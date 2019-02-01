@@ -1,0 +1,20 @@
+{
+  "name": "diplo-bot",
+  "version": "0.0.1",
+  "description": "Telegram Bots for Diplomacy games",
+  "author": "ALEGATOR1209",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ALEGATOR1209/diploBot"
+  },
+  "readmeFilename": "README.md",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "lowdb": "^1.0.0",
+    "telegraf": "^3.27.0"
+  }
+}

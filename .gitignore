@@ -1,0 +1,3 @@
+node_modules/*
+bots/countryBot/db.json
+bots/*/token.js
