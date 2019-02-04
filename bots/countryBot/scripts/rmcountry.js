@@ -11,16 +11,20 @@ const rmcountry = ctx => {
     return;
   }
 
+  const link = ctx.message.chat.username;
   let name = ctx.message
     .text
-    .match(/ .*$/);
+    .slice('/rmcountry'.length);
   if (!name) {
-    ctx.reply('No country name.');
-    return;
+    if (ctx.message.chat.title)
+      name = ctx.message.chat.title;
+    else {
+      ctx.reply('No country name.');
+      return;
+    }
   }
-  name = name[0].trim();
 
-  const country = getCountry(name);
+  const country = getCountry(link);
   if (!country) {
     ctx.reply('Country does not exist!');
     return;

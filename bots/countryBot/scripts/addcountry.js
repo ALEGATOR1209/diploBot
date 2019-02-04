@@ -11,38 +11,27 @@ const addcountry = ctx => {
     return;
   }
 
-  const text = ctx.message
-    .text
-    .slice('/addcountry'.length)
-    .trim()
-    .split(' ');
-  if (text.length > 2) {
-    ctx.reply('USAGE:\n` /addcountry name link `');
+  if (ctx.message.chat.type === 'private') {
+    ctx.reply('Cannot create countries in private chats.');
     return;
   }
-  let title = text.shift();
-  const link = text.pop();
+
+  let title = ctx.message
+    .text
+    .slice('/addcountry'.length)
+    .trim();
 
   if (!title) {
-    if (ctx.message.chat.type === 'private') {
-      ctx.reply('No country name provided.');
+    if (ctx.message.chat.title)
+      title = ctx.message.chat.title;
+    else {
+      ctx.reply('Country name is not provided.');
       return;
     }
-    title = ctx.message.chat.title;
   }
+  const link = ctx.message.chat.username;
 
-  if (!link) {
-    if (ctx.message.chat.type === 'private') {
-      ctx.reply('No country chat link provided.');
-      return;
-    }
-
-    if (ctx.message.chat.username)
-      title = ctx.message.chat.username;
-    else title = ctx.message.chat.id;
-  }
-
-  if (getCountry(title)) {
+  if (getCountry(link)) {
     ctx.reply('Country already exists.');
     return;
   }

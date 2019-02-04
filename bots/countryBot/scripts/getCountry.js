@@ -5,13 +5,16 @@ const FileSync = require('lowdb/adapters/FileSync');
 
 const databases = '../../databases';
 const adapterStates = new FileSync(`${databases}/countries.json`);
-const DBcountries = low(adapterStates);
-DBcountries.defaults({
-  countries: [],
-}).write();
 
-const getCountry = name => DBcountries.get('countries')
-  .find(country => country.name === name)
+const getCountry = id => {
+  const DBcountries = low(adapterStates);
+  DBcountries.defaults({
+    countries: [],
+  }).write();
+
+  return DBcountries.get('countries')
+  .find(country => country.chat === id)
   .value();
+}
 
 module.exports = getCountry;
