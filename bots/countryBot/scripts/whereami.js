@@ -11,15 +11,14 @@ const whereami = ctx => {
   const country = getCountry(link);
   if (country) {
     ctx.reply(
-      `You\'re citizen of ${country.name}`,
+      `You're citizen of ${country.name}`,
       { reply_to_message_id: ctx.message.message_id }
     );
-  }
-  else ctx.reply(
-    `I don\'t know. It seems like there is no country in this chat.`,
+  } else ctx.reply(
+    'I don\'t know. It seems like there is no country in this chat.',
     { reply_to_message_id: ctx.message.messageId }
   );
-}
+};
 
 module.exports = whereami;
 /*****************

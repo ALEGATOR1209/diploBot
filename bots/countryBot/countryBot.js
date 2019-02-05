@@ -10,6 +10,7 @@ const rmcountry = require('./scripts/rmcountry');
 const whereami = require('./scripts/whereami');
 const handleText = require('./scripts/handleText');
 const newCititzens = require('./scripts/newCititzens');
+const removeCitizen = require('./scripts/removeCitizen');
 
 const bot = new Telegraf(TOKEN);
 
@@ -21,6 +22,7 @@ bot.command('addcountry', addcountry);
 bot.command('rmcountry', rmcountry);
 bot.on('text', handleText);
 bot.on('new_chat_members', newCititzens);
+bot.on('left_chat_member', removeCitizen);
 
 bot.catch(console.log);
 bot.launch();

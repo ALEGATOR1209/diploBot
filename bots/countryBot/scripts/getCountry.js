@@ -13,8 +13,8 @@ const getCountry = id => {
   }).write();
 
   return DBcountries.get('countries')
-  .find(country => country.chat === id)
-  .value();
-}
+    .find(country => country.chat === id)
+    .value();
+};
 
 module.exports = getCountry;

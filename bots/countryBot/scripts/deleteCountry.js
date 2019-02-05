@@ -7,12 +7,12 @@ const adapterStates = new FileSync(`${databases}/countries.json`);
 
 const deleteCountry = name => {
   const DBcountries = low(adapterStates);
-  let countries = DBcountries.get('countries');
-  const index = countries
+  let nations = DBcountries.get('countries');
+  const i = nations
     .findIndex(country => country.name === name);
 
-  countries = [...countries.value().slice(0, index), ...countries.value().slice(index + 1)];
-  DBcountries.set('countries', countries)
+  nations = [...nations.value().slice(0, i), ...nations.value().slice(i + 1)];
+  DBcountries.set('countries', nations)
     .write();
   return DBcountries.get('countries').value();
 };

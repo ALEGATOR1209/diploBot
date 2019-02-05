@@ -9,7 +9,7 @@ const adapterStates = new FileSync(`${databases}/countries.json`);
 const createCountry = (name, chat) => {
   const DBcountries = low(adapterStates);
   const countries = DBcountries.get('countries');
-  countries.push({ name, chat })
+  countries.push({ name, chat, citizens: [] })
     .write();
   return countries.value();
 };
