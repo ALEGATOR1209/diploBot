@@ -1,12 +1,12 @@
 'use strict';
 
-const isAdmin = require('./isAdmin');
+const getAdmins = require('./getAdmins');
 const getCountry = require('./getCountry');
 const createCountry = require('./createCountry');
 
 const addcountry = ctx => {
   const username = ctx.message.from.username;
-  if (!isAdmin(username)) {
+  if (!getAdmins().include(username)) {
     ctx.reply('You have no rights.');
     return;
   }
