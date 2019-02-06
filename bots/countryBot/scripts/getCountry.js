@@ -9,11 +9,10 @@ const adapterStates = new FileSync(`${databases}/countries.json`);
 const getCountry = id => {
   const DBcountries = low(adapterStates);
   DBcountries.defaults({
-    countries: [],
+    countries: {},
   }).write();
 
-  return DBcountries.get('countries')
-    .find(country => country.chat === id)
+  return DBcountries.get(`countries.${id}`)
     .value();
 };
 

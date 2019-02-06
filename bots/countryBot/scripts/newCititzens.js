@@ -44,7 +44,7 @@ const newCitizens = ctx => {
     }
 
     ctx.reply(
-      `You are a citizen of ${nation} now.` +
+      `You are a citizen of ${nation} now. ` +
       'You have all posibilities in accord with local laws.'
     );
   });

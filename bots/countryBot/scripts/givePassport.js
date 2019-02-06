@@ -7,10 +7,12 @@ const databases = '../../databases';
 const adapterStates = new FileSync(`${databases}/countries.json`);
 
 const givePassport = ({ chat }, user) => low(adapterStates)
-  .get('countries')
-  .find(country => country.chat === chat)
-  .get('citizens')
-  .push(user)
-  .write();
+  .get(`countries.${chat}`)
+  .set(`citizens.${user}`, 
+    { 
+      class: 'default',
+      inPrison: false,
+    }
+  ).write();
 
 module.exports = givePassport;

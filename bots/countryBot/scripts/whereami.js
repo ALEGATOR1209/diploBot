@@ -16,7 +16,7 @@ const whereami = ctx => {
     );
   } else ctx.reply(
     'I don\'t know. It seems like there is no country in this chat.',
-    { reply_to_message_id: ctx.message.messageId }
+    { reply_to_message_id: ctx.message.message_id }
   );
 };
 

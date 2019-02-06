@@ -21,7 +21,7 @@ const removeCitizen = ctx => {
 
   const nation = country.name;
   if (tag) {
-    if (checkUserCountry(tag).chat === country.chat) {
+    if (checkUserCountry(tag) && checkUserCountry(tag).chat === country.chat) {
       retakePassport(country, tag);
       ctx.reply(`@${tag} is no longer a citizen of ${nation}.`);
       return;

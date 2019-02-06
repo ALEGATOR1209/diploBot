@@ -6,7 +6,7 @@ const createCountry = require('./createCountry');
 
 const addcountry = ctx => {
   const username = ctx.message.from.username;
-  if (!getAdmins().include(username)) {
+  if (!getAdmins().includes(username)) {
     ctx.reply('You have no rights.');
     return;
   }
@@ -38,7 +38,12 @@ const addcountry = ctx => {
 
   const countries = createCountry(title, link);
   ctx.reply(`Young ${title} country appears on politic arena.`);
-  ctx.reply(`Countries list:\n\n${countries.map(c => c.name).join('\n')}`);
+  ctx.reply(
+    'Countries list:\n\n' +
+    Object.keys(countries)
+      .map(country => countries[country].name)
+      .join('\n')
+  );
 };
 
 module.exports = addcountry;

@@ -11,6 +11,8 @@ const whereami = require('./scripts/whereami');
 const handleText = require('./scripts/handleText');
 const newCititzens = require('./scripts/newCititzens');
 const removeCitizen = require('./scripts/removeCitizen');
+const rightlist = require('./scripts/rightlist');
+const rights = require('./scripts/rights');
 
 const bot = new Telegraf(TOKEN);
 
@@ -20,6 +22,8 @@ bot.help(ctx => ctx.reply('`No help.`'));
 bot.command('whereami', whereami);
 bot.command('addcountry', addcountry);
 bot.command('rmcountry', rmcountry);
+bot.command('rightslist', rightlist);
+bot.command('rights', rights);
 bot.on('text', handleText);
 bot.on('new_chat_members', newCititzens);
 bot.on('left_chat_member', removeCitizen);
