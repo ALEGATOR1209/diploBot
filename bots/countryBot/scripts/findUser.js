@@ -6,9 +6,9 @@ const FileSync = require('lowdb/adapters/FileSync');
 const databases = '../../databases';
 const adapterStates = new FileSync(`${databases}/countries.json`);
 
-const retakePassport = ({ chat }, username) => low(adapterStates)
-  .get(`countries.${chat}`)
-  .unset(`citizens.${username}`)
-  .write();
+const findUser = id => low(adapterStates)
+  .get('countries')
+  .find(country => country.citizens[id])
+  .value();
 
-module.exports = retakePassport;
+module.exports = findUser;

@@ -6,9 +6,9 @@ const databases = '../../databases';
 const adapterStates = new FileSync(`${databases}/countries.json`);
 
 const deleteCountry = chat => {
-  const DBcountries = low(adapterStates)
-    DBcountries.unset(`countries.${chat}`)
-    .write()
+  const DBcountries = low(adapterStates);
+  DBcountries.unset(`countries.${chat}`)
+    .write();
   return DBcountries.get('countries')
     .value();
 };

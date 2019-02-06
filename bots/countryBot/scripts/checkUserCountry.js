@@ -9,11 +9,11 @@ const adapterStates = new FileSync(`${databases}/countries.json`);
 const checkUserCountry = user => low(adapterStates)
   .get('countries')
   .find(country => country
-      .citizens
-      .value()
-      .keys()
-      .includes(user)
-    )
+    .citizens
+    .value()
+    .keys()
+    .includes(user)
+  )
   .value();
 
 module.exports = checkUserCountry;

@@ -10,7 +10,7 @@ const rightlist = ctx => ctx.reply(
   'Все права:\n\n✅ ' + low(adapterRigths)
     .get('rights')
     .value()
-    .join(`\n✅ `),
+    .join('\n✅ '),
   { reply_to_message_id: ctx.message.message_id }
 );
 

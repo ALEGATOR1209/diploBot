@@ -11,7 +11,7 @@ const adapterRigths = new FileSync(`${databases}/rights.json`);
 const rights = ctx => {
   let tag = ctx.message
     .text
-    .match(/ .*$/)
+    .match(/ .*$/);
   if (tag) tag = tag[0].trim().slice(1);
   else tag = ctx.message.from.username || ctx.message.from.id;
 
@@ -44,7 +44,7 @@ const rights = ctx => {
     'Rights:\n\n' +
     rightslist.reduce(
       (acc, rights) => acc + (
-          userClass.includes(rights) ? '✅ ' : '❌ ' 
+        userClass.includes(rights) ? '✅ ' : '❌ '
       ) + rights + '\n', ''
     ) + '\n' + (user.inPrison ? '🔴 **Игрок в тюрьме.**' : 'Игрок на свободе.'),
     { reply_to_message_id: ctx.message.message_id }
