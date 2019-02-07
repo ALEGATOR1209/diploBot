@@ -18,6 +18,7 @@ const droppassport = require('./scripts/droppassport');
 const kill = require('./scripts/kill');
 const shoot = require('./scripts/shoot');
 const sendmessage = require('./scripts/sendmessage');
+const addclass = require('./scripts/addclass');
 
 const bot = new Telegraf(TOKEN);
 
@@ -34,6 +35,7 @@ bot.command('droppassport', droppassport);
 bot.command('kill', kill);
 bot.command('shoot', shoot);
 bot.command('sendmessage', sendmessage);
+bot.command('addclass', addclass);
 bot.on('text', handleText);
 bot.on('new_chat_members', newCitizens);
 bot.on('left_chat_member', removeCitizen);

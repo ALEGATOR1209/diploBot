@@ -1,12 +1,8 @@
 'use strict';
 
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
 const getCountry = require('./getCountry');
 const getAdmins = require('./getAdmins');
-
-const databases = '../../databases';
-const adapterRigths = new FileSync(`${databases}/rights.json`);
+const rightslist = require('./getAllRights');
 
 const rights = ctx => {
   let tag = ctx.message
@@ -39,12 +35,11 @@ const rights = ctx => {
   }
 
   const userClass = country.classes[user.class];
-  const rightslist = low(adapterRigths).get('rights');
   ctx.reply(
     'Rights:\n\n' +
     rightslist.reduce(
       (acc, rights) => acc + (
-        userClass.includes(rights) ? '✅ ' : '❌ '
+        userClass.rights.includes(rights) ? '✅ ' : '❌ '
       ) + rights + '\n', ''
     ) + '\n' + (user.inPrison ? '🔴 **Игрок в тюрьме.**' : 'Игрок на свободе.'),
     { reply_to_message_id: ctx.message.message_id }

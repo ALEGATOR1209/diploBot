@@ -17,7 +17,9 @@ const createCountry = (name, chat) => {
       chat,
       citizens: {},
       classes: {
-        default: DBrights.get('rights').value(),
+        default: {
+          rights: DBrights.get('rights').value()
+        },
       },
       blacklist: {},
     }

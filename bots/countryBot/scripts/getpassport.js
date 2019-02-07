@@ -24,6 +24,7 @@ const getpassport = ctx => {
       `You're also is a citizen of ${userCountry.name}!`,
       { reply_to_message_id: ctx.message.message_id }
     );
+    return;
   }
 
   if (username) {

@@ -1,8 +1,19 @@
 'use strict';
 const getAdmins = require('./getAdmins');
+const getStates = require('./getStates');
+const createClass = require('./createClass');
 
 const handleText = ctx => {
   const { type } = ctx.message.chat;
+  const { id } = ctx.message.from;
+
+  const states = getStates(id);
+  if (states) {
+    if (states.creatingClass) {
+      createClass(ctx);
+      return;
+    }
+  }
 
   if (type === 'private') {
     const admins = getAdmins();

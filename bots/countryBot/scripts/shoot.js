@@ -28,7 +28,7 @@ const shoot = ctx => {
   }
 
   let victim = ctx.message.text
-    .match(/ .*$/);
+    .slice('/shoot'.length + 1);
   if (!victim) {
     victim = getRandomChoice(Object.keys(country.citizens));
   }

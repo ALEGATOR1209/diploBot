@@ -6,7 +6,7 @@ const retakePassport = require('./retakePassport');
 
 const droppassport = ctx => {
   const { username, id } = ctx.message.from;
-  if (getAdmins().includes(username) || getAdmins.includes(id)) {
+  if (getAdmins().includes(username) || getAdmins().includes(id)) {
     ctx.reply(
       'Admins have no passport!',
       { reply_to_message_id: ctx.message.message_id }
