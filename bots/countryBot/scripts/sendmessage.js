@@ -6,7 +6,7 @@ const sendmessage = ctx => {
   const { username, id } = ctx.message.from;
   if (!(getAdmins().includes(username) || getAdmins().includes(id))) {
     ctx.reply('This command avaliable only for admins').
-    return;
+      return;
   }
   const chat = ctx.message.text
     .match(/ @[^(\n)]*/g);
@@ -25,7 +25,7 @@ const sendmessage = ctx => {
   chat[0].trim()
     .split(' ')
     .forEach(tag => ctx.reply(text.join('\n'), { chat_id: tag })
-        .catch(e => ctx.reply('Error: Chat not found'))
+      .catch(() => ctx.reply('Error: Chat not found'))
     );
 };
 

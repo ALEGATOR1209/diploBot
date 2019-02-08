@@ -19,6 +19,8 @@ const kill = require('./scripts/kill');
 const shoot = require('./scripts/shoot');
 const sendmessage = require('./scripts/sendmessage');
 const addclass = require('./scripts/addclass');
+const classlist = require('./scripts/classlist');
+const showclass = require('./scripts/showclass');
 
 const bot = new Telegraf(TOKEN);
 
@@ -36,6 +38,8 @@ bot.command('kill', kill);
 bot.command('shoot', shoot);
 bot.command('sendmessage', sendmessage);
 bot.command('addclass', addclass);
+bot.command('classlist', classlist);
+bot.command('showclass', showclass);
 bot.on('text', handleText);
 bot.on('new_chat_members', newCitizens);
 bot.on('left_chat_member', removeCitizen);

@@ -2,7 +2,7 @@
 
 const getCountry = require('./getCountry');
 const getAdmins = require('./getAdmins');
-const rightslist = require('./getAllRights');
+const rightsString = require('./rightsString');
 
 const rights = ctx => {
   let tag = ctx.message
@@ -37,11 +37,8 @@ const rights = ctx => {
   const userClass = country.classes[user.class];
   ctx.reply(
     'Rights:\n\n' +
-    rightslist.reduce(
-      (acc, rights) => acc + (
-        userClass.rights.includes(rights) ? '✅ ' : '❌ '
-      ) + rights + '\n', ''
-    ) + '\n' + (user.inPrison ? '🔴 **Игрок в тюрьме.**' : 'Игрок на свободе.'),
+    rightsString(userClass.rights) + '\n' +
+    (user.inPrison ? '🔴 **Игрок в тюрьме.**' : 'Игрок на свободе.'),
     { reply_to_message_id: ctx.message.message_id }
   );
 };

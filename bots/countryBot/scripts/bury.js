@@ -1,5 +1,5 @@
 'use strict';
 
-const bury = id => {};
+const bury  = () => {};
 
 module.exports = bury;

@@ -7,7 +7,7 @@ const databases = '../../databases';
 const adapterRights = new FileSync(`${databases}/rights.json`);
 
 const getAllRights = low(adapterRights)
-    .get('rights')
-    .value();
+  .get('rights')
+  .value();
 
 module.exports = getAllRights;

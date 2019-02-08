@@ -11,6 +11,13 @@ const setState = (id, name, value) => {
   BDstates.defaults({}).write();
 
   if (value === null) {
+    const userStates = BDstates.get(id);
+    if (userStates.value() && Object.keys(userStates.value()['length'] === 0)) {
+      BDstates
+        .unset(id)
+        .write();
+      return;
+    }
     BDstates
       .unset(`${id}.${name}`)
       .write();
@@ -21,8 +28,8 @@ const setState = (id, name, value) => {
     .set(`${id}.${name}`, value)
     .write();
   return true;
-}
+};
 
-setState(0, "someState", null);
+setState(0, 'someState', null);
 
 module.exports = setState;

@@ -7,7 +7,6 @@ const bury = require('./bury');
 
 const kill = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
-  const { username: countryTag, id: countryId } = ctx.message.chat;
   const { username, id } = ctx.message.from;
   const tag = username || id;
 
@@ -26,8 +25,7 @@ const kill = ctx => {
   if (!victim) {
     ctx.reply('Убиваем случайного игрока.', reply);
     victim = getRandomChoice(Object.keys(country.citizens));
-  } 
-  else victim = victim[0].trim().slice(1);
+  } else victim = victim[0].trim().slice(1);
   if (getAdmins().includes(victim)) {
     ctx.reply('Baka! Do not kill admins!', reply);
     return;
@@ -43,7 +41,7 @@ const kill = ctx => {
     `🎲${killed}  ` + (killed < 60 ? 'Он(а) выживает!' : 'Он(а) погибает!') + '\n' +
     `🎲${incognito}  ` + (incognito < 40 ? 'Убийца скрылся.' : `Стрелял ${tag ? '@' + tag : ctx.message.from.firs_name}.`),
     { chat_id: `@${country.chat}` }
-  ).catch(e => console.log(country.chat, 'not found.'));
+  ).catch(() => console.log(country.chat, 'not found.'));
   if (killed) bury(victim);
 };
 

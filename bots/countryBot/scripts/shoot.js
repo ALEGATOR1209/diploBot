@@ -31,8 +31,7 @@ const shoot = ctx => {
     .slice('/shoot'.length + 1);
   if (!victim) {
     victim = getRandomChoice(Object.keys(country.citizens));
-  }
-  else victim = victim.trim().slice(1);
+  } else victim = victim.trim().slice(1);
   if (getAdmins().includes(victim)) {
     ctx.reply('Baka! Do not kill admins!', reply);
     return;
