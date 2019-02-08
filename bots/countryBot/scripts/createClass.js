@@ -6,6 +6,7 @@ const findUser = require('./findUser');
 const rightslist = require('./getAllRights');
 const newClass = require('./newClass');
 const removeClass = require('./removeClass');
+const getText = text => require('./getText')(`createClass.${text}`);
 
 const stateHandlers = {
   'enteringName': ctx => {
@@ -16,7 +17,7 @@ const stateHandlers = {
 
     if (text.match(/^cancel$/gi)) {
       setState(id, 'creatingClass', null);
-      ctx.reply('Class creating canceled.');
+      ctx.reply(getText(1));
       return;
     }
 
@@ -28,9 +29,9 @@ const stateHandlers = {
 
     setState(id, 'creatingClass', 'enteringRights');
     ctx.reply(
-      'Enter numbers you want add to your class in following format' +
-      '\nnum1 num2 num3\n\n' + 'Rights:\n\n' +
-      rightslist.reduce((acc, val, i) => acc + `${i + 1} - ${val}\n`, '')
+      getText(2) + rightslist.reduce(
+        (acc, val, i) => acc + `${i + 1} - ${val}\n`, ''
+      )
     );
   },
 
@@ -45,7 +46,7 @@ const stateHandlers = {
     if (text.match(/^cancel$/gi)) {
       setState(id, 'creatingClass', null);
       removeClass(country.chat, className);
-      ctx.reply('Class creating canceled.');
+      ctx.reply(getText(3));
       return;
     }
 
@@ -63,9 +64,9 @@ const stateHandlers = {
 
     setState(id, 'creatingClass', 'enteringNumber');
     ctx.reply(
-      'Your class will have following rights:\n\n' +
+      getText(4) +
       rightslist.reduce((acc, val) => acc + ((rights.includes(rightslist.indexOf(val) + 1) ? '✅ ' : '❌ ') + `${val}\n`), '') +
-      '\n\nEnter max number of people for this class (0 = infinity) or cancel to abort.',
+      + '\n\n' + getText(5),
       { reply_to_message_id: ctx.message.message_id }
     );
   },
@@ -81,15 +82,14 @@ const stateHandlers = {
     if (text.match(/^cancel$/gi)) {
       setState(id, 'creatingClass', null);
       removeClass(country.chat, userClass);
-      ctx.reply('Class creating canceled.');
+      ctx.reply(getText(3));
       return;
     }
 
     if (text.match(/^[‒–—―]$/g)) {
       setState(id, 'creatingClass', 'enteringRights');
       ctx.reply(
-        'Enter numbers of rights you want add to your class in following format:' +
-        '\nnum1 num2 num3\n\n' + 'Rigths:\n\n' +
+        getText(2) +
         rightslist.reduce((acc, val, i) => acc + `${i + 1} - ${val}\n`, '')
       );
       return;
@@ -98,22 +98,22 @@ const stateHandlers = {
     if (text.match(/^[0-9]*$/)) {
       const number = parseInt(text);
       if (number < 0) {
-        ctx.reply('Wrong number, try again.', { reply_to_message_id: ctx.message.message_id });
+        ctx.reply(getText(6), { reply_to_message_id: ctx.message.message_id });
         return;
       }
 
       if (number === 0)
-        ctx.reply('Class unlimited.', { reply_to_message_id: ctx.message.message_id });
-      else ctx.reply(`Max size of class is ${number} people.`, { reply_to_message_id: ctx.message.message_id });
+        ctx.reply(getText(7), { reply_to_message_id: ctx.message.message_id });
+      else ctx.reply(getText(8) + number, { reply_to_message_id: ctx.message.message_id });
 
       newClass(country.chat, userClass, {
         number,
       });
       setState(id, 'creatingClass', 'confirmation');
-      ctx.reply('Enter + to confirm creation, - to return to previous step and cancel to decline.');
+      ctx.reply(getText(9));
       return;
     }
-    ctx.reply('Wrong input, try again.', { reply_to_message_id: ctx.message.message_id });
+    ctx.reply(getText(10), { reply_to_message_id: ctx.message.message_id });
   },
   'confirmation': ctx => {
     const { text } = ctx.message;
@@ -126,20 +126,20 @@ const stateHandlers = {
     if (text.match(/^cancel$/gi)) {
       setState(id, 'creatingClass', null);
       removeClass(country.chat, userClass);
-      ctx.reply('Class creating canceled.');
+      ctx.reply(getText(3));
       return;
     }
 
     if (text.match(/^\+$/g)) {
       setState(id, 'creatingClass', null);
       newClass(country.chat, userClass, { creator: null });
-      ctx.reply('Class successfully created!');
+      ctx.reply(getText(11));
       return;
     }
 
     if (text.match(/^-$/g)) {
       setState(id, 'creatingClass', 'enteringNumber');
-      ctx.reply('Enter max number of people for this class (0 = infinity) or cancel to abort.');
+      ctx.reply(getText(5));
       return;
     }
 

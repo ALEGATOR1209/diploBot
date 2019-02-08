@@ -4,6 +4,7 @@ const getCountry = require('./getCountry');
 const getAdmins = require('./getAdmins');
 const givePassport = require('./givePassport');
 const checkUserCountry = require('./checkUserCountry');
+const getText = id => require('./getText')(`newCitizens.${id}`);
 
 const newCitizens = ctx => {
   const { username: countryTag, id: countryId } = ctx.message.chat;
@@ -16,37 +17,29 @@ const newCitizens = ctx => {
 
     const { username: tag, id: userId } = user;
     if (getAdmins().includes(tag)) {
-      ctx.reply(`Welcome in ${country.name}, @${tag}-senpai! ^_^`);
+      ctx.reply(`${getText(1)} ${country.name}, @${tag}${getText(2)}`);
       return;
     }
 
     const nation = country.name;
     if (tag) {
-      ctx.reply(`Welcome in ${nation}, @${tag}!`);
+      ctx.reply(`${getText(1)} ${nation}, @${tag}!`);
       if (checkUserCountry(tag)) {
-        ctx.reply(
-          `It looks like you're sitizen of another country, @${tag}!\n` +
-          'You cannot have full sitizen rigth here.'
-        );
+        ctx.reply(`${getText(3)} @${tag}!\n${getText(4)}`);
         return;
       }
       givePassport(country, tag);
     } else {
-      ctx.reply(`Welcome in ${nation}, ${user.first_name}!`);
+      ctx.reply(`${getText(1)} ${nation}, ${user.first_name}!`);
       if (checkUserCountry(userId)) {
-        ctx.reply(
-          `It looks like you're sitizen of another country, @${tag}!\n` +
-          'You cannot have full sitizen rigth here.'
-        );
+        const name = ctx.message.from.first_name + (ctx.message.from.last_name || '');
+        ctx.reply(`${getText(3)} ${name}!\n${getText(4)}`);
         return;
       }
       givePassport(country, userId);
     }
 
-    ctx.reply(
-      `You are a citizen of ${nation} now. ` +
-      'You have all posibilities in accord with local laws.'
-    );
+    ctx.reply(`${getText(5)} ${nation}.\n${getText(6)}`);
   });
 };
 

@@ -3,6 +3,7 @@
 const getCountry = require('./getCountry');
 const getAdmins = require('./getAdmins');
 const rightsString = require('./rightsString');
+const getText = id => require('./getText')(`rights.${id}`);
 
 const rights = ctx => {
   let tag = ctx.message
@@ -19,7 +20,7 @@ const rights = ctx => {
 
   if (getAdmins().includes(tag)) {
     ctx.reply(
-      `@${tag} rights:\n\n✅ Право быть самым лучшим.`,
+      `@${tag} ${getText(1)}:\n\n${getText(2)}`,
       { reply_to_message_id: ctx.message.message_id }
     );
     return;
@@ -28,7 +29,7 @@ const rights = ctx => {
   const user = country.citizens[tag];
   if (!user) {
     ctx.reply(
-      `There is no such user in ${country.name}.`,
+      `${getText(3)} ${country.name}.`,
       { reply_to_message_id: ctx.message.message_id }
     );
     return;
@@ -36,9 +37,9 @@ const rights = ctx => {
 
   const userClass = country.classes[user.class];
   ctx.reply(
-    'Rights:\n\n' +
+    `${getText(1)}:\n\n` +
     rightsString(userClass.rights) + '\n' +
-    (user.inPrison ? '🔴 **Игрок в тюрьме.**' : 'Игрок на свободе.'),
+    (user.inPrison ? getText(4) : getText(5)),
     { reply_to_message_id: ctx.message.message_id }
   );
 };

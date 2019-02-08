@@ -4,6 +4,7 @@ const getAdmins = require('./getAdmins');
 const getCountry = require('./getCountry');
 const findUser = require('./findUser');
 const setState = require('./setState');
+const getText = text => require('./getText')(`addclass.${text}`);
 
 const addclass = ctx => {
   const { username: uTag, id: uId } = ctx.message.from;
@@ -14,23 +15,17 @@ const addclass = ctx => {
   const userCountry = findUser(uTag) || findUser(uId);
 
   if (getAdmins().includes(uTag) || getAdmins().includes(uId)) {
-    ctx.reply(
-      'Admins can\'t create social imparity. They must fix it!',
-      reply
-    );
+    ctx.reply(getText(1), reply);
     return;
   }
 
   if (!userCountry) {
-    ctx.reply('It looks like you\'re stateless!', reply);
+    ctx.reply(getText(2), reply);
     return;
   }
 
   if (country && country.chat !== userCountry.chat) {
-    ctx.reply(
-      'Create classes only in your country chat or in private messages.',
-      reply
-    );
+    ctx.reply(getText(3), reply);
     return;
   }
 
@@ -39,17 +34,13 @@ const addclass = ctx => {
       userCountry.citizens[uTag].class
     ].rights.includes('Право на назначение должностей')
   ) {
-    ctx.reply('You have no rights to create classes.');
+    ctx.reply(getText(4));
     return;
   }
 
   if (!country && ctx.message.chat.type !== 'private') return;
 
-  ctx.reply(
-    'Ok, send me name of your class, please.' +
-      '\nType cancel to abort.',
-    reply
-  );
+  ctx.reply(getText(5), reply);
   setState(uId, 'creatingClass', 'enteringName');
 };
 

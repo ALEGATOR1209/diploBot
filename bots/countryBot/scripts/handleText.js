@@ -2,6 +2,7 @@
 const getAdmins = require('./getAdmins');
 const getStates = require('./getStates');
 const createClass = require('./createClass');
+const getText = id => require('./getText')(`handleText.${id}`);
 
 const handleText = ctx => {
   const { type } = ctx.message.chat;
@@ -17,12 +18,8 @@ const handleText = ctx => {
 
   if (type === 'private') {
     const admins = getAdmins();
-    ctx.reply('Robot cannot speak to human. I will be punished!');
-    ctx.reply(
-      'But you can speak to my developers or other admins as well.' +
-      `\n@${admins.join('\n@')}`
-    );
-    return;
+    ctx.reply(getText(1));
+    ctx.reply(getText(2) + `\n@${admins.join('\n@')}`);
   }
 };
 

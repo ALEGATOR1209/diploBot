@@ -3,16 +3,17 @@
 const getAdmins = require('./getAdmins');
 const getCountry = require('./getCountry');
 const createCountry = require('./createCountry');
+const getText = text => require('./getText')(`addcountry.${text}`);
 
 const addcountry = ctx => {
   const username = ctx.message.from.username;
   if (!getAdmins().includes(username)) {
-    ctx.reply('You have no rights.');
+    ctx.reply(getText(1));
     return;
   }
 
   if (ctx.message.chat.type === 'private') {
-    ctx.reply('Cannot create countries in private chats.');
+    ctx.reply(getText(2));
     return;
   }
 
@@ -25,21 +26,21 @@ const addcountry = ctx => {
     if (ctx.message.chat.title)
       title = ctx.message.chat.title;
     else {
-      ctx.reply('Country name is not provided.');
+      ctx.reply(getText(3));
       return;
     }
   }
   const link = ctx.message.chat.username;
 
   if (getCountry(link)) {
-    ctx.reply('Country already exists.');
+    ctx.reply(getText(4));
     return;
   }
 
   const countries = createCountry(title, link);
-  ctx.reply(`Young ${title} country appears on politic arena.`);
+  ctx.reply(` ${title} ${getText(5)}`);
   ctx.reply(
-    'Countries list:\n\n' +
+    getText(6) +
     Object.keys(countries)
       .map(country => countries[country].name)
       .join('\n')
@@ -47,10 +48,3 @@ const addcountry = ctx => {
 };
 
 module.exports = addcountry;
-
-/***************************
-USAGE:
- /addcountry Ukraine ukr - create Ukraine in chat t.me/ukr
- /addcountry Ukraine - create Ukraine in current group chat
-
-****************************/

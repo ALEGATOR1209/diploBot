@@ -1,11 +1,12 @@
 'use strict';
 
 const getAdmins = require('./getAdmins');
+const getText = id => require('./getText')(`sendmessage.${id}`);
 
 const sendmessage = ctx => {
   const { username, id } = ctx.message.from;
   if (!(getAdmins().includes(username) || getAdmins().includes(id))) {
-    ctx.reply('This command avaliable only for admins').
+    ctx.reply(getText(1));
       return;
   }
   const chat = ctx.message.text
@@ -13,13 +14,13 @@ const sendmessage = ctx => {
   const text = ctx.message.text
     .match(/\n.*/g);
   if (!chat) {
-    ctx.reply('Error: Targeted chat\'s tag not found.');
-    ctx.reply('Use:\n/sendmessage @chat1 @chat2\nText');
+    ctx.reply(getText(2));
+    ctx.reply(getText(3));
     return;
   }
   if (!text) {
-    ctx.reply('Error: Text not found.');
-    ctx.reply('Use:\n/sendmessage @chat1 @chat2\nText');
+    ctx.reply(getText(4));
+    ctx.reply(getText(3));
     return;
   }
   chat[0].trim()

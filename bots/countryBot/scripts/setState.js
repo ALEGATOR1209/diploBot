@@ -30,6 +30,4 @@ const setState = (id, name, value) => {
   return true;
 };
 
-setState(0, 'someState', null);
-
 module.exports = setState;

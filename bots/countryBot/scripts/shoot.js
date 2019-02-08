@@ -4,6 +4,7 @@ const getAdmins = require('./getAdmins');
 const getCountry = require('./getCountry');
 const getRandomChoice = require('./getRandomChoice');
 const bury = require('./bury');
+const getText = id => require('./getText')(`shoot.${id}`);
 
 const shoot = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
@@ -15,15 +16,12 @@ const shoot = ctx => {
   if (!country) return;
 
   if (getAdmins().includes(tag)) {
-    ctx.reply(
-      'Baka! Admins cannot kill players!!!',
-      reply
-    );
+    ctx.reply(getText(1), reply);
     return;
   }
 
   if (!country.citizens[tag]) {
-    ctx.reply('Вам нельзя тут стрелять.');
+    ctx.reply(getText(2));
     return;
   }
 
@@ -33,18 +31,17 @@ const shoot = ctx => {
     victim = getRandomChoice(Object.keys(country.citizens));
   } else victim = victim.trim().slice(1);
   if (getAdmins().includes(victim)) {
-    ctx.reply('Baka! Do not kill admins!', reply);
+    ctx.reply(getText(3), reply);
     return;
   }
   if (!country.citizens[victim]) {
-    ctx.reply('Target does not live here.', reply);
+    ctx.reply(getText(4), reply);
     return;
   }
   const killed = parseInt(Math.random() * 100);
   ctx.reply(
-    'ВЬІСТРЕЛ!\n\n' +
-    `Стреляли в @${victim}!\n` +
-    `🎲${killed}  ` + (killed < 60 ? 'Он(а) выживает!' : 'Он(а) погибает!'),
+    `${getText(5)} @${victim}!\n` +
+    `🎲${killed}  ` + (killed < 60 ? getText(6) : getText(7)),
     reply
   );
   if (killed) bury(victim);

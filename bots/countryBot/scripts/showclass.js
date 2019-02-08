@@ -4,6 +4,7 @@ const getAllClasses = require('./getAllClasses');
 const findUser = require('./findUser');
 const getCountry = require('./getCountry');
 const rightsString = require('./rightsString');
+const getText = id => require('./getText')(`showclass.${id}`);
 
 const showclass = ctx => {
   const { text, chat } = ctx.message;
@@ -13,7 +14,7 @@ const showclass = ctx => {
   if (chat.type === 'private') {
     userCountry = findUser(username) || findUser(id);
     if (!userCountry) {
-      ctx.reply('You\'re stateless!');
+      ctx.reply(getText(1));
       return;
     }
   } else userCountry = getCountry(chat.username) || getCountry(chat.id);
@@ -24,24 +25,24 @@ const showclass = ctx => {
     .trim();
 
   if (!className) {
-    ctx.reply('Usage: /showclass classname');
+    ctx.reply(getText(2));
     return;
   }
   const classList = getAllClasses(userCountry.chat);
   const userClass = classList[className];
   if (!userClass || userClass.creator) {
-    ctx.reply('Class not found.');
+    ctx.reply(getText(3));
     return;
   }
   const number = Object.keys(userCountry.citizens)
     .filter(man => userCountry.citizens[man].class === className).length;
   ctx.reply(
-    `Класс ${className}\n` +
-    (userClass.parentClass ? `Родительский класс: ${userClass.parentClass}\n` : '') +
-    rightsString(userClass.rights) +
-    (userClass.number ? `Максимальная численность: ${userClass.number}\n` :
-      'Максимальная численность: неограничено\n') +
-    `Текущая численность: ${number}`,
+    getText(4) + className + '\n' +
+    (userClass.parentClass ? `${getText(5)}: ${userClass.parentClass}\n` : '') +
+    rightsString(userClass.rights) + getText(6) + ':' +
+    (userClass.number ? `${userClass.number}\n` :
+      `${getText(7)}\n`) +
+    `${getText(8)}: ${number}`,
     { reply_to_message_id: ctx.message.message_id }
   );
 };

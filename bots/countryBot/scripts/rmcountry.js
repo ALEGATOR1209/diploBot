@@ -3,11 +3,12 @@
 const getAdmins = require('./getAdmins');
 const getCountry = require('./getCountry');
 const deleteCountry = require('./deleteCountry.js');
+const getText = id => require('./getText')(`rmcountry.${id}`);
 
 const rmcountry = ctx => {
   const username = ctx.message.from.username;
   if (!getAdmins().includes(username)) {
-    ctx.reply('You have no rights.');
+    ctx.reply(getText(1));
     return;
   }
 
@@ -15,14 +16,14 @@ const rmcountry = ctx => {
 
   const country = getCountry(link);
   if (!country) {
-    ctx.reply('Country does not exist!');
+    ctx.reply(getText(2));
     return;
   }
   const countries = deleteCountry(link);
   console.log(countries);
-  ctx.reply(`${ctx.message.chat.title} destroyed.`);
+  ctx.reply(`${ctx.message.chat.title} ${getText(3)}.`);
   ctx.reply(
-    'Countries list:\n\n' +
+    getText(4) + '\n\n' +
     Object.keys(countries)
       .map(country => countries[country].name)
       .join('\n')
@@ -30,8 +31,3 @@ const rmcountry = ctx => {
 };
 
 module.exports = rmcountry;
-
-/**************************
-USAGE:
-  /rmcountry
-**************************/
