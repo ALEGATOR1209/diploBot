@@ -10,7 +10,6 @@ const givePassport = ({ chat }, user) => low(adapterStates)
   .set(`countries.${chat}.citizens.${user}`, {
     'class': 'default',
     inPrison: false,
-    dead: false,
   }).write();
 
 module.exports = givePassport;

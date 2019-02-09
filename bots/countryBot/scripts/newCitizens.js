@@ -5,6 +5,7 @@ const getAdmins = require('./getAdmins');
 const givePassport = require('./givePassport');
 const checkUserCountry = require('./checkUserCountry');
 const getText = id => require('./getText')(`newCitizens.${id}`);
+const getDead = require('./getDead');
 
 const newCitizens = ctx => {
   const { username: countryTag, id: countryId } = ctx.message.chat;
@@ -16,8 +17,13 @@ const newCitizens = ctx => {
     if (user.is_bot) return;
 
     const { username: tag, id: userId } = user;
-    if (getAdmins().includes(tag)) {
+    if (getAdmins().includes(tag) || getAdmins().includes(id)) {
       ctx.reply(`${getText(1)} ${country.name}, @${tag}${getText(2)}`);
+      return;
+    }
+
+    if (getDead(id) || getDead(tag)) {
+      ctx.reply(getText(7));
       return;
     }
 

@@ -5,6 +5,7 @@ const givePassport = require('./givePassport');
 const findUser = require('./findUser');
 const getCountry = require('./getCountry');
 const getText = id => require('./getText')(`getpassport.${id}`);
+const getDead = require('./getDead');
 
 const getpassport = ctx => {
   const { username: countryTag, id: countryId } = ctx.message.chat;
@@ -14,6 +15,10 @@ const getpassport = ctx => {
   const { username, id } = ctx.message.from;
   if (getAdmins().includes(username) || getAdmins().includes(id)) {
     ctx.reply(getText(1), { reply_to_message_id: ctx.message.message_id });
+    return;
+  }
+  if (getDead(username) || getDead(id)) {
+    ctx.reply(getDead(5));
     return;
   }
   const userCountry = findUser(username) || findUser(id);

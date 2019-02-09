@@ -5,6 +5,7 @@ const findUser = require('./findUser');
 const getRandomChoice = require('./getRandomChoice');
 const bury = require('./bury');
 const getText = id => require('./getText')(`kill.${id}`);
+const getDead =require('./getDead');
 
 const kill = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
@@ -31,6 +32,10 @@ const kill = ctx => {
   } else victim = victim[0].trim().slice(1);
   if (getAdmins().includes(victim)) {
     ctx.reply(getText(3), reply);
+    return;
+  }
+  if (getDead(victim)) {
+    ctx.reply(getText(10));
     return;
   }
   if (!country.citizens[victim]) {

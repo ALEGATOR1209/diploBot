@@ -5,6 +5,7 @@ const getCountry = require('./getCountry');
 const getRandomChoice = require('./getRandomChoice');
 const bury = require('./bury');
 const getText = id => require('./getText')(`shoot.${id}`);
+const getDead = require('./getDead');
 
 const shoot = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
@@ -34,6 +35,12 @@ const shoot = ctx => {
     ctx.reply(getText(3), reply);
     return;
   }
+
+  if (getDead(victim)) {
+    ctx.reply(getText(8));
+    return;
+  }
+
   if (!country.citizens[victim]) {
     ctx.reply(getText(4), reply);
     return;
