@@ -65,8 +65,7 @@ const stateHandlers = {
     setState(id, 'creatingClass', 'enteringNumber');
     ctx.reply(
       getText(4) +
-      rightslist.reduce((acc, val) => acc + ((rights.includes(rightslist.indexOf(val) + 1) ? '✅ ' : '❌ ') + `${val}\n`), '') +
-      + '\n\n' + getText(5),
+      rightslist.reduce((acc, val) => acc + ((rights.includes(rightslist.indexOf(val) + 1) ? '✅ ' : '❌ ') + `${val}\n`), '') + getText(5),
       { reply_to_message_id: ctx.message.message_id }
     );
   },

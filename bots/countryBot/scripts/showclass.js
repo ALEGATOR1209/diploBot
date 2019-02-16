@@ -39,7 +39,7 @@ const showclass = ctx => {
   ctx.reply(
     getText(4) + className + '\n' +
     (userClass.parentClass ? `${getText(5)}: ${userClass.parentClass}\n` : '') +
-    rightsString(userClass.rights) + getText(6) + ':' +
+    rightsString(userClass.rights) + getText(6) + ': ' +
     (userClass.number ? `${userClass.number}\n` :
       `${getText(7)}\n`) +
     `${getText(8)}: ${number}`,

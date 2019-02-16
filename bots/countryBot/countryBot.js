@@ -21,6 +21,7 @@ const sendmessage = require('./scripts/sendmessage');
 const addclass = require('./scripts/addclass');
 const classlist = require('./scripts/classlist');
 const showclass = require('./scripts/showclass');
+const changeclass = require('./scripts/changeclass');
 
 const bot = new Telegraf(TOKEN);
 
@@ -40,6 +41,7 @@ bot.command('sendmessage', sendmessage);
 bot.command('addclass', addclass);
 bot.command('classlist', classlist);
 bot.command('showclass', showclass);
+bot.command('changeclass', changeclass);
 bot.on('text', handleText);
 bot.on('new_chat_members', newCitizens);
 bot.on('left_chat_member', removeCitizen);

@@ -4,6 +4,7 @@ const getCountry = require('./getCountry');
 const getAdmins = require('./getAdmins');
 const rightsString = require('./rightsString');
 const getText = id => require('./getText')(`rights.${id}`);
+const findUser = require('./findUser');
 
 const rights = ctx => {
   let tag = ctx.message
@@ -13,7 +14,7 @@ const rights = ctx => {
   else tag = ctx.message.from.username || ctx.message.from.id;
 
   const { username: link, id: countryId } = ctx.message.chat;
-  const country = getCountry(link) || getCountry(countryId);
+  const country = getCountry(link) || getCountry(countryId) || findUser(tag);
   if (!country) {
     return;
   }
@@ -35,11 +36,14 @@ const rights = ctx => {
     return;
   }
 
-  const userClass = country.classes[user.class];
+  const classlist = country.classes
+  const userClass = classlist[user.class];
+  const userClassName = user.class;
   ctx.reply(
     `${getText(1)}:\n\n` +
     rightsString(userClass.rights) + '\n' +
-    (user.inPrison ? getText(4) : getText(5)),
+    (user.inPrison ? getText(4) : getText(5)) +
+    getText(6) + userClassName + getText(7) + country.name,
     { reply_to_message_id: ctx.message.message_id }
   );
 };
