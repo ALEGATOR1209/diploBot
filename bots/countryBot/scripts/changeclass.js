@@ -6,11 +6,7 @@ const getAllClasses = require('./getAllClasses');
 const findUser = require('./findUser');
 const setState = require('./setState');
 const Markup = require('telegraf/markup');
-
-const isParent = (parent, child, classlist) => child.parentClass === parent ? true :
-  child.parentClass ? isParent(parent, classlist[child.parentClass]) : false;
-const getChildClasses = (className, classlist) => Object.keys(classlist)
-    .filter(cls => isParent(className, classlist[cls], classlist));
+const getChildClasses = require('./getChildClasses');
 
 const changeclass = ctx => {
   const { username, id } = ctx.message.from;

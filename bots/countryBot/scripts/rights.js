@@ -36,7 +36,7 @@ const rights = ctx => {
     return;
   }
 
-  const classlist = country.classes
+  const classlist = country.classes;
   const userClass = classlist[user.class];
   const userClassName = user.class;
   ctx.reply(

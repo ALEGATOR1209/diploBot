@@ -8,7 +8,7 @@ const whereami = ctx => {
     ctx.reply(getText(1));
     return;
   }
-  const reply = { reply_to_message_id: ctx.message.message_id }
+  const reply = { reply_to_message_id: ctx.message.message_id };
   const link = ctx.message.chat.username || ctx.message.char.id;
   const country = getCountry(link);
   if (country) {

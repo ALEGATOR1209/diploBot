@@ -1,5 +1,5 @@
 'use strict';
 
-const getRandomChoice = array => array[Math.floor(Math.random() * array.length)];
+const getRandomChoice = arr => arr[Math.floor(Math.random() * arr.length)];
 
 module.exports = getRandomChoice;

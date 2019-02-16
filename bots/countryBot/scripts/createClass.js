@@ -65,7 +65,11 @@ const stateHandlers = {
     setState(id, 'creatingClass', 'enteringNumber');
     ctx.reply(
       getText(4) +
-      rightslist.reduce((acc, val) => acc + ((rights.includes(rightslist.indexOf(val) + 1) ? '✅ ' : '❌ ') + `${val}\n`), '') + getText(5),
+      rightslist.reduce(
+        (acc, val) => acc +
+          ((rights.includes(rightslist.indexOf(val) + 1) ? '✅ ' : '❌ ') +
+          `${val}\n`), ''
+      ) + getText(5),
       { reply_to_message_id: ctx.message.message_id }
     );
   },
@@ -103,7 +107,10 @@ const stateHandlers = {
 
       if (number === 0)
         ctx.reply(getText(7), { reply_to_message_id: ctx.message.message_id });
-      else ctx.reply(getText(8) + number, { reply_to_message_id: ctx.message.message_id });
+      else ctx.reply(
+        getText(8) + number,
+        { reply_to_message_id: ctx.message.message_id }
+      );
 
       newClass(country.chat, userClass, {
         number,

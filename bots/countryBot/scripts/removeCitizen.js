@@ -2,7 +2,7 @@
 
 const getCountry = require('./getCountry');
 const getAdmins = require('./getAdmins');
-const checkUserCountry = require('./checkUserCountry');
+const findUser = require('./findUser');
 const retakePassport = require('./retakePassport');
 const getText = id => require('./getText')(`removeCitizen.${id}`);
 
@@ -22,7 +22,7 @@ const removeCitizen = ctx => {
 
   const nation = country.name;
   if (tag) {
-    if (checkUserCountry(tag) && checkUserCountry(tag).chat === country.chat) {
+    if (findUser(tag) && findUser(tag).chat === country.chat) {
       retakePassport(country, tag);
       ctx.reply(`@${tag} ${getText(3)} ${nation}.`);
       return;
@@ -30,7 +30,7 @@ const removeCitizen = ctx => {
     ctx.reply(`${getText(4)} ${nation}.`);
     return;
   }
-  if (checkUserCountry(userId).chat === country.chat) {
+  if (findUser(userId).chat === country.chat) {
     retakePassport(country, userId);
     ctx.reply(`${user.first_name} ${getText(3)} ${nation}.`);
     return;

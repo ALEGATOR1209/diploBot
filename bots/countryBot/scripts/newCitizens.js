@@ -3,7 +3,7 @@
 const getCountry = require('./getCountry');
 const getAdmins = require('./getAdmins');
 const givePassport = require('./givePassport');
-const checkUserCountry = require('./checkUserCountry');
+const findUser = require('./findUser');
 const getText = id => require('./getText')(`newCitizens.${id}`);
 const getDead = require('./getDead');
 
@@ -17,28 +17,33 @@ const newCitizens = ctx => {
     if (user.is_bot) return;
 
     const { username: tag, id: userId } = user;
-    if (getAdmins().includes(tag) || getAdmins().includes(id)) {
+    if (getAdmins().includes(tag) || getAdmins().includes(userId)) {
       ctx.reply(`${getText(1)} ${country.name}, @${tag}${getText(2)}`);
       return;
     }
 
-    if (getDead(id) || getDead(tag)) {
+    if (getDead(userId) || getDead(tag)) {
       ctx.reply(getText(7));
+      return;
+    }
+    if (country.blacklist[userId] || country.blacklist[tag]) {
+      ctx.reply(`@${tag} ${getText(8)} ${country.name} ${getText(9)}`);
       return;
     }
 
     const nation = country.name;
     if (tag) {
       ctx.reply(`${getText(1)} ${nation}, @${tag}!`);
-      if (checkUserCountry(tag)) {
+      if (findUser(tag)) {
         ctx.reply(`${getText(3)} @${tag}!\n${getText(4)}`);
         return;
       }
       givePassport(country, tag);
     } else {
       ctx.reply(`${getText(1)} ${nation}, ${user.first_name}!`);
-      if (checkUserCountry(userId)) {
-        const name = ctx.message.from.first_name + (ctx.message.from.last_name || '');
+      if (findUser(userId)) {
+        const { first_name, last_name } = ctx.message.from;
+        const name = first_name + (last_name || '');
         ctx.reply(`${getText(3)} ${name}!\n${getText(4)}`);
         return;
       }

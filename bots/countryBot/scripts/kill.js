@@ -5,7 +5,7 @@ const findUser = require('./findUser');
 const getRandomChoice = require('./getRandomChoice');
 const bury = require('./bury');
 const getText = id => require('./getText')(`kill.${id}`);
-const getDead =require('./getDead');
+const getDead = require('./getDead');
 
 const kill = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
@@ -47,7 +47,9 @@ const kill = ctx => {
   ctx.reply(
     `${getText(5)} @${victim}!\n` +
     `🎲${killed}  ` + (killed < 60 ? getText(6) : getText(7)) + '\n' +
-    `🎲${incognito}  ` + (incognito < 40 ? getText(8) : `${getText(9)} ${tag ? '@' + tag : ctx.message.from.firs_name}.`),
+    `🎲${incognito}  ` +
+    (incognito < 40 ? getText(8) : getText(9) +
+    `${tag ? '@' + tag : ctx.message.from.firs_name}.`),
     { chat_id: `@${country.chat}` }
   ).catch(() => console.log(country.chat, 'not found.'));
   if (killed) bury(victim);

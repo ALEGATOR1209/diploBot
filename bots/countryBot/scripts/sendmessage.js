@@ -7,7 +7,7 @@ const sendmessage = ctx => {
   const { username, id } = ctx.message.from;
   if (!(getAdmins().includes(username) || getAdmins().includes(id))) {
     ctx.reply(getText(1));
-      return;
+    return;
   }
   const chat = ctx.message.text
     .match(/ @[^(\n)]*/g);
