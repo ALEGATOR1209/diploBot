@@ -4,15 +4,20 @@
   "description": "Telegram Bots for Diplomacy games",
   "author": "ALEGATOR1209",
   "license": "MIT",
+  "scripts": {
+    "countrybot": "node ./bots/countryBot/countryBot.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ALEGATOR1209/diploBot"
   },
   "readmeFilename": "README.md",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^5.16.0"
+  },
   "dependencies": {
     "lowdb": "^1.0.0",
     "telegraf": "^3.27.0"

@@ -2,9 +2,7 @@
 
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
-
-const databases = '../../databases';
-const adapterStates = new FileSync(`${databases}/states.json`);
+const adapterStates = new FileSync('./databases/states.json');
 
 const getStates = user => low(adapterStates)
   .get(user)

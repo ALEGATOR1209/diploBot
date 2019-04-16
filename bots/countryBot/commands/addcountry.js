@@ -1,19 +1,28 @@
 'use strict';
 
-const getAdmins = require('./getAdmins');
-const getCountry = require('./getCountry');
-const createCountry = require('./createCountry');
-const getText = text => require('./getText')(`addcountry.${text}`);
+const {
+  getAdmins,
+  getCountry,
+  createCountry,
+  getText,
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getAdmins',
+    'getCountry',
+    'getText',
+    'createCountry',
+  ]);
+const text = t => getText('addclass')[t];
 
 const addcountry = ctx => {
   const username = ctx.message.from.username;
   if (!getAdmins().includes(username)) {
-    ctx.reply(getText(1));
+    ctx.reply(text(1));
     return;
   }
 
   if (ctx.message.chat.type === 'private') {
-    ctx.reply(getText(2));
+    ctx.reply(text(2));
     return;
   }
 
@@ -26,21 +35,21 @@ const addcountry = ctx => {
     if (ctx.message.chat.title)
       title = ctx.message.chat.title;
     else {
-      ctx.reply(getText(3));
+      ctx.reply(text(3));
       return;
     }
   }
   const link = ctx.message.chat.username;
 
   if (getCountry(link)) {
-    ctx.reply(getText(4));
+    ctx.reply(text(4));
     return;
   }
 
   const countries = createCountry(title, link);
-  ctx.reply(` ${title} ${getText(5)}`);
+  ctx.reply(` ${title} ${text(5)}`);
   ctx.reply(
-    getText(6) +
+    text(6) +
     Object.keys(countries)
       .map(country => countries[country].name)
       .join('\n')

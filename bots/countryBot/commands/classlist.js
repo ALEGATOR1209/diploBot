@@ -3,6 +3,17 @@
 const getAllClasses = require('./getAllClasses');
 const findUser = require('./findUser');
 const getText = text => require('./getText')(`classlist.${text}`);
+const {
+  getAllClasses,
+  findUser,
+  getText
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getAllClasses',
+    'findUser',
+    'getText'
+  ]);
+const text = t => getText('addclass')[t];
 
 const classlist = ctx => {
   const { username, id } = ctx.message.from;
@@ -10,7 +21,7 @@ const classlist = ctx => {
   const userCountry = findUser(tag);
 
   if (!userCountry) {
-    ctx.reply(getText(1));
+    ctx.reply(text(1));
     return;
   }
 

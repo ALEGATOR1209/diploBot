@@ -1,6 +1,11 @@
 'use strict';
 
-const getAllRights = require('./getAllRights');
+const {
+  getAllRights
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getAllRights'
+  ]);
 
 const rightlist = ctx => ctx.reply(
   'Все права:\n\n✅ ' + getAllRights

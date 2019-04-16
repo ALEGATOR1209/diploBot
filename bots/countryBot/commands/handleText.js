@@ -1,9 +1,20 @@
 'use strict';
-const getAdmins = require('./getAdmins');
-const getStates = require('./getStates');
-const createClass = require('./createClass');
-const getText = id => require('./getText')(`handleText.${id}`);
-const changeUserClass = require('./changeUserClass');
+
+const {
+  getAdmins,
+  getStates,
+  createClass,
+  getText,
+  changeUserClass
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getAdmins',
+    'getStates',
+    'createClass',
+    'getText',
+    'changeUserClass',
+  ]);
+const text = t => getText('addclass')[t];
 
 const handleText = ctx => {
   const { type } = ctx.message.chat;
@@ -23,8 +34,8 @@ const handleText = ctx => {
 
   if (type === 'private') {
     const admins = getAdmins();
-    ctx.reply(getText(1));
-    ctx.reply(getText(2) + `\n@${admins.join('\n@')}`);
+    ctx.reply(text(1));
+    ctx.reply(text(2) + `\n@${admins.join('\n@')}`);
   }
 };
 

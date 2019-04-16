@@ -3,9 +3,8 @@
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
-const databases = '../../databases';
-const adapterStates = new FileSync(`${databases}/countries.json`);
-const adapterRigths = new FileSync(`${databases}/rights.json`);
+const adapterStates = new FileSync('./databases/countries.json');
+const adapterRigths = new FileSync('./databases}/rights.json');
 
 const createCountry = (name, chat) => {
   const DBcountries = low(adapterStates);

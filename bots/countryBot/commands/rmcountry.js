@@ -1,14 +1,23 @@
 'use strict';
 
-const getAdmins = require('./getAdmins');
-const getCountry = require('./getCountry');
-const deleteCountry = require('./deleteCountry.js');
-const getText = id => require('./getText')(`rmcountry.${id}`);
+const {
+  getAdmins,
+  getCountry,
+  deleteCountry,
+  getText,
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getAdmins',
+    'getCountry',
+    'deleteCountry',
+    'getText',
+  ]);
+const text = t => getText('addclass')[t];
 
 const rmcountry = ctx => {
   const username = ctx.message.from.username;
   if (!getAdmins().includes(username)) {
-    ctx.reply(getText(1));
+    ctx.reply(text(1));
     return;
   }
 

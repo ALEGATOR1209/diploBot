@@ -1,10 +1,20 @@
 'use strict';
 
-const getCountry = require('./getCountry');
-const getAdmins = require('./getAdmins');
-const findUser = require('./findUser');
-const retakePassport = require('./retakePassport');
-const getText = id => require('./getText')(`removeCitizen.${id}`);
+const {
+  getCountry,
+  getAdmins,
+  findUser,
+  retakePassport,
+  getText
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getCountry',
+    'getAdmins',
+    'findUser',
+    'retakePassport',
+    'getText',
+  ]);
+const text = t => getText('addclass')[t];
 
 const removeCitizen = ctx => {
   const { username: countryTag, id: countryId } = ctx.message.chat;
@@ -16,7 +26,7 @@ const removeCitizen = ctx => {
 
   const { username: tag, id: userId } = user;
   if (getAdmins().includes(tag)) {
-    ctx.reply(`${getText(1)} @${tag}${getText(2)}`);
+    ctx.reply(`${text(1)} @${tag}${text(2)}`);
     return;
   }
 
@@ -24,19 +34,19 @@ const removeCitizen = ctx => {
   if (tag) {
     if (findUser(tag) && findUser(tag).chat === country.chat) {
       retakePassport(country, tag);
-      ctx.reply(`@${tag} ${getText(3)} ${nation}.`);
+      ctx.reply(`@${tag} ${text(3)} ${nation}.`);
       return;
     }
-    ctx.reply(`${getText(4)} ${nation}.`);
+    ctx.reply(`${text(4)} ${nation}.`);
     return;
   }
   if (findUser(userId).chat === country.chat) {
     retakePassport(country, userId);
-    ctx.reply(`${user.first_name} ${getText(3)} ${nation}.`);
+    ctx.reply(`${user.first_name} ${text(3)} ${nation}.`);
     return;
   }
 
-  ctx.reply(`${getText(4)} ${nation}.`);
+  ctx.reply(`${text(4)} ${nation}.`);
 };
 
 module.exports = removeCitizen;

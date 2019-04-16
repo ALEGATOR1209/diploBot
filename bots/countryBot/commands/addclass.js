@@ -1,10 +1,20 @@
 'use strict';
 
-const getAdmins = require('./getAdmins');
-const getCountry = require('./getCountry');
-const findUser = require('./findUser');
-const setState = require('./setState');
-const getText = text => require('./getText')(`addclass.${text}`);
+const {
+  getAdmins,
+  getCountry,
+  findUser,
+  setState,
+  getText
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getAdmins',
+    'getCountry',
+    'getText',
+    'findUser',
+    'setState'
+  ]);
+const text = t => getText('addclass')[t];
 
 const addclass = ctx => {
   const { username: uTag, id: uId } = ctx.message.from;
@@ -15,17 +25,17 @@ const addclass = ctx => {
   const userCountry = findUser(uTag) || findUser(uId);
 
   if (getAdmins().includes(uTag) || getAdmins().includes(uId)) {
-    ctx.reply(getText(1), reply);
+    ctx.reply(text(1), reply);
     return;
   }
 
   if (!userCountry) {
-    ctx.reply(getText(2), reply);
+    ctx.reply(text(2), reply);
     return;
   }
 
   if (country && country.chat !== userCountry.chat) {
-    ctx.reply(getText(3), reply);
+    ctx.reply(text(3), reply);
     return;
   }
 
@@ -34,13 +44,13 @@ const addclass = ctx => {
       userCountry.citizens[uTag].class
     ].rights.includes('Право на назначение должностей')
   ) {
-    ctx.reply(getText(4));
+    ctx.reply(text(4));
     return;
   }
 
   if (!country && ctx.message.chat.type !== 'private') return;
 
-  ctx.reply(getText(5), reply);
+  ctx.reply(text(5), reply);
   setState(uId, 'creatingClass', 'enteringName');
 };
 

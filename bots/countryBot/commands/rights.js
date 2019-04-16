@@ -5,6 +5,22 @@ const getAdmins = require('./getAdmins');
 const rightsString = require('./rightsString');
 const getText = id => require('./getText')(`rights.${id}`);
 const findUser = require('./findUser');
+const {
+  getCountry,
+  getAdmins,
+  rightsString,
+  getText,
+  findUser,
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getCountry',
+    'getAdmins',
+    'rightsString',
+    'getText',
+    'findUser',
+  ]);
+const text = t => getText('addclass')[t];
+
 
 const rights = ctx => {
   let tag = ctx.message

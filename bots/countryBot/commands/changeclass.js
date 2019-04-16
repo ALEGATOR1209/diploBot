@@ -1,22 +1,32 @@
 'use strict';
 
-const getText = id => require('./getText')('changeclass')[id];
-const getAdmins = require('./getAdmins');
-const getAllClasses = require('./getAllClasses');
-const findUser = require('./findUser');
-const setState = require('./setState');
 const Markup = require('telegraf/markup');
-const getChildClasses = require('./getChildClasses');
+const {
+  getAdmins,
+  getAllClasses,
+  findUser,
+  setState,
+  getChildClasses,
+  getText,
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getAdmins',
+    'getAllClasses',
+    'findUser',
+    'setState',
+    'getChildClasses'
+  ]);
+const text = t => getText('addclass')[t];
 
 const changeclass = ctx => {
   const { username, id } = ctx.message.from;
   if (getAdmins().includes(username) || getAdmins().includes(id)) {
-    ctx.reply(getText(1));
+    ctx.reply(text(1));
     return;
   }
   const country = findUser(username) || findUser(id);
   if (!country) {
-    ctx.reply(getText(2));
+    ctx.reply(text(2));
     return;
   }
   const classlist = getAllClasses(country.chat);
@@ -27,7 +37,7 @@ const changeclass = ctx => {
 
   const childClasses = getChildClasses(userClass, classlist);
   if (!childClasses) {
-    ctx.reply(getText(3));
+    ctx.reply(text(3));
     return;
   }
 
@@ -39,17 +49,17 @@ const changeclass = ctx => {
 
   const slaveCountry = findUser(slave);
   if (!slaveCountry || slaveCountry.chat !== country.chat) {
-    ctx.reply(getText(4));
+    ctx.reply(text(4));
     return;
   }
 
   const slaveClass = slaveCountry.citizens[slave].class;
   if (!childClasses.find(x => x === slaveClass) && slaveClass !== 'default') {
-    ctx.reply(getText(5));
+    ctx.reply(text(5));
     return;
   }
 
-  ctx.reply(getText(6), Markup.keyboard(childClasses)
+  ctx.reply(text(6), Markup.keyboard(childClasses)
     .oneTime()
     .resize()
     .extra());

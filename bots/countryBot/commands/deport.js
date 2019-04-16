@@ -1,9 +1,18 @@
 'use strict';
 
-const findUser = require('./findUser');
-const getText = id => require('./getText')(`deport.${id}`);
-const getChildClasses = require('./getChildClasses');
-const deportUser = require('./deportUser');
+const {
+  findUser,
+  getText,
+  getChildClasses,
+  deportUser,
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'findUser',
+    'getText',
+    'getChildClasses',
+    'deportUser',
+  ]);
+const text = t => getText('addclass')[t];
 
 const deport = ctx => {
   const { username, id } = ctx.message.from;
@@ -11,7 +20,7 @@ const deport = ctx => {
   const country = findUser(tag);
 
   if (!country) {
-    ctx.reply(getText(1));
+    ctx.reply(text(1));
     return;
   }
 
@@ -19,14 +28,14 @@ const deport = ctx => {
   const userClass = country.classes[userClassName];
 
   if (!userClass.rights.includes('Право изгонять из страны')) {
-    ctx.reply(getText(2));
+    ctx.reply(text(2));
     return;
   }
 
   let target = ctx.message.text
     .match(/ .*$/g);
   if (!target) {
-    ctx.reply(getText(3));
+    ctx.reply(text(3));
     return;
   }
 
@@ -34,7 +43,7 @@ const deport = ctx => {
   if (target[0] === '@') target = target.slice(1);
   const targetCountry = findUser(target);
   if (!targetCountry || targetCountry.chat !== country.chat) {
-    ctx.reply(getText(4));
+    ctx.reply(text(4));
     return;
   }
   const targetClass = country.citizens[target].class;
@@ -42,13 +51,13 @@ const deport = ctx => {
     targetClass, Object.keys(country.classes)
   );
   if (childClasses.includes(userClassName)) {
-    ctx.reply(getText(5));
+    ctx.reply(text(5));
     return;
   }
 
   deportUser(country.chat, target);
   ctx.reply(
-    `@${target} ${getText(6)} ${country.name}`,
+    `@${target} ${text(6)} ${country.name}`,
     { chat_id: `@${country.chat}` }
   );
 };

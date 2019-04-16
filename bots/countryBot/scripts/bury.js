@@ -5,9 +5,8 @@ const FileSync = require('lowdb/adapters/FileSync');
 const findUser = require('./findUser');
 const getTurn = require('./getTurn');
 
-const databases = '../../databases';
-const adapterStates = new FileSync(`${databases}/countries.json`);
-const adapterGraveyard = new FileSync(`${databases}/graveyard.json`);
+const adapterStates = new FileSync('./databases/countries.json');
+const adapterGraveyard = new FileSync('./databases/graveyard.json');
 
 const bury = user => {
   const DBcountries = low(adapterStates);
