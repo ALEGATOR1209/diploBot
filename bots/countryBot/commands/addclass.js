@@ -34,6 +34,12 @@ const addclass = ctx => {
     return;
   }
 
+  const name = uTag || uId;
+  if (userCountry.citizens[name].inPrison) {
+    ctx.reply(text(6), reply);
+    return;
+  }
+
   if (country && country.chat !== userCountry.chat) {
     ctx.reply(text(3), reply);
     return;

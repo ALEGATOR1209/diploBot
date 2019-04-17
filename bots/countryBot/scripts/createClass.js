@@ -1,27 +1,39 @@
 'use strict';
 
-const getStates = require('./getStates');
-const setState = require('./setState');
-const findUser = require('./findUser');
-const rightslist = require('./getAllRights');
-const newClass = require('./newClass');
-const removeClass = require('./removeClass');
-const getText = text => require('./getText')(`createClass.${text}`);
+const {
+  getStates,
+  setState,
+  findUser,
+  getAllRights: rightslist,
+  newClass,
+  removeClass,
+  getText,
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getStates',
+    'setState',
+    'findUser',
+    'getAllRights',
+    'newClass',
+    'removeClass',
+    'getText',
+  ]);
+const text = t => getText('createClass')[t];
 
 const stateHandlers = {
   'enteringName': ctx => {
-    const { text } = ctx.message;
+    const { text: messageText } = ctx.message;
     const { username, id } = ctx.message.from;
     const tag = username || id;
     const country  = findUser(tag);
 
-    if (text.match(/^cancel$/gi)) {
+    if (messageText.match(/^cancel$/gi)) {
       setState(id, 'creatingClass', null);
-      ctx.reply(getText(1));
+      ctx.reply(text(1));
       return;
     }
 
-    newClass(country.chat, text, {
+    newClass(country.chat, messageText, {
       creator: id,
       rules: [],
       parentClass: country.citizens[tag].class,
@@ -29,86 +41,98 @@ const stateHandlers = {
 
     setState(id, 'creatingClass', 'enteringRights');
     ctx.reply(
-      getText(2) + rightslist.reduce(
+      text(2) + rightslist.reduce(
         (acc, val, i) => acc + `${i + 1} - ${val}\n`, ''
       )
     );
   },
 
   'enteringRights': ctx => {
-    const { text } = ctx.message;
+    const { text: messageText } = ctx.message;
     const { username, id } = ctx.message.from;
     const tag = username || id;
     const country  = findUser(tag);
     const className = Object.keys(country.classes)
       .find(cLaSS => country.classes[cLaSS].creator === id);
 
-    if (text.match(/^cancel$/gi)) {
+    if (messageText.match(/^cancel$/gi)) {
       setState(id, 'creatingClass', null);
       removeClass(country.chat, className);
-      ctx.reply(getText(3));
+      ctx.reply(text(3));
       return;
     }
 
-    const rights = text
+    const rights = messageText
       .split(' ')
-      .map(string => parseInt(string))
+      .map(string => parseInt(string) - 1)
       .sort((a, b) => (a >= b ? 1 : -1))
       .reduce((acc, val) => (acc.includes(val) ? acc : [...acc, val]), []);
 
+    const playersClass = country.classes[country.citizens[tag].class].rights;
+    const classRights = [];
     newClass(country.chat, className, {
       rights: rights.reduce(
-        (acc, val) => (rightslist[val - 1] ?
-          [...acc, rightslist[val - 1]] : acc), []),
+        (acc, val) => {
+          if (!playersClass.includes(rightslist[val])) {
+            ctx.reply(
+              text(12) + rightslist[val],
+              { reply_to_message_id: ctx.message.message_id }
+            );
+            return acc;
+          }
+          classRights.push(rightslist[val]);
+          return [...acc, rightslist[val]];
+        }, []),
     });
 
+    console.log(classRights);
     setState(id, 'creatingClass', 'enteringNumber');
     ctx.reply(
-      getText(4) +
+      text(4) +
       rightslist.reduce(
         (acc, val) => acc +
-          ((rights.includes(rightslist.indexOf(val) + 1) ? '✅ ' : '❌ ') +
-          `${val}\n`), ''
-      ) + getText(5),
+          ((classRights.includes(val) ? '✅ ' : '❌ '
+          ) + `${val}\n`), ''
+      ) + text(5),
       { reply_to_message_id: ctx.message.message_id }
     );
   },
 
   'enteringNumber': ctx => {
-    const { text } = ctx.message;
+    const { text: messageText } = ctx.message;
     const { username, id } = ctx.message.from;
     const tag = username || id;
     const country  = findUser(tag);
     const userClass = Object.keys(country.classes)
       .find(key => country.classes[key].creator === id);
 
-    if (text.match(/^cancel$/gi)) {
+    if (messageText.match(/^cancel$/gi)) {
       setState(id, 'creatingClass', null);
       removeClass(country.chat, userClass);
-      ctx.reply(getText(3));
+      ctx.reply(text(3));
       return;
     }
 
-    if (text.match(/^[‒–—―]$/g)) {
+    if (messageText.match(/^[-‒–—―]$/g)) {
       setState(id, 'creatingClass', 'enteringRights');
       ctx.reply(
-        getText(2) +
+        text(2) +
         rightslist.reduce((acc, val, i) => acc + `${i + 1} - ${val}\n`, '')
       );
       return;
     }
 
-    if (text.match(/^[0-9]*$/)) {
-      const number = parseInt(text);
+    if (messageText.match(/^[0-9]*$/)) {
+      const number = parseInt(messageText);
       if (number < 0) {
-        ctx.reply(getText(6), { reply_to_message_id: ctx.message.message_id });
+        ctx.reply(text(6), { reply_to_message_id: ctx.message.message_id });
         return;
       }
 
       if (number === 0)
-        ctx.reply(getText(7), { reply_to_message_id: ctx.message.message_id });
+        ctx.reply(text(7), { reply_to_message_id: ctx.message.message_id });
       else ctx.reply(
-        getText(8) + number,
+        text(8) + number,
         { reply_to_message_id: ctx.message.message_id }
       );
 
@@ -116,36 +140,36 @@ const stateHandlers = {
         number,
       });
       setState(id, 'creatingClass', 'confirmation');
-      ctx.reply(getText(9));
+      ctx.reply(text(9));
       return;
     }
-    ctx.reply(getText(10), { reply_to_message_id: ctx.message.message_id });
+    ctx.reply(text(10), { reply_to_message_id: ctx.message.message_id });
   },
   'confirmation': ctx => {
-    const { text } = ctx.message;
+    const { text: messageText } = ctx.message;
     const { username, id } = ctx.message.from;
     const tag = username || id;
     const country  = findUser(tag);
     const userClass = Object.keys(country.classes)
       .find(key => country.classes[key].creator === id);
 
-    if (text.match(/^cancel$/gi)) {
+    if (messageText.match(/^cancel$/gi)) {
       setState(id, 'creatingClass', null);
       removeClass(country.chat, userClass);
-      ctx.reply(getText(3));
+      ctx.reply(text(3));
       return;
     }
 
-    if (text.match(/^\+$/g)) {
+    if (messageText.match(/^\+$/g)) {
       setState(id, 'creatingClass', null);
       newClass(country.chat, userClass, { creator: null });
-      ctx.reply(getText(11));
+      ctx.reply(text(11));
       return;
     }
 
-    if (text.match(/^-$/g)) {
+    if (messageText.match(/^-$/g)) {
       setState(id, 'creatingClass', 'enteringNumber');
-      ctx.reply(getText(5));
+      ctx.reply(text(5));
       return;
     }
 

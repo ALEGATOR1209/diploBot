@@ -16,7 +16,7 @@ const {
     'setState',
     'getChildClasses'
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('changeclass')[t];
 
 const changeclass = ctx => {
   const { username, id } = ctx.message.from;

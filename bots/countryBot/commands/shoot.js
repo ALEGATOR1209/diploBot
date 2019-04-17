@@ -1,11 +1,5 @@
 'use strict';
 
-const getAdmins = require('./getAdmins');
-const getCountry = require('./getCountry');
-const getRandomChoice = require('./getRandomChoice');
-const bury = require('./bury');
-const getText = id => require('./getText')(`shoot.${id}`);
-const getDead = require('./getDead');
 const {
   getAdmins,
   getCountry,
@@ -22,7 +16,7 @@ const {
     'getText',
     'getDead',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('shoot')[t];
 
 const shoot = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };

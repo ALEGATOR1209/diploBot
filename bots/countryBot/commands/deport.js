@@ -12,7 +12,7 @@ const {
     'getChildClasses',
     'deportUser',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('deport')[t];
 
 const deport = ctx => {
   const { username, id } = ctx.message.from;

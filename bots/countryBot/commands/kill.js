@@ -16,7 +16,7 @@ const {
     'getText',
     'getDead'
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('kill')[t];
 
 const kill = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };

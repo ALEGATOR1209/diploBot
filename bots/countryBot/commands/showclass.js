@@ -1,10 +1,5 @@
 'use strict';
 
-const getAllClasses = require('./getAllClasses');
-const findUser = require('./findUser');
-const getCountry = require('./getCountry');
-const rightsString = require('./rightsString');
-const getText = id => require('./getText')(`showclass.${id}`);
 const {
   getAllClasses,
   findUser,
@@ -19,10 +14,10 @@ const {
     'rightsString',
     'getText',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('showclass')[t];
 
 const showclass = ctx => {
-  const { text, chat } = ctx.message;
+  const { text: messageText, chat } = ctx.message;
   const { id, username } = ctx.message.from;
   let userCountry;
 
@@ -35,7 +30,7 @@ const showclass = ctx => {
   } else userCountry = getCountry(chat.username) || getCountry(chat.id);
   if (!userCountry) return;
 
-  const className = text
+  const className = messageText
     .slice('/showclass'.length)
     .trim();
 

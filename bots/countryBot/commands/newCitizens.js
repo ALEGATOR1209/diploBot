@@ -16,7 +16,7 @@ const {
     'getText',
     'getDead',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('newCitizens')[t];
 
 const newCitizens = ctx => {
   const { username: countryTag, id: countryId } = ctx.message.chat;

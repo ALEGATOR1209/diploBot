@@ -1,7 +1,5 @@
 'use strict';
 
-const getAdmins = require('./getAdmins');
-const getText = id => require('./getText')(`sendmessage.${id}`);
 const {
   getAdmins,
   getText
@@ -10,7 +8,7 @@ const {
     'getAdmins',
     'getText',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('sendmessage')[t];
 
 const sendmessage = ctx => {
   const { username, id } = ctx.message.from;
@@ -20,21 +18,21 @@ const sendmessage = ctx => {
   }
   const chat = ctx.message.text
     .match(/ @[^(\n)]*/g);
-  const text = ctx.message.text
+  const messageText = ctx.message.text
     .match(/\n.*/g);
   if (!chat) {
     ctx.reply(text(2));
     ctx.reply(text(3));
     return;
   }
-  if (!text) {
+  if (!messageText) {
     ctx.reply(text(4));
     ctx.reply(text(3));
     return;
   }
   chat[0].trim()
     .split(' ')
-    .forEach(tag => ctx.reply(text.join('\n'), { chat_id: tag })
+    .forEach(tag => ctx.reply(messageText.join('\n'), { chat_id: tag })
       .catch(() => ctx.reply('Error: Chat not found'))
     );
 };

@@ -12,7 +12,7 @@ const {
     'retakePassport',
     'getText',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('droppassport')[t];
 
 const droppassport = ctx => {
   const { username, id } = ctx.message.from;
@@ -24,6 +24,10 @@ const droppassport = ctx => {
   const userCountry = findUser(username) || findUser(id);
   if (!userCountry) {
     ctx.reply(text(2), { reply_to_message_id: ctx.message.message_id });
+    return;
+  }
+  if (userCountry.citizens[username].inPrison) {
+    ctx.reply(text(4), { reply_to_message_id: ctx.message.message_id });
     return;
   }
   if (username) retakePassport(userCountry, username);

@@ -1,8 +1,5 @@
 'use strict';
 
-const getAllClasses = require('./getAllClasses');
-const findUser = require('./findUser');
-const getText = text => require('./getText')(`classlist.${text}`);
 const {
   getAllClasses,
   findUser,
@@ -13,7 +10,7 @@ const {
     'findUser',
     'getText'
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('classlist')[t];
 
 const classlist = ctx => {
   const { username, id } = ctx.message.from;
@@ -27,7 +24,7 @@ const classlist = ctx => {
 
   const classList = Object.keys(getAllClasses(userCountry.chat));
   ctx.reply(
-    `${getText(2)} ${userCountry.name}:\n\n` +
+    `${text(2)} ${userCountry.name}:\n\n` +
     classList.join('\n')
   );
 };

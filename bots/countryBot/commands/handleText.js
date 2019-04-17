@@ -14,7 +14,7 @@ const {
     'getText',
     'changeUserClass',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('handleText')[t];
 
 const handleText = ctx => {
   const { type } = ctx.message.chat;

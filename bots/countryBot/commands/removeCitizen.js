@@ -14,7 +14,7 @@ const {
     'retakePassport',
     'getText',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('removeCitizen')[t];
 
 const removeCitizen = ctx => {
   const { username: countryTag, id: countryId } = ctx.message.chat;

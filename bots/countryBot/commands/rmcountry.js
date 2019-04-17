@@ -12,7 +12,7 @@ const {
     'deleteCountry',
     'getText',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('rmcountry')[t];
 
 const rmcountry = ctx => {
   const username = ctx.message.from.username;

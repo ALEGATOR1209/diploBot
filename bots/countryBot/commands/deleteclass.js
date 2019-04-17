@@ -1,7 +1,5 @@
 'use strict';
 
-const getAdmins = require('./getAdmins');
-const getText = id => require('./getText')(`deleteclass.${id}`);
 const {
   getAdmins,
   getText
@@ -10,7 +8,7 @@ const {
     'getAdmins',
     'getText',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('deleteclass')[t];
 
 const deleteclass = ctx => {
   const { username, id } = ctx.message.from;

@@ -1,16 +1,12 @@
 'use strict';
 
-const getCountry = require('./getCountry');
-const getAdmins = require('./getAdmins');
-const rightsString = require('./rightsString');
-const getText = id => require('./getText')(`rights.${id}`);
-const findUser = require('./findUser');
 const {
   getCountry,
   getAdmins,
   rightsString,
   getText,
   findUser,
+  getDead,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getCountry',
@@ -18,9 +14,9 @@ const {
     'rightsString',
     'getText',
     'findUser',
+    'getDead',
   ]);
-const text = t => getText('addclass')[t];
-
+const text = t => getText('rights')[t];
 
 const rights = ctx => {
   let tag = ctx.message
@@ -37,7 +33,14 @@ const rights = ctx => {
 
   if (getAdmins().includes(tag)) {
     ctx.reply(
-      `@${tag} ${getText(1)}:\n\n${getText(2)}`,
+      `@${tag} ${text(1)}:\n\n${text(2)}`,
+      { reply_to_message_id: ctx.message.message_id }
+    );
+    return;
+  }
+  if (getDead(tag)) {
+    ctx.reply(
+      text(8),
       { reply_to_message_id: ctx.message.message_id }
     );
     return;
@@ -46,7 +49,7 @@ const rights = ctx => {
   const user = country.citizens[tag];
   if (!user) {
     ctx.reply(
-      `${getText(3)} ${country.name}.`,
+      `${text(3)} ${country.name}.`,
       { reply_to_message_id: ctx.message.message_id }
     );
     return;
@@ -56,10 +59,10 @@ const rights = ctx => {
   const userClass = classlist[user.class];
   const userClassName = user.class;
   ctx.reply(
-    `${getText(1)}:\n\n` +
+    `${text(1)}:\n\n` +
     rightsString(userClass.rights) + '\n' +
-    (user.inPrison ? getText(4) : getText(5)) +
-    getText(6) + userClassName + getText(7) + country.name,
+    (user.inPrison ? text(4) : text(5)) +
+    text(6) + userClassName + text(7) + country.name,
     { reply_to_message_id: ctx.message.message_id }
   );
 };

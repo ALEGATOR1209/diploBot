@@ -16,12 +16,15 @@ const {
     'getText',
     'getDead',
   ]);
-const text = t => getText('addclass')[t];
+const text = t => getText('getpassport')[t];
 
 const getpassport = ctx => {
   const { username: countryTag, id: countryId } = ctx.message.chat;
   const country = getCountry(countryTag) || getCountry(countryId);
-  if (!country) return;
+  if (!country) {
+    ctx.reply(text(6));
+    return;
+  }
 
   const { username, id } = ctx.message.from;
   if (getAdmins().includes(username) || getAdmins().includes(id)) {
@@ -29,7 +32,7 @@ const getpassport = ctx => {
     return;
   }
   if (getDead(username) || getDead(id)) {
-    ctx.reply(getDead(5));
+    ctx.reply(text(1));
     return;
   }
   const userCountry = findUser(username) || findUser(id);
