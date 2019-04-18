@@ -2,7 +2,7 @@
 
 const isParent = (parent, child, classlist) => (child.parentClass === parent ?
   true : child.parentClass ?
-    isParent(parent, classlist[child.parentClass]) : false
+    isParent(parent, classlist[child.parentClass], classlist) : false
 );
 
 const getChildClasses = (className, classlist) => Object.keys(classlist)

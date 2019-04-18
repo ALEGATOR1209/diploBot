@@ -14,7 +14,8 @@ const {
     'getAllClasses',
     'findUser',
     'setState',
-    'getChildClasses'
+    'getChildClasses',
+    'getText',
   ]);
 const text = t => getText('changeclass')[t];
 
@@ -36,14 +37,18 @@ const changeclass = ctx => {
   else userClass = country.citizens[id].class;
 
   const childClasses = getChildClasses(userClass, classlist);
-  if (!childClasses) {
+  if (childClasses.length < 1) {
     ctx.reply(text(3));
     return;
   }
 
   let slave = ctx.message.text
-    .match(/ *$/g)[0];
+    .match(/@.*$/g)[0];
   if (slave) slave.trim();
+  else {
+    ctx.reply(text(7));
+    return;
+  }
   if (slave[0] === '@') slave = slave.slice(1);
   if (!slave) slave = username || id;
 

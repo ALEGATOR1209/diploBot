@@ -1,11 +1,13 @@
 'use strict';
 
+const Markup = require('telegraf/markup');
 const {
   getAdmins,
   getStates,
   createClass,
   getText,
-  changeUserClass
+  changeUserClass,
+  deleteClass
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -13,6 +15,7 @@ const {
     'createClass',
     'getText',
     'changeUserClass',
+    'deleteClass',
   ]);
 const text = t => getText('handleText')[t];
 
@@ -30,11 +33,15 @@ const handleText = ctx => {
       changeUserClass(ctx);
       return;
     }
+    if (states.deletingClass) {
+      deleteClass(ctx);
+      return;
+    }
   }
 
   if (type === 'private') {
     const admins = getAdmins();
-    ctx.reply(text(1));
+    ctx.reply(text(1), Markup.removeKeyboard(true).extra(),);
     ctx.reply(text(2) + `\n@${admins.join('\n@')}`);
   }
 };
