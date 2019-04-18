@@ -25,6 +25,12 @@ const deleteClass = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
   const country = findUser(tag);
 
+  if (ctx.message.text.match(/^cancel$/i)) {
+    ctx.reply(text(6));
+    setState(id, 'deletingClass', null);
+    return;
+  }
+
   if (!country) {
     ctx.reply(text(1), Markup.removeKeyboard(true).extra(), reply);
     setState(id, 'deletingClass', null);

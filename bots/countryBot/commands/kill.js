@@ -63,7 +63,7 @@ const kill = ctx => {
     `${tag ? '@' + tag : ctx.message.from.firs_name}.`),
     { chat_id: `@${country.chat}` }
   ).catch(() => console.log(country.chat, 'not found.'));
-  if (killed) bury(victim);
+  if (killed > 60) bury(victim);
 };
 
 module.exports = kill;

@@ -5,6 +5,7 @@ const {
   getText,
   getDead,
   getGame,
+  getMigrationClass,
 } = require('../../imports')
   .few('countryBot', 'scripts',
     [
@@ -12,6 +13,7 @@ const {
       'getText',
       'getDead',
       'getGame',
+      'getMigrationClass',
     ]);
 const text = t => getText('whereami')[t];
 const whereami = ctx => {
@@ -25,9 +27,19 @@ const whereami = ctx => {
     return;
   }
   const country = findUser(link);
-  if (country) {
-    ctx.reply(text(3) + country.name + ` @${country.chat}`, reply);
-  } else ctx.reply(text(4), reply);
+  if (!country) {
+    ctx.reply(text(4), reply);
+  }
+
+  const messageText = text(3) +
+    country.name +
+    text(5) +
+    Object.keys(country.citizens).length +
+    text(6) + country.citizens[link].class + '.' +
+    text(7) + (country.citizens[link].inPrison ? text(9) : text(8)) +
+    text(10) + getMigrationClass(country.chat);
+
+  ctx.reply(messageText, reply);
 };
 
 module.exports = whereami;

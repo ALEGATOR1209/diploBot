@@ -28,6 +28,7 @@ const commands = [ /* asterisk comments marks command for admins */
   'changeclass',   //change one of player's class subclasses
   'deport',        //deport user from the country
   'deleteclass',   //delete one of player's class subclasses
+  'migrantclass',  //set default class for new players
 ];
 
 setCommands(commands);

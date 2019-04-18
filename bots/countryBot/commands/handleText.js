@@ -7,7 +7,8 @@ const {
   createClass,
   getText,
   changeUserClass,
-  deleteClass
+  deleteClass,
+  setMigrantClass,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -16,6 +17,7 @@ const {
     'getText',
     'changeUserClass',
     'deleteClass',
+    'setMigrantClass',
   ]);
 const text = t => getText('handleText')[t];
 
@@ -35,6 +37,10 @@ const handleText = ctx => {
     }
     if (states.deletingClass) {
       deleteClass(ctx);
+      return;
+    }
+    if (states.settingMigrantClass) {
+      setMigrantClass(ctx);
       return;
     }
   }

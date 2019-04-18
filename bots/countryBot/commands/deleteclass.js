@@ -40,17 +40,20 @@ const deleteclass = ctx => {
     ctx.reply(text(4), reply);
     return;
   }
-  const emptyClasses = childClasses.filter(classname => {
+  let emptyClasses = childClasses.filter(classname => {
     for (const man in country.citizens) {
       if (country.citizens[man].class === classname) return false;
     }
     return true;
   });
+  emptyClasses = emptyClasses
+    .filter(cl => getChildClasses(cl, classlist).length === 0);
+
   if (emptyClasses.length < 1) {
     ctx.reply(text(5), reply);
     return;
   }
-
+  emptyClasses.push(text(7));
   ctx.reply(text(6), Markup.keyboard(emptyClasses)
     .oneTime()
     .resize()

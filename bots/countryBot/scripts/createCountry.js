@@ -21,6 +21,7 @@ const createCountry = (name, chat) => {
         },
       },
       blacklist: {},
+      migrantClass: 'default',
     }
   ).write();
   return countries.value();
