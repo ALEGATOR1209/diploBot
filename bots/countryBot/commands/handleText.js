@@ -9,6 +9,7 @@ const {
   changeUserClass,
   deleteClass,
   setMigrantClass,
+  startRevolution
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -18,6 +19,7 @@ const {
     'changeUserClass',
     'deleteClass',
     'setMigrantClass',
+    'startRevolution'
   ]);
 const text = t => getText('handleText')[t];
 
@@ -41,6 +43,10 @@ const handleText = ctx => {
     }
     if (states.settingMigrantClass) {
       setMigrantClass(ctx);
+      return;
+    }
+    if (states.preparingRevolution) {
+      startRevolution(ctx);
       return;
     }
   }
