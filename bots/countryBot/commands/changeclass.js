@@ -43,9 +43,14 @@ const changeclass = ctx => {
   }
 
   let slave = ctx.message.text
-    .match(/@.*$/g)[0];
-  if (slave) slave.trim();
-  else {
+    .match(/@.*$/g);
+  if (!slave) {
+    ctx.reply(text(5));
+    return;
+  }
+  if (slave) {
+    slave = slave[0].trim();
+  } else {
     ctx.reply(text(7));
     return;
   }
@@ -59,7 +64,11 @@ const changeclass = ctx => {
   }
 
   const slaveClass = slaveCountry.citizens[slave].class;
-  if (!childClasses.find(x => x === slaveClass) && slaveClass !== 'default') {
+  if (
+    !childClasses.find(x => x === slaveClass) &&
+    slaveClass !== 'default' &&
+    slave !== (username || id)
+  ) {
     ctx.reply(text(5));
     return;
   }

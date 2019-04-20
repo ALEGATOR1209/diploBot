@@ -35,7 +35,6 @@ const stateHandlers = {
 
     newClass(country.chat, messageText, {
       creator: id,
-      rules: [],
       parentClass: country.citizens[tag].class,
     });
 
@@ -85,7 +84,6 @@ const stateHandlers = {
         }, []),
     });
 
-    console.log(classRights);
     setState(id, 'creatingClass', 'enteringNumber');
     ctx.reply(
       text(4) +
