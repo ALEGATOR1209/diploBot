@@ -17,7 +17,6 @@ const bury = user => {
     .unset(`countries.${country.chat}.citizens.${user}`)
     .write();
   const dateOfDeath = getTurn();
-  console.log(dateOfDeath);
   DBgraveyard
     .set(user, { dateOfDeath })
     .write();

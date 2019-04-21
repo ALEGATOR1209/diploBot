@@ -30,6 +30,8 @@ const commands = [ /* asterisk comments marks command for admins */
   'deleteclass',   //delete one of player's class subclasses
   'migrantclass',  //set default class for new players
   'revolution',    //start a revolution
+  'arrest',         //arrest player
+  'free',           //liberate player
 ];
 
 setCommands(commands);

@@ -8,6 +8,7 @@ const {
   getChildClasses,
   getAllClasses,
   setState,
+  getMigrationClass,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -16,6 +17,7 @@ const {
     'getChildClasses',
     'getAllClasses',
     'setState',
+    'getMigrationClass',
   ]);
 const text = t => getText('deleteclass')[t];
 
@@ -47,7 +49,10 @@ const deleteclass = ctx => {
     return true;
   });
   emptyClasses = emptyClasses
-    .filter(cl => getChildClasses(cl, classlist).length === 0);
+    .filter(cl =>
+      getChildClasses(cl, classlist).length === 0 &&
+      getMigrationClass(country.chat) !== cl
+    );
 
   if (emptyClasses.length < 1) {
     ctx.reply(text(5), reply);
