@@ -5,16 +5,20 @@ const {
   findUser,
   getText,
   jail,
+  getExecution,
+  getRandomChoice,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'findUser',
     'getText',
     'jail',
+    'getExecution',
+    'getRandomChoice',
   ]);
-const text = t => getText('free')[t];
+const text = t => getText('execute')[t];
 
-const free = ctx => {
+const arrest = ctx => {
   const { username, id } = ctx.message.from;
   const tag = username || id;
   const reply = { reply_to_message_id: ctx.message.message_id };
@@ -30,7 +34,7 @@ const free = ctx => {
     return;
   }
   const userClass = country.citizens[tag].class;
-  if (!country.classes[userClass].rights.includes('Право на помилование')) {
+  if (!country.classes[userClass].rights.includes('Право на казнь')) {
     ctx.reply(text(3), reply);
     return;
   }
@@ -50,16 +54,16 @@ const free = ctx => {
     return;
   }
   if (!country.citizens[victim].inPrison) {
-    ctx.reply(text(8), reply);
+    ctx.reply(text(6), reply);
     return;
   }
 
-  ctx.reply(text(6), reply);
+  ctx.reply(text(7), reply);
   jail(country.chat, victim, true);
   ctx.reply(
-    `@${victim}` + text(7),
+    `@${victim}` + getRandomChoice(getExecution()),
     { chat_id: `@${country.chat}` }
   );
 };
 
-module.exports = free;
+module.exports = arrest;

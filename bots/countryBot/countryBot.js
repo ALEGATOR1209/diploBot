@@ -30,21 +30,30 @@ const commands = [ /* asterisk comments marks command for admins */
   'deleteclass',   //delete one of player's class subclasses
   'migrantclass',  //set default class for new players
   'revolution',    //start a revolution
-  'arrest',         //arrest player
-  'free',           //liberate player
+  'arrest',        //arrest player
+  'free',          //liberate player
+  'execute',       //execute prisoner
+  //TODO: list of banned users         'blacklist'
+  //TODO: remove users from blacklist  'opendoors'
+  //TODO: list of laws                 'laws'
+  //TODO: add a law to lawlist         'addlaw'
+  //TODO: remove law from lawlist      'rmlaw'
+  //TODO: send army orders             'sendorders'
+  //TODO: show last orders             'showorders'
+  //TODO: *ADMINS* show country orders 'orders'
+  //TODO: *ADMINS* start new turn      'turn'
 ];
 
 setCommands(commands);
 bot.on('text', imports.countryBot.commands('handleText'));
 bot.on('new_chat_members', imports.countryBot.commands('newCitizens'));
-bot.on('left_chat_member', imports.countryBot.commands('removeCitizen'));
 
 const setActions = actions => actions.forEach(action =>
   bot.action(action, imports.countryBot.actions(action))
 );
 const actions = [
-  'revolt', //support rebels
-  'reaction',   //support government
+  'revolt',      //support rebels
+  'reaction',    //support government
 ];
 setActions(actions);
 
