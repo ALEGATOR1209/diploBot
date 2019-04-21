@@ -1,26 +1,19 @@
 'use strict';
 
-const Markup = require('telegraf/markup');
 const {
-  findUser,
   getText,
   getRevolutionDemands,
-  getStates,
   getRevolution,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'findUser',
     'getText',
     'getRevolutionDemands',
-    'getStates',
     'getRevolution',
   ]);
 const text = t => getText('declareRevolutionaryDemands')[t];
 
-const declareRevolutionaryDemands = ctx => {
-  const { username, id } = ctx.message.from;
-  const tag = username || id;
-  const country = findUser(tag);
+const declareRevolutionaryDemands = (country, id, tag) => {
   if (!country) return;
   const revolution = getRevolution(country.chat, id);
   const demands = getRevolutionDemands();
@@ -31,17 +24,22 @@ const declareRevolutionaryDemands = ctx => {
   if (revolution.type === 'CHANGE_PARENT') {
     demandsToString = text(9) + revolution.demands + text(10);
   }
-  ctx.reply(
-    text(1) +
+
+  const playersNum = Object.keys(country.citizens).length;
+  const rebels = revolution.rebels.length;
+  const rebelsPercent = Math.floor(rebels * 100 / playersNum);
+  const reactioners = revolution.reactioners.length;
+  const reactionersPercent = Math.floor(reactioners * 100 / playersNum);
+  return text(1) +
     country.citizens[tag].class +
     text(2) +
     text(3 + Object.keys(demands).findIndex(el => el === revolution.type)) +
     text(5) +
     demandsToString +
     text(6) + tag +
-    text(7) + revolution.cost + text(8),
-    { chat_id: `@${country.chat}` }
-  );
+    text(7) + revolution.cost + text(8) +
+    text(13) + rebelsPercent + text(14) +
+    text(15) + reactionersPercent + text(14);
 };
 
 module.exports = declareRevolutionaryDemands;

@@ -1,5 +1,6 @@
 'use strict';
 
+const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const {
   findUser,
@@ -105,8 +106,10 @@ const startRevolution = ctx => {
     type,
     revolter: userClass,
     cost: 30,
+    rebels: [],
+    reactioners: [],
   };
-  setRevolution(country.chat, id, revolution, false);
+  setRevolution(country.chat, id, revolution);
   handleType[type]();
 };
 
@@ -315,8 +318,19 @@ const confirmation = ctx => {
     ctx.reply(text(16), Markup.removeKeyboard(true).extra(), reply);
     setState(id, 'preparingRevolution', null);
     const revolution = getRevolution(country.chat, id);
+    revolution.active = true;
     setRevolution(country.chat, id, revolution, true);
-    declareRevolutionaryDemands(ctx);
+    ctx.reply(
+      declareRevolutionaryDemands(country, id, tag),
+      Extra.load({
+        chat_id: `@${country.chat}`,
+        parse_mode: 'Markdown',
+        reply_markup: Markup.inlineKeyboard([
+          Markup.callbackButton(text(20), 'revolt'),
+          Markup.callbackButton(text(21), 'reaction')
+        ])
+      })
+    );
     return;
   }
   ctx.reply(text(5), Markup.keyboard([text(16), text(17)])

@@ -37,5 +37,14 @@ bot.on('text', imports.countryBot.commands('handleText'));
 bot.on('new_chat_members', imports.countryBot.commands('newCitizens'));
 bot.on('left_chat_member', imports.countryBot.commands('removeCitizen'));
 
+const setActions = actions => actions.forEach(action =>
+  bot.action(action, imports.countryBot.actions(action))
+);
+const actions = [
+  'revolt', //support rebels
+  'reaction',   //support government
+];
+setActions(actions);
+
 bot.catch(console.log);
 bot.launch();

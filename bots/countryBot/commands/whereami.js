@@ -33,6 +33,7 @@ const whereami = ctx => {
 
   const messageText = text(3) +
     country.name +
+    (country.hasRevolution ? text(11) : text(12)) +
     text(5) +
     Object.keys(country.citizens).length +
     text(6) + country.citizens[link].class + '.' +

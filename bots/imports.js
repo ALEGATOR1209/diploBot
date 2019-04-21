@@ -2,16 +2,13 @@
 
 const commands = 'commands';
 const scripts = 'scripts';
+const actions = 'actions';
 const cb = 'countryBot';
-const db = 'diploBot';
 const exporter = {
   countryBot: {
     commands: module => require(`./${cb}/${commands}/${module}`),
     scripts: script => require(`./${cb}/${scripts}/${script}`),
-  },
-  diploBot: {
-    commands: module => require(`./${db}/${commands}/${module}`),
-    scripts: script => require(`./${db}/${scripts}/${script}`),
+    actions: action => require(`./${cb}/${actions}/${action}`),
   },
   few: (bot, type, list) => list.reduce((obj, key) =>
     (obj[key] = exporter[bot][type](key), obj), {}
