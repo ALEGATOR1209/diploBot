@@ -4,7 +4,7 @@ const {
   getAdmins,
   findUser,
   getText,
-  jail,
+  bury,
   getExecution,
   getRandomChoice,
 } = require('../../imports').few('countryBot', 'scripts',
@@ -12,7 +12,7 @@ const {
     'getAdmins',
     'findUser',
     'getText',
-    'jail',
+    'bury',
     'getExecution',
     'getRandomChoice',
   ]);
@@ -59,7 +59,7 @@ const arrest = ctx => {
   }
 
   ctx.reply(text(7), reply);
-  jail(country.chat, victim, true);
+  bury(victim);
   ctx.reply(
     `@${victim}` + getRandomChoice(getExecution()),
     { chat_id: `@${country.chat}` }

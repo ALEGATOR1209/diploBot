@@ -33,11 +33,11 @@ const commands = [ /* asterisk comments marks command for admins */
   'arrest',        //arrest player
   'free',          //liberate player
   'execute',       //execute prisoner
-  //TODO: list of banned users         'blacklist'
-  //TODO: remove users from blacklist  'opendoors'
-  //TODO: list of laws                 'laws'
-  //TODO: add a law to lawlist         'addlaw'
-  //TODO: remove law from lawlist      'rmlaw'
+  'blacklist',     //list of banned users
+  'opendoors',     //remove users from blacklist
+  'laws',          //list of laws
+  'addlaw',        //add a law to lawlist
+  'rmlaw',         //remove law from lawlist
   //TODO: send army orders             'sendorders'
   //TODO: show last orders             'showorders'
   //TODO: *ADMINS* show country orders 'orders'

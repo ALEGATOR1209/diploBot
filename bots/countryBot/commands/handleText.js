@@ -9,7 +9,11 @@ const {
   changeUserClass,
   deleteClass,
   setMigrantClass,
-  startRevolution
+  startRevolution,
+  unbanPeople,
+  showLaw,
+  addLaw,
+  removeLaw,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -19,9 +23,24 @@ const {
     'changeUserClass',
     'deleteClass',
     'setMigrantClass',
-    'startRevolution'
+    'startRevolution',
+    'unbanPeople',
+    'showLaw',
+    'addLaw',
+    'removeLaw',
   ]);
 const text = t => getText('handleText')[t];
+const STATE_HANDLERS = {
+  creatingClass: createClass,
+  changingUserClass: changeUserClass,
+  deletingClass: deleteClass,
+  settingMigrantClass: setMigrantClass,
+  preparingRevolution: startRevolution,
+  choosingPeopleToUnban: unbanPeople,
+  choosingLaw: showLaw,
+  addingLaw: addLaw,
+  removingLaw: removeLaw,
+};
 
 const handleText = ctx => {
   const { type } = ctx.message.chat;
@@ -29,26 +48,9 @@ const handleText = ctx => {
 
   const states = getStates(id);
   if (states) {
-    if (states.creatingClass) {
-      createClass(ctx);
-      return;
-    }
-    if (states.changingUserClass) {
-      changeUserClass(ctx);
-      return;
-    }
-    if (states.deletingClass) {
-      deleteClass(ctx);
-      return;
-    }
-    if (states.settingMigrantClass) {
-      setMigrantClass(ctx);
-      return;
-    }
-    if (states.preparingRevolution) {
-      startRevolution(ctx);
-      return;
-    }
+    for (const state of Object.keys(states))
+      STATE_HANDLERS[state](ctx);
+    return;
   }
 
   if (type === 'private') {

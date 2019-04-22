@@ -22,6 +22,7 @@ const createCountry = (name, chat) => {
       },
       blacklist: {},
       migrantClass: 'default',
+      laws: {},
     }
   ).write();
   return countries.value();
