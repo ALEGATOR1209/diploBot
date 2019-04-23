@@ -38,14 +38,14 @@ const commands = [ /* asterisk comments marks command for admins */
   'laws',          //list of laws
   'addlaw',        //add a law to lawlist
   'rmlaw',         //remove law from lawlist
-  //TODO: send army orders             'sendorders'
-  //TODO: show last orders             'showorders'
+  'sendorders',    //send army orders
+  'showorders',    //show last orders
   //TODO: *ADMINS* show country orders 'orders'
   //TODO: *ADMINS* start new turn      'turn'
 ];
 
 setCommands(commands);
-bot.on('text', imports.countryBot.commands('handleText'));
+bot.on('message', imports.countryBot.commands('handleText'));
 bot.on('new_chat_members', imports.countryBot.commands('newCitizens'));
 
 const setActions = actions => actions.forEach(action =>

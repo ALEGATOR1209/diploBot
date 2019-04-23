@@ -14,6 +14,7 @@ const {
   showLaw,
   addLaw,
   removeLaw,
+  sendOrders,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -28,6 +29,7 @@ const {
     'showLaw',
     'addLaw',
     'removeLaw',
+    'sendOrders',
   ]);
 const text = t => getText('handleText')[t];
 const STATE_HANDLERS = {
@@ -40,6 +42,7 @@ const STATE_HANDLERS = {
   choosingLaw: showLaw,
   addingLaw: addLaw,
   removingLaw: removeLaw,
+  sendingOrders: sendOrders,
 };
 
 const handleText = ctx => {
