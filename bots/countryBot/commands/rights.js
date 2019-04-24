@@ -25,8 +25,7 @@ const rights = ctx => {
   if (tag) tag = tag[0].trim().slice(1);
   else tag = ctx.message.from.username || ctx.message.from.id;
 
-  const { username: link, id: countryId } = ctx.message.chat;
-  const country = getCountry(link) || getCountry(countryId) || findUser(tag);
+  const country = findUser(tag);
   if (getAdmins().includes(tag)) {
     ctx.reply(
       `@${tag} ${text(1)}:\n\n${text(2)}`,
@@ -43,6 +42,10 @@ const rights = ctx => {
   }
 
   if (!country) {
+    ctx.reply(
+      text(9),
+      { reply_to_message_id: ctx.message.message_id }
+    );
     return;
   }
 
@@ -55,9 +58,8 @@ const rights = ctx => {
     return;
   }
 
-  const classlist = country.classes;
-  const userClass = classlist[user.class];
-  const userClassName = user.class;
+  const userClassName = country.citizens[tag].class;
+  const userClass = country.classes[user.class];
   ctx.reply(
     `${text(1)}:\n\n` +
     rightsString(userClass.rights) + '\n' +

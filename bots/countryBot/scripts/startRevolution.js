@@ -144,7 +144,6 @@ const startRevolution = ctx => {
   const revolution = {
     type,
     revolter: userClass,
-    cost: 30,
     rebels: [],
     reactioners: [],
   };
@@ -210,10 +209,10 @@ const choosingRights = ctx => {
   //Done
   if (right.match(new RegExp(`^${text(10)}$`))) {
     ctx.reply(
-      text(15),
+      text(14),
       Extra
         .load(reply)
-        .markup(Markup.keyboard([text(16), text(17)])
+        .markup(Markup.keyboard([text(15), text(16)])
           .oneTime()
           .resize()
           .selective(true)
@@ -253,13 +252,12 @@ const choosingRights = ctx => {
   }
   if (!revolution.demands) revolution.demands = [];
   revolution.demands.push(right);
-  revolution.cost += 10;
   const otherRights = [text(10), text(7), ...parentRights.filter(
     el => !revolution.demands.includes(el)
   )];
   setRevolution(country.chat, id, revolution);
   ctx.reply(
-    right + text(13) + revolution.cost + text(14),
+    right + text(13),
     Extra
       .load(reply)
       .markup(Markup.keyboard(otherRights)
@@ -342,23 +340,20 @@ const choosingParent = ctx => {
     return;
   }
   revolution.demands = newParent;
-  revolution.cost = 60;
   setRevolution(country.chat, id, revolution);
   setState(id, 'preparingRevolution', 'confirmation');
   ctx.reply(
-    text(18) +
+    text(17) +
     country.citizens[tag].class +
-    text(19) +
+    text(17) +
     newParent +
-    text(13) +
-    revolution.cost +
-    text(14)
+    text(13)
   )
     .then(() => ctx.reply(
-      text(15),
+      text(14),
       Extra
         .load(reply)
-        .markup(Markup.keyboard([text(16), text(17)])
+        .markup(Markup.keyboard([text(15), text(16)])
           .oneTime()
           .resize()
           .selective(true)
@@ -409,7 +404,7 @@ const confirmation = ctx => {
   }
   //Cancel
   const { text: message } = ctx.message;
-  if (message.match(new RegExp(`^${text(17)}$`))) {
+  if (message.match(new RegExp(`^${text(16)}$`))) {
     ctx.reply(
       text(4),
       Extra
@@ -421,9 +416,9 @@ const confirmation = ctx => {
     return;
   }
   //Done
-  if (message.match(new RegExp(`^${text(16)}$`))) {
+  if (message.match(new RegExp(`^${text(15)}$`))) {
     ctx.reply(
-      text(16),
+      text(15),
       Extra
         .load(reply)
         .markup(Markup.removeKeyboard(true).selective(true))
@@ -439,8 +434,8 @@ const confirmation = ctx => {
         reply_to_message_id: ctx.message.message_id,
         parse_mode: 'Markdown',
         reply_markup: Markup.inlineKeyboard([
-          Markup.callbackButton(text(20), 'revolt'),
-          Markup.callbackButton(text(21), 'reaction')
+          Markup.callbackButton(text(19), 'revolt'),
+          Markup.callbackButton(text(20), 'reaction')
         ])
       })
     );
@@ -450,7 +445,7 @@ const confirmation = ctx => {
     text(5),
     Extra
       .load(reply)
-      .markup(Markup.keyboard([text(16), text(17)])
+      .markup(Markup.keyboard([text(15), text(16)])
         .oneTime()
         .resize()
         .selective(true)

@@ -26,6 +26,12 @@ const opendoors = ctx => {
     );
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(
+      text(10),
+      reply
+    );
+  }
   const userClass = country.classes[
     country
       .citizens[tag]

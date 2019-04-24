@@ -28,6 +28,10 @@ const addlaw = ctx => {
     ctx.reply(text(2), reply);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(12), reply);
+    return;
+  }
 
   const userClassName = country.citizens[tag].class;
   const userClass = country.classes[userClassName];

@@ -36,6 +36,10 @@ const changeclass = ctx => {
     ctx.reply(text(0) + text(2), reply);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(0) + text(10), reply);
+    return;
+  }
   if (country.citizens[tag].inPrison) {
     ctx.reply(text(0) + text(3), reply);
     return;

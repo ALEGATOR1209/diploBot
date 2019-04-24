@@ -40,6 +40,10 @@ const deleteclass = ctx => {
     ctx.reply(text(0) + text(2), reply);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(0) + text(7), reply);
+    return;
+  }
   const classlist = getAllClasses(country.chat);
   const userClass = country.citizens[tag].class;
   const childClasses = getChildClasses(userClass, classlist);

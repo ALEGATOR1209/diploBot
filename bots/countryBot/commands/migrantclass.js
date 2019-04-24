@@ -28,6 +28,10 @@ const migrantclass = ctx => {
     ctx.reply(text(1), reply);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(6), reply);
+    return;
+  }
   if (country.citizens[tag].inPrison) {
     ctx.reply(text(6), reply);
     return;

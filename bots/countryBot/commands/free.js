@@ -29,6 +29,10 @@ const free = ctx => {
     ctx.reply(text(2), reply);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(9), reply);
+  }
+
   const userClass = country.citizens[tag].class;
   if (!country.classes[userClass].rights.includes('Право на помилование')) {
     ctx.reply(text(3), reply);

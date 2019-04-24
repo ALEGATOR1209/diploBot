@@ -23,6 +23,10 @@ const deport = ctx => {
     ctx.reply(text(1));
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(10));
+    return;
+  }
 
   const userClassName = country.citizens[tag].class;
   const userClass = country.classes[userClassName];

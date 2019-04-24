@@ -29,6 +29,10 @@ const arrest = ctx => {
     ctx.reply(text(2), reply);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(10), reply);
+    return;
+  }
   const userClass = country.citizens[tag].class;
   if (!country.classes[userClass].rights.includes('Право на арест')) {
     ctx.reply(text(3), reply);

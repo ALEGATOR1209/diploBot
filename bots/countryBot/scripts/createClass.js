@@ -51,6 +51,11 @@ const enteringName = ctx => {
     setState(id, 'creatingClass', null);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(0) + text(18), reply);
+    setState(id, 'creatingClass', null);
+    return;
+  }
   if (country.citizens[tag].inPrison) {
     reply(text(0) + text(3));
     setState(id, 'creatingClass', null);
@@ -103,6 +108,17 @@ const enteringRights = ctx => {
     reply(
       text(0) +
       text(2),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
+    );
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  if (country.hasRevolution) {
+    reply(
+      text(0) +
+      text(18),
       Markup
         .removeKeyboard(true)
         .selective(true)
@@ -185,6 +201,11 @@ const enteringNumber = ctx => {
     setState(id, 'creatingClass', null);
     return;
   }
+  if (country.hasRevolution) {
+    reply(text(0) + text(18));
+    setState(id, 'creatingClass', null);
+    return;
+  }
   if (country.citizens[tag].inPrison) {
     reply(text(0) + text(3));
     setState(id, 'creatingClass', null);
@@ -218,7 +239,7 @@ const enteringNumber = ctx => {
 };
 
 const confirmation = ctx => {
-  const {username, id} = ctx.message.from;
+  const { username, id } = ctx.message.from;
   const tag = username || id;
   const reply = answer.bind(null, ctx);
   if (getDead(tag)) {
@@ -237,6 +258,17 @@ const confirmation = ctx => {
     reply(
       text(0) +
       text(2),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
+    );
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  if (country.hasRevolution) {
+    reply(
+      text(0) +
+      text(18),
       Markup
         .removeKeyboard(true)
         .selective(true)

@@ -29,6 +29,10 @@ const kill = ctx => {
     ctx.reply(text(0));
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(11));
+    return;
+  }
 
   if (getAdmins().includes(tag)) {
     ctx.reply(text(1), reply);

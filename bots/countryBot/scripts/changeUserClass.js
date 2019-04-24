@@ -55,6 +55,11 @@ const changeUserClass = ctx => {
     reply(text(2));
     return;
   }
+  if (userCountry.hasRevolution) {
+    setState(id, 'changingUserClass', null);
+    reply(text(5));
+    return;
+  }
 
   editUser(userCountry.chat, slave, { class: newClass });
   setState(id, 'changingUserClass', null);

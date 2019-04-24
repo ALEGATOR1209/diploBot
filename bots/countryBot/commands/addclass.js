@@ -21,7 +21,6 @@ const addclass = ctx => {
   const { username: cTag, id: cId } = ctx.message.chat;
   const reply = { reply_to_message_id: ctx.message.message_id };
 
-  const country = getCountry(cTag) || getCountry(cId);
   const userCountry = findUser(uTag) || findUser(uId);
 
   if (getAdmins().includes(uTag) || getAdmins().includes(uId)) {
@@ -31,6 +30,10 @@ const addclass = ctx => {
 
   if (!userCountry) {
     ctx.reply(text(0) + text(2), reply);
+    return;
+  }
+  if (userCountry.hasRevolution) {
+    ctx.reply(text(0) + text(6), reply);
     return;
   }
 

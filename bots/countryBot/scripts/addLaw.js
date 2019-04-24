@@ -36,6 +36,10 @@ const enteringLaw = ctx => {
     ctx.reply(text(2), reply);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(text(12), reply);
+    return;
+  }
 
   const userClassName = country.citizens[tag].class;
   const userClass = country.classes[userClassName];
@@ -91,6 +95,13 @@ const confirm = ctx => {
   const country = findUser(tag);
   if (!country) {
     ctx.reply(text(2), Extra
+      .load(reply)
+      .markup(Markup.removeKeyboard(true).selective(true))
+    );
+    return;
+  }
+  if (country.hasRevolution) {
+    ctx.reply(text(12), Extra
       .load(reply)
       .markup(Markup.removeKeyboard(true).selective(true))
     );

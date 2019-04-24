@@ -49,6 +49,16 @@ const deleteClass = ctx => {
     setState(id, 'deletingClass', null);
     return;
   }
+  if (country.hasRevolution) {
+    ctx.reply(
+      text(0) + text(8),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
+    setState(id, 'deletingClass', null);
+    return;
+  }
 
   if (country.citizens[tag].inPrison) {
     ctx.reply(

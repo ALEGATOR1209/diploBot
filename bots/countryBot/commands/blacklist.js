@@ -26,6 +26,10 @@ const blacklist = ctx => {
       ctx.reply(text(1), reply);
       return;
     }
+    if (country.hasRevolution) {
+      ctx.reply(text(7), reply);
+      return;
+    }
   } else if (getCountry(ctx.message.chat.username)) {
     country = getCountry(ctx.message.chat.username);
   } else {
