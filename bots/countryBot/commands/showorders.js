@@ -73,7 +73,6 @@ const showorders = ctx => {
   ctx.reply(text(5) + country.name)
     .then(() => {
       const orders = getOrders(country.chat);
-      console.dir(orders);
       if (Object.keys(orders) < 1) {
         ctx.reply(text(6));
         return;

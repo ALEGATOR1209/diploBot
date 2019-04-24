@@ -47,14 +47,15 @@ const getpassport = ctx => {
   if (username) {
     givePassport(country, username);
     ctx.reply(
-      `${text(3)} ${country.name}, @${username}!\n` + text(4),
+      `${text(3)} ${country.name}, @${username}!\n` +
+      text(4) + country.migrantClass,
       { reply_to_message_id: ctx.message.message_id }
     );
     return;
   }
   givePassport(country, id);
   ctx.reply(
-    `${text(3)} ${country.name}!\n` + text(4),
+    `${text(3)} ${country.name}!\n` + text(4) + country.migrantClass,
     { reply_to_message_id: ctx.message.message_id }
   );
 };

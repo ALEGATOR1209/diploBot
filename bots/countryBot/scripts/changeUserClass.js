@@ -1,39 +1,66 @@
 'use strict';
 
-const getStates = require('./getStates');
-const setState = require('./setState');
-const findUser = require('./findUser');
-const getText = id => require('./getText')(`changeUserClass.${id}`);
-const editUser = require('./editUser');
+const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
-const getAllClasses = require('./getAllClasses');
+const {
+  getStates,
+  setState,
+  findUser,
+  getText,
+  editUser,
+  getAllClasses,
+} = require('../../imports').few('countryBot', 'scripts',
+  [
+    'getStates',
+    'setState',
+    'findUser',
+    'getText',
+    'editUser',
+    'getAllClasses',
+  ]);
+const text = t => getText('changeclass')[0] + getText('changeUserClass')[t];
 
 const changeUserClass = ctx => {
-  const reply = (text, options) => ctx.reply(
+  const reply = (text) => ctx.reply(
     text,
-    Markup.removeKeyboard(true).extra(),
-    options
+    Extra
+      .load({
+        reply_to_message_id: ctx.message.message_id,
+        parse_mode: 'Markdown',
+      })
+      .markup(Markup.removeKeyboard(true).selective(true))
   );
+
   const { username, id } = ctx.message.from;
-  const userCountry = findUser(username) || findUser(id);
+  const tag = username || id;
+  const userCountry = findUser(tag);
   const slave = getStates(id).changingUserClass;
   const slaveCountry = findUser(slave);
   const newClass = ctx.message.text
     .trim();
 
+  if (ctx.message.text === getText('changeclass')[9]) {
+    setState(id, 'changingUserClass', null);
+    reply(text(0));
+    return;
+  }
+
   if (!slaveCountry || slaveCountry.chat !== userCountry.chat) {
-    reply(getText(1));
+    setState(id, 'changingUserClass', null);
+    reply(text(1));
     return;
   }
   if (!getAllClasses(userCountry.chat)[newClass]) {
-    reply(getText(2));
+    setState(id, 'changingUserClass', null);
+    reply(text(2));
+    return;
   }
 
   editUser(userCountry.chat, slave, { class: newClass });
   setState(id, 'changingUserClass', null);
-  reply(getText(3));
+  reply(text(3));
   ctx.reply(
-    `@${slave} ${getText(4)} ${newClass}`,
+    `@${slave} ${text(4)} ${newClass}`,
     { chat_id: `@${slaveCountry.chat}` }
   );
 };

@@ -59,10 +59,10 @@ const shoot = ctx => {
   const killed = parseInt(Math.random() * 100);
   ctx.reply(
     `${text(5)} @${victim}!\n` +
-    `🎲${killed}  ` + (killed < 60 ? text(6) : text(7)),
+    `🎲${killed}  ` + (killed < 40 ? text(6) : text(7)),
     reply
   );
-  if (killed) bury(victim);
+  if (killed > 40) bury(victim);
 };
 
 module.exports = shoot;

@@ -27,6 +27,10 @@ const deport = ctx => {
   const userClassName = country.citizens[tag].class;
   const userClass = country.classes[userClassName];
 
+  if (country.citizens[tag].inPrison) {
+    ctx.reply(text(7));
+    return;
+  }
   if (!userClass.rights.includes('Право изгонять из страны')) {
     ctx.reply(text(2));
     return;
@@ -55,11 +59,19 @@ const deport = ctx => {
     return;
   }
 
+  if (country.citizens[target].inPrison) {
+    ctx.reply(text(9));
+    return;
+  }
+
   deportUser(country.chat, target);
-  ctx.reply(
-    `@${target} ${text(6)} ${country.name}`,
-    { chat_id: `@${country.chat}` }
-  );
+  ctx.reply(`${text(8)} @${target} ${text(6)} ${country.name}`);
+  if (ctx.message.chat.username !== country.chat) {
+    ctx.reply(
+      `${text(8)} @${target} ${text(6)} ${country.name}`,
+      { chat_id: `@${country.chat}` }
+    );
+  }
 };
 
 module.exports = deport;

@@ -1,5 +1,6 @@
 'use strict';
 
+const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const {
   getText,
@@ -27,6 +28,10 @@ const migrantclass = ctx => {
     ctx.reply(text(1), reply);
     return;
   }
+  if (country.citizens[tag].inPrison) {
+    ctx.reply(text(6), reply);
+    return;
+  }
 
   const userClass = country.citizens[tag].class;
   const hasLawRights = country
@@ -46,10 +51,16 @@ const migrantclass = ctx => {
   }
 
   childClasses.push(text(4));
-  ctx.reply(text(5), Markup.keyboard(childClasses)
-    .oneTime()
-    .resize()
-    .extra());
+  ctx.reply(
+    text(5),
+    Extra
+      .load(reply)
+      .markup(Markup.keyboard([...childClasses])
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
+  );
 
   setState(id, 'settingMigrantClass', 1);
 };

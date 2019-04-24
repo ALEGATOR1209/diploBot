@@ -40,6 +40,7 @@ const commands = [ /* asterisk comments marks command for admins */
   'rmlaw',         //remove law from lawlist
   'sendorders',    //send army orders
   'showorders',    //show last orders
+  'setadminschat'  /* sets this chat as admin chat */
   //TODO: *ADMINS* show country orders 'orders'
   //TODO: *ADMINS* start new turn      'turn'
 ];

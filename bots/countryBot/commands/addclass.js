@@ -25,23 +25,18 @@ const addclass = ctx => {
   const userCountry = findUser(uTag) || findUser(uId);
 
   if (getAdmins().includes(uTag) || getAdmins().includes(uId)) {
-    ctx.reply(text(1), reply);
+    ctx.reply(text(0) + text(1), reply);
     return;
   }
 
   if (!userCountry) {
-    ctx.reply(text(2), reply);
+    ctx.reply(text(0) + text(2), reply);
     return;
   }
 
   const name = uTag || uId;
   if (userCountry.citizens[name].inPrison) {
-    ctx.reply(text(6), reply);
-    return;
-  }
-
-  if (country && country.chat !== userCountry.chat) {
-    ctx.reply(text(3), reply);
+    ctx.reply(text(0) + text(5), reply);
     return;
   }
 
@@ -50,13 +45,11 @@ const addclass = ctx => {
       userCountry.citizens[uTag].class
     ].rights.includes('Право на назначение должностей')
   ) {
-    ctx.reply(text(4));
+    ctx.reply(text(0) + text(3));
     return;
   }
 
-  if (!country && ctx.message.chat.type !== 'private') return;
-
-  ctx.reply(text(5), reply);
+  ctx.reply(text(0) + text(4), reply);
   setState(uId, 'creatingClass', 'enteringName');
 };
 

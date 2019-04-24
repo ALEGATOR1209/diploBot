@@ -31,30 +31,46 @@ const startRevolution = ctx => {
 
   const country = findUser(tag);
   if (!country) {
-    ctx.reply(text(1), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(1),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     return;
   }
 
   const inPrison = country.citizens[tag].inPrison;
   if (inPrison) {
-    ctx.reply(text(2), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(2),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     return;
   }
   if (country.hasRevolution) {
     ctx.reply(
       text(3) + country.name,
-      Markup.removeKeyboard(true).extra(),
-      reply
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setState(id, 'preparingRevolution', null);
     return;
   }
 
   const demands = ctx.message.text;
-  if (demands.match(new RegExp(`^${text(7)}$`))) {
-    ctx.reply(text(4), Markup.removeKeyboard(true).extra(), reply);
+  if (demands.match(new RegExp(`^${getText('revolution')[5]}$`))) {
+    ctx.reply(
+      text(4),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     return;
   }
@@ -64,7 +80,12 @@ const startRevolution = ctx => {
     .find(el => REVOLUTION_DEMANDS[el] === demands);
 
   if (!type) {
-    ctx.reply(text(5), Markup.removeKeyboard(true).extra());
+    ctx.reply(
+      text(5),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     return;
   }
@@ -76,7 +97,12 @@ const startRevolution = ctx => {
     .classes[userClass]
     .parentClass;
   if (!parentClass) {
-    ctx.reply(text(6), reply);
+    ctx.reply(
+      text(6),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     return;
   }
@@ -85,20 +111,33 @@ const startRevolution = ctx => {
       const rights = country.classes[parentClass].rights;
       rights.push(text(7));
       rights.push(text(10));
-      ctx.reply(text(8), Markup.keyboard(rights)
-        .oneTime()
-        .resize()
-        .extra());
+      ctx.reply(
+        text(8),
+        Extra
+          .load(reply)
+          .markup(
+            Markup.keyboard(rights)
+              .oneTime()
+              .resize()
+              .selective(true)
+          )
+      );
       setState(id, 'preparingRevolution', 'choosingRights');
     },
     'CHANGE_PARENT': () => {
       const parents = Object.keys(country.classes)
         .filter(el => el !== userClass);
       parents.push(text(7));
-      ctx.reply(text(9), Markup.keyboard(parents)
-        .oneTime()
-        .resize()
-        .extra());
+      ctx.reply(
+        text(8),
+        Extra
+          .load(reply)
+          .markup(Markup.keyboard(parents)
+            .oneTime()
+            .resize()
+            .selective(true)
+          )
+      );
       setState(id, 'preparingRevolution', 'choosingParent');
     }
   };
@@ -120,7 +159,12 @@ const choosingRights = ctx => {
 
   const country = findUser(tag);
   if (!country) {
-    ctx.reply(text(1), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(1),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     setRevolution(country.chat, id);
     return;
@@ -128,7 +172,12 @@ const choosingRights = ctx => {
 
   const inPrison = country.citizens[tag].inPrison;
   if (inPrison) {
-    ctx.reply(text(2), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(2),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     setRevolution(country.chat, id);
     return;
@@ -136,8 +185,9 @@ const choosingRights = ctx => {
   if (country.hasRevolution) {
     ctx.reply(
       text(3) + country.name,
-      Markup.removeKeyboard(true).extra(),
-      reply
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setRevolution(country.chat, id);
     setState(id, 'preparingRevolution', null);
@@ -147,7 +197,12 @@ const choosingRights = ctx => {
   const right = ctx.message.text;
   //Cancel
   if (right.match(new RegExp(`^${text(7)}$`))) {
-    ctx.reply(text(4), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(4),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     setRevolution(country.chat, id);
     return;
@@ -156,11 +211,13 @@ const choosingRights = ctx => {
   if (right.match(new RegExp(`^${text(10)}$`))) {
     ctx.reply(
       text(15),
-      Markup.keyboard([text(16), text(17)])
-        .oneTime()
-        .resize()
-        .extra(),
-      reply
+      Extra
+        .load(reply)
+        .markup(Markup.keyboard([text(16), text(17)])
+          .oneTime()
+          .resize()
+          .selective(true)
+        )
     );
     setState(id, 'preparingRevolution', 'confirmation');
     return;
@@ -174,17 +231,24 @@ const choosingRights = ctx => {
     parentRights.push(text(7));
     ctx.reply(
       text(11),
-      Markup.keyboard(parentRights)
-        .oneTime()
-        .resize()
-        .extra()
+      Extra
+        .load(reply)
+        .markup(Markup.keyboard(parentRights)
+          .oneTime()
+          .resize()
+          .selective(true)
+        )
     );
     return;
   }
 
   const revolution = getRevolution(country.chat, id);
   if (!revolution) {
-    ctx.reply(12);
+    ctx.reply(
+      text(12),
+      Extra
+        .load(reply)
+    );
     return;
   }
   if (!revolution.demands) revolution.demands = [];
@@ -196,10 +260,13 @@ const choosingRights = ctx => {
   setRevolution(country.chat, id, revolution);
   ctx.reply(
     right + text(13) + revolution.cost + text(14),
-    Markup.keyboard(otherRights)
-      .oneTime()
-      .resize()
-      .extra()
+    Extra
+      .load(reply)
+      .markup(Markup.keyboard(otherRights)
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
   );
 };
 
@@ -210,7 +277,12 @@ const choosingParent = ctx => {
 
   const country = findUser(tag);
   if (!country) {
-    ctx.reply(text(1), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(1),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     setRevolution(country.chat, id);
     return;
@@ -218,7 +290,12 @@ const choosingParent = ctx => {
 
   const inPrison = country.citizens[tag].inPrison;
   if (inPrison) {
-    ctx.reply(text(2), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(2),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     setRevolution(country.chat, id);
     return;
@@ -226,8 +303,9 @@ const choosingParent = ctx => {
   if (country.hasRevolution) {
     ctx.reply(
       text(3) + country.name,
-      Markup.removeKeyboard(true).extra(),
-      reply
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setRevolution(country.chat, id);
     setState(id, 'preparingRevolution', null);
@@ -236,21 +314,31 @@ const choosingParent = ctx => {
 
   const newParent = ctx.message.text;
   if (!Object.keys(country.classes).includes(newParent)) {
-    ctx.reply(text(5), Markup.keyboard([
-      text(7),
-      ...Object.keys(country.classes)
-        .filter(el => el !== country.citizens[tag].class)
-    ])
-      .oneTime()
-      .resize()
-      .extra()
+    ctx.reply(
+      text(5),
+      Extra
+        .load(reply)
+        .markup(Markup.keyboard([
+          text(7),
+          ...Object.keys(country.classes)
+            .filter(el => el !== country.citizens[tag].class)
+        ])
+          .oneTime()
+          .selective(true)
+          .resize()
+        )
     );
     return;
   }
 
   const revolution = getRevolution(country.chat, id);
   if (!revolution) {
-    ctx.reply(12);
+    ctx.reply(
+      text(12),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     return;
   }
   revolution.demands = newParent;
@@ -268,10 +356,13 @@ const choosingParent = ctx => {
   )
     .then(() => ctx.reply(
       text(15),
-      Markup.keyboard([text(16), text(17)])
-        .oneTime()
-        .resize()
-        .extra()
+      Extra
+        .load(reply)
+        .markup(Markup.keyboard([text(16), text(17)])
+          .oneTime()
+          .resize()
+          .selective(true)
+        )
     ));
 };
 
@@ -282,7 +373,12 @@ const confirmation = ctx => {
 
   const country = findUser(tag);
   if (!country) {
-    ctx.reply(text(1), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(1),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     setRevolution(country.chat, id);
     return;
@@ -290,7 +386,12 @@ const confirmation = ctx => {
 
   const inPrison = country.citizens[tag].inPrison;
   if (inPrison) {
-    ctx.reply(text(2), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(2),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     setRevolution(country.chat, id);
     return;
@@ -298,8 +399,9 @@ const confirmation = ctx => {
   if (country.hasRevolution) {
     ctx.reply(
       text(3) + country.name,
-      Markup.removeKeyboard(true).extra(),
-      reply
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setRevolution(country.chat, id);
     setState(id, 'preparingRevolution', null);
@@ -308,14 +410,24 @@ const confirmation = ctx => {
   //Cancel
   const { text: message } = ctx.message;
   if (message.match(new RegExp(`^${text(17)}$`))) {
-    ctx.reply(text(4), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(4),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     setRevolution(country.chat, id);
     return;
   }
   //Done
   if (message.match(new RegExp(`^${text(16)}$`))) {
-    ctx.reply(text(16), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(16),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'preparingRevolution', null);
     const revolution = getRevolution(country.chat, id);
     revolution.active = true;
@@ -324,6 +436,7 @@ const confirmation = ctx => {
       declareRevolutionaryDemands(country, id, tag),
       Extra.load({
         chat_id: `@${country.chat}`,
+        reply_to_message_id: ctx.message.message_id,
         parse_mode: 'Markdown',
         reply_markup: Markup.inlineKeyboard([
           Markup.callbackButton(text(20), 'revolt'),
@@ -333,10 +446,15 @@ const confirmation = ctx => {
     );
     return;
   }
-  ctx.reply(text(5), Markup.keyboard([text(16), text(17)])
-    .oneTime()
-    .resize()
-    .extra()
+  ctx.reply(
+    text(5),
+    Extra
+      .load(reply)
+      .markup(Markup.keyboard([text(16), text(17)])
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
   );
 };
 

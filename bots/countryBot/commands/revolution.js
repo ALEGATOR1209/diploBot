@@ -1,5 +1,6 @@
 'use strict';
 
+const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const {
   getAdmins,
@@ -46,11 +47,16 @@ const revolution = ctx => {
   const REVOLUTION_DEMANDS = getRevolutionDemands();
   const types = Object.values(REVOLUTION_DEMANDS);
   types.push(text(5));
-  ctx.reply(text(6), Markup.keyboard(types)
-    .oneTime()
-    .resize()
-    .extra());
-
+  ctx.reply(
+    text(6),
+    Extra
+      .load(reply)
+      .markup(Markup.keyboard(types)
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
+  );
   setState(id, 'preparingRevolution', 'startRevolution');
 };
 

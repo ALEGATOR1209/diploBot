@@ -27,10 +27,6 @@ const rights = ctx => {
 
   const { username: link, id: countryId } = ctx.message.chat;
   const country = getCountry(link) || getCountry(countryId) || findUser(tag);
-  if (!country) {
-    return;
-  }
-
   if (getAdmins().includes(tag)) {
     ctx.reply(
       `@${tag} ${text(1)}:\n\n${text(2)}`,
@@ -43,6 +39,10 @@ const rights = ctx => {
       text(8),
       { reply_to_message_id: ctx.message.message_id }
     );
+    return;
+  }
+
+  if (!country) {
     return;
   }
 

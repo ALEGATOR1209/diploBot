@@ -40,7 +40,7 @@ const arrest = ctx => {
   }
 
   let victim = ctx.message.text
-    .match(/ @[A-z]*/gi);
+    .match(/ @.*/gi);
   if (!victim) {
     ctx.reply(text(4), reply);
     return;

@@ -6,7 +6,6 @@ const adapterCountries = new FileSync('./databases/countries.json');
 
 const setLaw = (country, name, law) => {
   const countries = low(adapterCountries);
-  countries.defaults({}).write();
 
   if (law === null) {
     countries

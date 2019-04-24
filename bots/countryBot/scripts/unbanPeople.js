@@ -28,7 +28,7 @@ const unbanPeople = ctx => {
       text(1),
       Extra
         .load(reply)
-        .markup(Markup.removeKeyboard(true).extra())
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setState(id, 'choosingPeopleToUnban', null);
     return;
@@ -43,7 +43,7 @@ const unbanPeople = ctx => {
       text(2),
       Extra
         .load(reply)
-        .markup(Markup.removeKeyboard(true).extra())
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setState(id, 'choosingPeopleToUnban', null);
     return;
@@ -55,7 +55,7 @@ const unbanPeople = ctx => {
       text(3),
       Extra
         .load(reply)
-        .markup(Markup.removeKeyboard(true).extra())
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setState(id, 'choosingPeopleToUnban', null);
     return;
@@ -67,7 +67,9 @@ const unbanPeople = ctx => {
   if (messageText === text(5)) {
     ctx.reply(
       text(8),
-      Markup.removeKeyboard(true).extra()
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setState(id, 'choosingPeopleToUnban', null);
     unban(country.chat, toUnban);
@@ -76,7 +78,9 @@ const unbanPeople = ctx => {
   if (messageText === text(6)) {
     ctx.reply(
       text(9),
-      Markup.removeKeyboard(true).extra()
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
     );
     setState(id, 'choosingPeopleToUnban', null);
     return;
@@ -91,7 +95,11 @@ const unbanPeople = ctx => {
           text(5),
           text(6),
           ...toUnban
-        ]))
+        ])
+          .oneTime()
+          .resize()
+          .selective(true)
+        )
     );
     return;
   }
@@ -106,8 +114,16 @@ const unbanPeople = ctx => {
     text(4),
     Extra
       .load(reply)
-      .markup(Markup.keyboard(list))
+      .markup(Markup.keyboard(list)
+        .oneTime()
+        .selective(true)
+        .resize()
+      )
   );
+
+  if (country.chat !== ctx.message.chat.username) {
+    ctx.reply(text(4));
+  }
   setState(id, 'choosingPeopleToUnban', toUnban);
 };
 

@@ -7,6 +7,7 @@ const {
   getDead,
   setState,
   setOrders,
+  getAdminsChat,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -15,7 +16,9 @@ const {
     'getDead',
     'setState',
     'setOrders',
+    'getAdminsChat',
   ]);
+const showorders = require('../../imports').countryBot.commands('showorders');
 const text = t => getText('sendOrders')[t];
 
 const sendOrders = ctx => {
@@ -68,7 +71,10 @@ const sendOrders = ctx => {
     audio,
   });
   setState(id, 'sendingOrders', null);
-  ctx.reply(text(5), reply);
+  ctx.reply(text(5), reply).then(() => {
+    ctx.message.chat.id = getAdminsChat();
+    showorders(ctx);
+  });
 };
 
 module.exports = sendOrders;

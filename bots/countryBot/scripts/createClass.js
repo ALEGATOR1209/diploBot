@@ -1,5 +1,7 @@
 'use strict';
 
+const Extra = require('telegraf/extra');
+const Markup = require('telegraf/markup');
 const {
   getStates,
   setState,
@@ -8,6 +10,8 @@ const {
   newClass,
   removeClass,
   getText,
+  rightsString,
+  getDead,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getStates',
@@ -17,162 +21,281 @@ const {
     'newClass',
     'removeClass',
     'getText',
+    'rightsString',
+    'getDead',
   ]);
 const text = t => getText('createClass')[t];
 
-const stateHandlers = {
-  'enteringName': ctx => {
-    const { text: messageText } = ctx.message;
-    const { username, id } = ctx.message.from;
-    const tag = username || id;
-    const country  = findUser(tag);
+const answer = (ctx, text, markup) => ctx.reply(
+  text,
+  Extra
+    .load({
+      reply_to_message_id: ctx.message.message_id,
+      parse_mode: 'Markdown',
+    })
+    .markup(markup)
+);
 
-    if (messageText.match(/^cancel$/gi)) {
-      setState(id, 'creatingClass', null);
-      ctx.reply(text(1));
-      return;
-    }
+const enteringName = ctx => {
+  const { username, id } = ctx.message.from;
+  const tag = username || id;
+  const reply = answer.bind(null, ctx);
+  if (getDead(tag)) {
+    reply(text(0) + text(1));
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  const country = findUser(tag);
+  if (!country) {
+    reply(text(0) + text(2));
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  if (country.citizens[tag].inPrison) {
+    reply(text(0) + text(3));
+    setState(id, 'creatingClass', null);
+    return;
+  }
 
-    newClass(country.chat, messageText, {
-      creator: id,
-      parentClass: country.citizens[tag].class,
-    });
+  const name = ctx.message.text
+    .trim();
 
-    setState(id, 'creatingClass', 'enteringRights');
-    ctx.reply(
-      text(2) + rightslist.reduce(
-        (acc, val, i) => acc + `${i + 1} - ${val}\n`, ''
-      )
+  if (!name) {
+    reply(text(0) + text(4));
+    return;
+  }
+
+  const createdClass = {
+    creator: id,
+    rights: [],
+    parentClass: country.citizens[tag].class,
+    number: 0,
+  };
+
+  newClass(country.chat, name, createdClass);
+  reply(
+    text(0) + text(5) + rightsString([]),
+    Markup.keyboard([text(6), text(7), ...rightslist])
+      .oneTime()
+      .resize()
+      .selective(true)
+  );
+  setState(id, 'creatingClass', 'enteringRights');
+};
+
+const enteringRights = ctx => {
+  const { username, id } = ctx.message.from;
+  const tag = username || id;
+  const reply = answer.bind(null, ctx);
+  if (getDead(tag)) {
+    reply(
+      text(0) +
+      text(1),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
     );
-  },
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  const country = findUser(tag);
+  if (!country) {
+    reply(
+      text(0) +
+      text(2),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
+    );
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  if (country.citizens[tag].inPrison) {
+    reply(
+      text(0) +
+      text(3),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
+    );
+    setState(id, 'creatingClass', null);
+    return;
+  }
 
-  'enteringRights': ctx => {
-    const { text: messageText } = ctx.message;
-    const { username, id } = ctx.message.from;
-    const tag = username || id;
-    const country  = findUser(tag);
-    const className = Object.keys(country.classes)
-      .find(cLaSS => country.classes[cLaSS].creator === id);
-
-    if (messageText.match(/^cancel$/gi)) {
-      setState(id, 'creatingClass', null);
-      removeClass(country.chat, className);
-      ctx.reply(text(3));
-      return;
-    }
-
-    const rights = messageText
-      .split(' ')
-      .map(string => parseInt(string) - 1)
-      .sort((a, b) => (a >= b ? 1 : -1))
-      .reduce((acc, val) => (acc.includes(val) ? acc : [...acc, val]), []);
-
-    const playersClass = country.classes[country.citizens[tag].class].rights;
-    const classRights = [];
-    newClass(country.chat, className, {
-      rights: rights.reduce(
-        (acc, val) => {
-          if (!playersClass.includes(rightslist[val])) {
-            ctx.reply(
-              text(12) + rightslist[val],
-              { reply_to_message_id: ctx.message.message_id }
-            );
-            return acc;
-          }
-          classRights.push(rightslist[val]);
-          return [...acc, rightslist[val]];
-        }, []),
-    });
-
+  const right = ctx.message.text;
+  if (right.match(new RegExp(`^${text(6)}$`, 'gi'))) {
+    reply(
+      text(0) +
+      text(8),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
+    );
     setState(id, 'creatingClass', 'enteringNumber');
-    ctx.reply(
-      text(4) +
-      rightslist.reduce(
-        (acc, val) => acc +
-          ((classRights.includes(val) ? '✅ ' : '❌ '
-          ) + `${val}\n`), ''
-      ) + text(5),
-      { reply_to_message_id: ctx.message.message_id }
+    return;
+  }
+
+  if (right.match(new RegExp(`^${text(7)}$`, 'gi'))) {
+    reply(
+      text(0) +
+      text(9),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
     );
-  },
+    const userClassName = Object.keys(country.classes)
+      .find(cl => country.classes[cl].creator === id);
+    removeClass(country.chat, userClassName);
+    setState(id, 'creatingClass', null);
+    return;
+  }
 
-  'enteringNumber': ctx => {
-    const { text: messageText } = ctx.message;
-    const { username, id } = ctx.message.from;
-    const tag = username || id;
-    const country  = findUser(tag);
-    const userClass = Object.keys(country.classes)
-      .find(key => country.classes[key].creator === id);
+  if (!rightslist.includes(right)) {
+    reply(text(0) + text(8));
+  }
 
-    if (messageText.match(/^cancel$/gi)) {
-      setState(id, 'creatingClass', null);
-      removeClass(country.chat, userClass);
-      ctx.reply(text(3));
-      return;
-    }
+  const userClassName = Object.keys(country.classes)
+    .find(cl => country.classes[cl].creator === id);
+  const userClass = country.classes[userClassName];
+  userClass.rights.push(right);
+  newClass(country.chat, userClassName, userClass);
+  const list = rightslist.filter(el => !userClass.rights.includes(el));
+  reply(
+    text(0) +
+    text(5) + rightsString(userClass.rights),
+    Markup.keyboard([ text(6), text(7), ...list ])
+      .oneTime()
+      .resize()
+      .selective(true)
+  );
+};
 
-    if (messageText.match(/^[-‒–—―]$/g)) {
-      setState(id, 'creatingClass', 'enteringRights');
-      ctx.reply(
-        text(2) +
-        rightslist.reduce((acc, val, i) => acc + `${i + 1} - ${val}\n`, '')
-      );
-      return;
-    }
+const enteringNumber = ctx => {
+  const { username, id } = ctx.message.from;
+  const tag = username || id;
+  const reply = answer.bind(null, ctx);
+  if (getDead(tag)) {
+    reply(text(0) + text(1));
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  const country = findUser(tag);
+  if (!country) {
+    reply(text(0) + text(2));
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  if (country.citizens[tag].inPrison) {
+    reply(text(0) + text(3));
+    setState(id, 'creatingClass', null);
+    return;
+  }
 
-    if (messageText.match(/^[0-9]*$/)) {
-      const number = parseInt(messageText);
-      if (number < 0) {
-        ctx.reply(text(6), { reply_to_message_id: ctx.message.message_id });
-        return;
-      }
+  const number = Math.abs(parseInt(ctx.message.text));
+  if (number !== 0 && !number) {
+    reply(text(0) + text(4));
+    return;
+  }
 
-      if (number === 0)
-        ctx.reply(text(7), { reply_to_message_id: ctx.message.message_id });
-      else ctx.reply(
-        text(8) + number,
-        { reply_to_message_id: ctx.message.message_id }
-      );
+  const userClassName = Object.keys(country.classes)
+    .find(cl => country.classes[cl].creator === id);
+  const userClass = country.classes[userClassName];
+  userClass.number = number;
+  newClass(country.chat, userClassName, userClass);
+  reply(
+    text(0) +
+    text(15) + userClassName +
+    text(10) +
+    rightsString(userClass.rights) +
+    text(11) + (number === 0 ? '∞' : number) +
+    text(12),
+    Markup.keyboard([text(13), text(14)])
+      .oneTime()
+      .selective(true)
+      .resize()
+  );
+  setState(id, 'creatingClass', 'confirmation');
+};
 
-      newClass(country.chat, userClass, {
-        number,
-      });
-      setState(id, 'creatingClass', 'confirmation');
-      ctx.reply(text(9));
-      return;
-    }
-    ctx.reply(text(10), { reply_to_message_id: ctx.message.message_id });
-  },
-  'confirmation': ctx => {
-    const { text: messageText } = ctx.message;
-    const { username, id } = ctx.message.from;
-    const tag = username || id;
-    const country  = findUser(tag);
-    const userClass = Object.keys(country.classes)
-      .find(key => country.classes[key].creator === id);
+const confirmation = ctx => {
+  const {username, id} = ctx.message.from;
+  const tag = username || id;
+  const reply = answer.bind(null, ctx);
+  if (getDead(tag)) {
+    reply(
+      text(0) +
+      text(1),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
+    );
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  const country = findUser(tag);
+  if (!country) {
+    reply(
+      text(0) +
+      text(2),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
+    );
+    setState(id, 'creatingClass', null);
+    return;
+  }
+  if (country.citizens[tag].inPrison) {
+    reply(
+      text(0) +
+      text(3),
+      Markup
+        .removeKeyboard(true)
+        .selective(true)
+    );
+    setState(id, 'creatingClass', null);
+    return;
+  }
 
-    if (messageText.match(/^cancel$/gi)) {
-      setState(id, 'creatingClass', null);
-      removeClass(country.chat, userClass);
-      ctx.reply(text(3));
-      return;
-    }
+  const {text: message} = ctx.message;
+  const userClassName = Object.keys(country.classes)
+    .find(cl => country.classes[cl].creator === id);
+  const userClass = country.classes[userClassName];
+  if (message.match(new RegExp(`^${text(13)}$`, 'gi'))) {
+    reply(
+      text(0) + text(16),
+      Markup.removeKeyboard(true)
+        .selective(true)
+    );
+    setState(id, 'creatingClass', null);
+    userClass.creator = undefined;
+    newClass(country.chat, userClassName, userClass);
+    return;
+  }
+  if (message.match(new RegExp(`^${text(14)}$`, 'gi'))) {
+    reply(
+      text(0) + text(17),
+      Markup.removeKeyboard(true)
+        .selective(true)
+    );
+    removeClass(country.chat, userClassName);
+    setState(id, 'creatingClass', null);
+    return;
+  }
 
-    if (messageText.match(/^\+$/g)) {
-      setState(id, 'creatingClass', null);
-      newClass(country.chat, userClass, { creator: null });
-      ctx.reply(text(11));
-      return;
-    }
+  reply(
+    text(0) + text(4),
+    Markup.keyboard([text(13), text(14)])
+      .oneTime()
+      .selective(true)
+      .resize()
+  );
+};
 
-    if (messageText.match(/^-$/g)) {
-      setState(id, 'creatingClass', 'enteringNumber');
-      ctx.reply(text(5));
-      return;
-    }
-
-    ctx.reply('Wrong input');
-  },
+const stateHandlers = {
+  enteringName,
+  enteringRights,
+  enteringNumber,
+  confirmation,
 };
 
 const createClass = ctx => stateHandlers[

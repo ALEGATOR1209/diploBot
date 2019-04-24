@@ -1,5 +1,6 @@
 'use strict';
 
+const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const {
   getText,
@@ -25,15 +26,37 @@ const deleteClass = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
   const country = findUser(tag);
 
-  if (ctx.message.text.match(/^cancel$/i)) {
-    ctx.reply(text(6));
+  if (ctx.message.text.match(
+    new RegExp(`^${getText('deleteclass')[6]}$`, 'gi')
+  )) {
+    ctx.reply(
+      text(0) + text(1),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'deletingClass', null);
     return;
   }
 
   if (!country) {
-    ctx.reply(text(1), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(0) + text(2),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'deletingClass', null);
+    return;
+  }
+
+  if (country.citizens[tag].inPrison) {
+    ctx.reply(
+      text(0) + text(3),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     return;
   }
 
@@ -48,14 +71,24 @@ const deleteClass = ctx => {
     return true;
   });
   if (emptyClasses.length < 1) {
-    ctx.reply(text(2), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(0) + text(4),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'deletingClass', null);
     return;
   }
 
   const classToDelete = ctx.message.text;
   if (!emptyClasses.includes(classToDelete)) {
-    ctx.reply(text(3), Markup.removeKeyboard(true).extra(), reply);
+    ctx.reply(
+      text(0) + text(5),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'deletingClass', null);
     return;
   }
@@ -63,10 +96,17 @@ const deleteClass = ctx => {
   removeClass(country.chat, classToDelete);
   setState(id, 'deletingClass', null);
   ctx.reply(
-    text(4) + classToDelete + text(5),
-    Markup.removeKeyboard(true).extra(),
-    reply
+    text(6) + classToDelete + text(7),
+    Extra
+      .load(reply)
+      .markup(Markup.removeKeyboard(true).selective(true))
   );
+  if (ctx.message.chat.username !== country.chat) {
+    ctx.reply(
+      text(6) + classToDelete + text(7),
+      { chat_id: `@${country.chat}` }
+    );
+  }
 };
 
 module.exports = deleteClass;

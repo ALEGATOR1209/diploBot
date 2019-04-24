@@ -51,8 +51,7 @@ const handleText = ctx => {
 
   const states = getStates(id);
   if (states) {
-    for (const state of Object.keys(states))
-      STATE_HANDLERS[state](ctx);
+      STATE_HANDLERS[Object.keys(states)[0]](ctx);
     return;
   }
 

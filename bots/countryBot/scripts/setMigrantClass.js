@@ -1,5 +1,6 @@
 'use strict';
 
+const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const {
   getText,
@@ -26,13 +27,34 @@ const setMigrantClass = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
 
   if (ctx.message.text.match(/^cancel$/i)) {
-    ctx.reply(text(7));
+    ctx.reply(
+      text(7),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'settingMigrantClass', null);
     return;
   }
 
   if (!country) {
-    ctx.reply(text(1), reply);
+    ctx.reply(
+      text(1),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
+    setState(id, 'settingMigrantClass', null);
+    return;
+  }
+
+  if (country.citizens[tag].inPrison) {
+    ctx.reply(
+      text(8),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'settingMigrantClass', null);
     return;
   }
@@ -43,7 +65,12 @@ const setMigrantClass = ctx => {
     .rights
     .includes('Право на принятие законов');
   if (!hasLawRights) {
-    ctx.reply(text(2), reply);
+    ctx.reply(
+      text(2),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'settingMigrantClass', null);
     return;
   }
@@ -51,24 +78,53 @@ const setMigrantClass = ctx => {
   const classlist = getAllClasses(country.chat);
   const childClasses = getChildClasses(userClass, classlist);
   if (childClasses.length < 1) {
-    ctx.reply(text(3), reply);
+    ctx.reply(
+      text(3),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'settingMigrantClass', null);
     return;
   }
   const migrantClass = ctx.message.text;
   if (!childClasses.includes(migrantClass)) {
-    ctx.reply(4, reply);
+    ctx.reply(
+      text(4),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
     setState(id, 'settingMigrantClass', null);
     return;
+  }
+  if (country.classes.migrantClass.number) {
+    ctx.reply(
+      text(9),
+      Extra
+        .load(reply)
+        .markup(Markup.removeKeyboard(true).selective(true))
+    )
   }
 
   setMigrationClass(country.chat, migrantClass);
   ctx.reply(
     text(5) + migrantClass + text(6),
-    Markup.removeKeyboard(true).extra(),
-    reply
+    Extra
+      .load(reply)
+      .markdown()
+      .markup(Markup.removeKeyboard(true).selective(true))
   );
 
+  if (country.chat !== ctx.message.chat.username) {
+    ctx.reply(
+      text(5) + migrantClass + text(6),
+      Extra
+        .load({ chat_id: `@${country.chat}` })
+        .markdown()
+        .markup(Markup.removeKeyboard(true).selective(true))
+    );
+  }
   setState(id, 'settingMigrantClass', null);
 };
 

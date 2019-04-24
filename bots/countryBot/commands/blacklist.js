@@ -34,7 +34,7 @@ const blacklist = ctx => {
   }
 
   const blacklist = country.blacklist;
-  if (!blacklist) {
+  if (Object.keys(blacklist).length < 1) {
     ctx.reply(text(6), reply);
     return;
   }

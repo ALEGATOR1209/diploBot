@@ -36,7 +36,7 @@ const free = ctx => {
   }
 
   let victim = ctx.message.text
-    .match(/ @[A-z]*/gi);
+    .match(/ @.*/gi);
   if (!victim) {
     ctx.reply(text(4), reply);
     return;
@@ -55,7 +55,7 @@ const free = ctx => {
   }
 
   ctx.reply(text(6), reply);
-  jail(country.chat, victim, true);
+  jail(country.chat, victim, false);
   ctx.reply(
     `@${victim}` + text(7),
     { chat_id: `@${country.chat}` }

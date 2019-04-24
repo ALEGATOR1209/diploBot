@@ -44,13 +44,21 @@ const rmlaw = ctx => {
 
   const lawlist = Object.keys(country.laws)
     .filter(law => !country.laws[law].WIP);
+  if (lawlist.length < 1) {
+    ctx.reply(text(7), reply);
+    return;
+  }
   lawlist.push(text(6));
   setState(id, 'removingLaw', country.chat);
   ctx.reply(
     text(5),
     Extra
       .load(reply)
-      .markup(Markup.keyboard(lawlist))
+      .markup(Markup.keyboard(lawlist)
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
   );
 };
 

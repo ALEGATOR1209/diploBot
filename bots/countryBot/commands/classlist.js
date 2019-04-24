@@ -3,12 +3,14 @@
 const {
   getAllClasses,
   findUser,
-  getText
+  getText,
+  getCountry
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAllClasses',
     'findUser',
-    'getText'
+    'getText',
+    'getCountry',
   ]);
 const text = t => getText('classlist')[t];
 
@@ -24,8 +26,8 @@ const classlist = ctx => {
 
   const classList = Object.keys(getAllClasses(userCountry.chat));
   ctx.reply(
-    `${text(2)} ${userCountry.name}:\n\n` +
-    classList.join('\n')
+    `${text(2)} ${userCountry.name}:\n\n` + text(3) +
+    classList.join('\n' + text(3))
   );
 };
 

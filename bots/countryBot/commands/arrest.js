@@ -12,7 +12,7 @@ const {
     'getText',
     'jail',
   ]);
-const text = t => getText('arrest')[t];
+const text = t => getText('arrest')[0] + getText('arrest')[t];
 
 const arrest = ctx => {
   const { username, id } = ctx.message.from;
@@ -34,9 +34,13 @@ const arrest = ctx => {
     ctx.reply(text(3), reply);
     return;
   }
+  if (country.citizens[tag].inPrison) {
+    ctx.reply(text(9), reply);
+    return;
+  }
 
   let victim = ctx.message.text
-    .match(/ @[A-z]*/gi);
+    .match(/ @.*/gi);
   if (!victim) {
     ctx.reply(text(4), reply);
     return;

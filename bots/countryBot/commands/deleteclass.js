@@ -1,5 +1,6 @@
 'use strict';
 
+const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const {
   getAdmins,
@@ -23,23 +24,27 @@ const text = t => getText('deleteclass')[t];
 
 const deleteclass = ctx => {
   const { username, id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
-  if (getAdmins().includes(username) || getAdmins().includes(id)) {
-    ctx.reply(text(1), reply);
+  const reply = {
+    reply_to_message_id: ctx.message.message_id,
+    parse_mode: 'Markdown',
+  };
+
+  const tag = username || id;
+  if (getAdmins().includes(tag)) {
+    ctx.reply(text(0) + text(1), reply);
     return;
   }
 
-  const tag = username || id;
   const country = findUser(tag);
   if (!country) {
-    ctx.reply(text(2), reply);
+    ctx.reply(text(0) + text(2), reply);
     return;
   }
   const classlist = getAllClasses(country.chat);
   const userClass = country.citizens[tag].class;
   const childClasses = getChildClasses(userClass, classlist);
   if (childClasses.length < 1) {
-    ctx.reply(text(4), reply);
+    ctx.reply(text(0) + text(3), reply);
     return;
   }
   let emptyClasses = childClasses.filter(classname => {
@@ -55,14 +60,20 @@ const deleteclass = ctx => {
     );
 
   if (emptyClasses.length < 1) {
-    ctx.reply(text(5), reply);
+    ctx.reply(text(0) + text(4), reply);
     return;
   }
-  emptyClasses.push(text(7));
-  ctx.reply(text(6), Markup.keyboard(emptyClasses)
-    .oneTime()
-    .resize()
-    .extra());
+  emptyClasses.push(text(6));
+  ctx.reply(
+    text(0) + text(5),
+    Extra
+      .load(reply)
+      .markup(Markup.keyboard(emptyClasses)
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
+  );
 
   setState(id, 'deletingClass', 1);
 };

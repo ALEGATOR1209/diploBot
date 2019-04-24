@@ -38,26 +38,29 @@ const laws = ctx => {
   }
 
   const lawlist = country.laws;
-  if (!lawlist) {
+  const list = Object.keys(lawlist)
+    .filter(law => !law.WIP);
+  if (list.length < 1) {
     ctx.reply(text(6), reply);
     return;
   }
   let answer = text(2) + `*${country.name.toUpperCase()}*\n\n`;
-  for (const law in lawlist) {
-    if (lawlist[law].WIP) continue;
+  for (const law of list) {
     answer +=
       `${text(3)} ${law} ${text(3)}\n` +
       `${text(4)}${lawlist[law].date}${text(5)}\n\n`;
   }
+
   answer += `\n${text(7)}`;
   ctx.reply(
     answer,
     Extra
       .load(reply)
-      .markup(Markup.keyboard([
-        text(8),
-        ...Object.keys(lawlist),
-      ]))
+      .markup(Markup.keyboard([...list, text(8)])
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
   );
   setState(id, 'choosingLaw', country.chat);
 };

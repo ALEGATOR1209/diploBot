@@ -55,7 +55,11 @@ const opendoors = ctx => {
     text(4),
     Extra
       .load(reply)
-      .markup(Markup.keyboard(list))
+      .markup(Markup.keyboard(list)
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
   );
   setState(id, 'choosingPeopleToUnban', []);
 };
