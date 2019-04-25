@@ -4,13 +4,11 @@ const {
   getAllClasses,
   findUser,
   getText,
-  getCountry
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAllClasses',
     'findUser',
     'getText',
-    'getCountry',
   ]);
 const text = t => getText('classlist')[t];
 

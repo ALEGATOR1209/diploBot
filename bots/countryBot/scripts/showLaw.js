@@ -20,12 +20,13 @@ const laws = ctx => {
   const { id } = ctx.message.from;
   const reply = {
     reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'Markdown',
+    parse_mode: 'HTML',
   };
   const country = getCountry(getStates(id).choosingLaw);
 
   if (ctx.message.text === text(7)) {
     ctx.reply(
+      text(0) +
       text(8),
       Extra
         .load(reply)
@@ -36,6 +37,7 @@ const laws = ctx => {
   }
   if (!country) {
     ctx.reply(
+      text(0) +
       text(1),
       Extra
         .load(reply)
@@ -48,6 +50,7 @@ const laws = ctx => {
   const lawlist = country.laws;
   if (!lawlist) {
     ctx.reply(
+      text(0) +
       text(2),
       Extra
         .load(reply)
@@ -60,6 +63,7 @@ const laws = ctx => {
   const law = lawlist[lawName];
   if (!law || law.WIP) {
     ctx.reply(
+      text(0) +
       text(3),
       Extra
         .load(reply)

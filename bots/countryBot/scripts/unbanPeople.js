@@ -25,6 +25,7 @@ const unbanPeople = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
   if (!country) {
     ctx.reply(
+      text(0) +
       text(1),
       Extra
         .load(reply)
@@ -40,6 +41,7 @@ const unbanPeople = ctx => {
   ];
   if (!userClass.rights.includes('Право изгонять из страны')) {
     ctx.reply(
+      text(0) +
       text(2),
       Extra
         .load(reply)
@@ -52,6 +54,7 @@ const unbanPeople = ctx => {
   const blacklist = country.blacklist;
   if (!blacklist) {
     ctx.reply(
+      text(0) +
       text(3),
       Extra
         .load(reply)
@@ -66,17 +69,22 @@ const unbanPeople = ctx => {
 
   if (messageText === text(5)) {
     ctx.reply(
+      text(0) +
       text(8),
       Extra
         .load(reply)
         .markup(Markup.removeKeyboard(true).selective(true))
     );
+    if (country.chat !== ctx.message.chat.username) {
+      ctx.reply(text(8), { chat_id: `@${country.chat}` });
+    }
     setState(id, 'choosingPeopleToUnban', null);
     unban(country.chat, toUnban);
     return;
   }
   if (messageText === text(6)) {
     ctx.reply(
+      text(0) +
       text(9),
       Extra
         .load(reply)
@@ -88,6 +96,7 @@ const unbanPeople = ctx => {
 
   if (!Object.keys(blacklist).includes(messageText)) {
     ctx.reply(
+      text(0) +
       text(7),
       Extra
         .load(reply)
@@ -111,6 +120,7 @@ const unbanPeople = ctx => {
       .filter(user => !toUnban.includes(user))
   ];
   ctx.reply(
+    text(0) +
     text(4),
     Extra
       .load(reply)
@@ -121,9 +131,6 @@ const unbanPeople = ctx => {
       )
   );
 
-  if (country.chat !== ctx.message.chat.username) {
-    ctx.reply(text(4));
-  }
   setState(id, 'choosingPeopleToUnban', toUnban);
 };
 

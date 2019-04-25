@@ -23,6 +23,7 @@ const {
     'declareRevolutionaryDemands'
   ]);
 const text = t => getText('startRevolution')[t];
+const infoText = getText('revolution')[0];
 
 const startRevolution = ctx => {
   const { username, id } = ctx.message.from;
@@ -32,6 +33,7 @@ const startRevolution = ctx => {
   const country = findUser(tag);
   if (!country) {
     ctx.reply(
+      infoText +
       text(1),
       Extra
         .load(reply)
@@ -44,6 +46,7 @@ const startRevolution = ctx => {
   const inPrison = country.citizens[tag].inPrison;
   if (inPrison) {
     ctx.reply(
+      infoText +
       text(2),
       Extra
         .load(reply)
@@ -54,6 +57,7 @@ const startRevolution = ctx => {
   }
   if (country.hasRevolution) {
     ctx.reply(
+      infoText +
       text(3) + country.name,
       Extra
         .load(reply)
@@ -66,6 +70,7 @@ const startRevolution = ctx => {
   const demands = ctx.message.text;
   if (demands.match(new RegExp(`^${getText('revolution')[5]}$`))) {
     ctx.reply(
+      infoText +
       text(4),
       Extra
         .load(reply)
@@ -81,6 +86,7 @@ const startRevolution = ctx => {
 
   if (!type) {
     ctx.reply(
+      infoText +
       text(5),
       Extra
         .load(reply)
@@ -98,6 +104,7 @@ const startRevolution = ctx => {
     .parentClass;
   if (!parentClass) {
     ctx.reply(
+      infoText +
       text(6),
       Extra
         .load(reply)
@@ -109,14 +116,22 @@ const startRevolution = ctx => {
   const handleType = {
     'RIGHTS': () => {
       const rights = country.classes[parentClass].rights;
-      rights.push(text(7));
-      rights.push(text(10));
+      const otherRights = [
+        text(10),
+        text(7),
+        ...rights.filter(el => !country
+          .classes[userClass]
+          .rights
+          .includes(el)
+        )
+      ];
       ctx.reply(
+        infoText +
         text(8),
         Extra
           .load(reply)
           .markup(
-            Markup.keyboard(rights)
+            Markup.keyboard(otherRights)
               .oneTime()
               .resize()
               .selective(true)
@@ -129,6 +144,7 @@ const startRevolution = ctx => {
         .filter(el => el !== userClass);
       parents.push(text(7));
       ctx.reply(
+        infoText +
         text(8),
         Extra
           .load(reply)
@@ -159,6 +175,7 @@ const choosingRights = ctx => {
   const country = findUser(tag);
   if (!country) {
     ctx.reply(
+      infoText +
       text(1),
       Extra
         .load(reply)
@@ -172,6 +189,7 @@ const choosingRights = ctx => {
   const inPrison = country.citizens[tag].inPrison;
   if (inPrison) {
     ctx.reply(
+      infoText +
       text(2),
       Extra
         .load(reply)
@@ -183,6 +201,7 @@ const choosingRights = ctx => {
   }
   if (country.hasRevolution) {
     ctx.reply(
+      infoText +
       text(3) + country.name,
       Extra
         .load(reply)
@@ -197,6 +216,7 @@ const choosingRights = ctx => {
   //Cancel
   if (right.match(new RegExp(`^${text(7)}$`))) {
     ctx.reply(
+      infoText +
       text(4),
       Extra
         .load(reply)
@@ -209,6 +229,7 @@ const choosingRights = ctx => {
   //Done
   if (right.match(new RegExp(`^${text(10)}$`))) {
     ctx.reply(
+      infoText +
       text(14),
       Extra
         .load(reply)
@@ -225,14 +246,45 @@ const choosingRights = ctx => {
   const userClass = country.citizens[tag].class;
   const parentClass = country.classes[userClass].parentClass;
   const parentRights = country.classes[parentClass].rights;
-  if (!parentRights.includes(right)) {
-    parentRights.push(text(10));
-    parentRights.push(text(7));
+
+  const revolution = getRevolution(country.chat, id);
+  if (!revolution) {
     ctx.reply(
+      infoText +
+      text(12),
+      Extra
+        .load(reply)
+    );
+    return;
+  }
+
+  if (country.classes[userClass].rights.includes(right)) {
+    const otherRights = [text(10), text(7), ...parentRights.filter(
+      el => !revolution.demands.includes(el)
+    )];
+    ctx.reply(
+      infoText +
+      text(21),
+      Extra
+        .load(reply)
+        .markup(Markup.keyboard([text(10), text(7), ...otherRights])
+          .oneTime()
+          .resize()
+          .selective(true)
+        )
+    );
+    return;
+  }
+  if (!parentRights.includes(right)) {
+    const otherRights = [text(10), text(7), ...parentRights.filter(
+      el => !revolution.demands.includes(el)
+    )];
+    ctx.reply(
+      infoText +
       text(11),
       Extra
         .load(reply)
-        .markup(Markup.keyboard(parentRights)
+        .markup(Markup.keyboard([text(10), text(7), ...otherRights])
           .oneTime()
           .resize()
           .selective(true)
@@ -241,15 +293,6 @@ const choosingRights = ctx => {
     return;
   }
 
-  const revolution = getRevolution(country.chat, id);
-  if (!revolution) {
-    ctx.reply(
-      text(12),
-      Extra
-        .load(reply)
-    );
-    return;
-  }
   if (!revolution.demands) revolution.demands = [];
   revolution.demands.push(right);
   const otherRights = [text(10), text(7), ...parentRights.filter(
@@ -257,6 +300,7 @@ const choosingRights = ctx => {
   )];
   setRevolution(country.chat, id, revolution);
   ctx.reply(
+    infoText +
     right + text(13),
     Extra
       .load(reply)
@@ -276,6 +320,7 @@ const choosingParent = ctx => {
   const country = findUser(tag);
   if (!country) {
     ctx.reply(
+      infoText +
       text(1),
       Extra
         .load(reply)
@@ -289,6 +334,7 @@ const choosingParent = ctx => {
   const inPrison = country.citizens[tag].inPrison;
   if (inPrison) {
     ctx.reply(
+      infoText +
       text(2),
       Extra
         .load(reply)
@@ -300,6 +346,7 @@ const choosingParent = ctx => {
   }
   if (country.hasRevolution) {
     ctx.reply(
+      infoText +
       text(3) + country.name,
       Extra
         .load(reply)
@@ -313,6 +360,7 @@ const choosingParent = ctx => {
   const newParent = ctx.message.text;
   if (!Object.keys(country.classes).includes(newParent)) {
     ctx.reply(
+      infoText +
       text(5),
       Extra
         .load(reply)
@@ -332,6 +380,7 @@ const choosingParent = ctx => {
   const revolution = getRevolution(country.chat, id);
   if (!revolution) {
     ctx.reply(
+      infoText +
       text(12),
       Extra
         .load(reply)
@@ -343,6 +392,7 @@ const choosingParent = ctx => {
   setRevolution(country.chat, id, revolution);
   setState(id, 'preparingRevolution', 'confirmation');
   ctx.reply(
+    infoText +
     text(17) +
     country.citizens[tag].class +
     text(17) +
@@ -350,6 +400,7 @@ const choosingParent = ctx => {
     text(13)
   )
     .then(() => ctx.reply(
+      infoText +
       text(14),
       Extra
         .load(reply)
@@ -369,6 +420,7 @@ const confirmation = ctx => {
   const country = findUser(tag);
   if (!country) {
     ctx.reply(
+      infoText +
       text(1),
       Extra
         .load(reply)
@@ -382,6 +434,7 @@ const confirmation = ctx => {
   const inPrison = country.citizens[tag].inPrison;
   if (inPrison) {
     ctx.reply(
+      infoText +
       text(2),
       Extra
         .load(reply)
@@ -393,6 +446,7 @@ const confirmation = ctx => {
   }
   if (country.hasRevolution) {
     ctx.reply(
+      infoText +
       text(3) + country.name,
       Extra
         .load(reply)
@@ -406,6 +460,7 @@ const confirmation = ctx => {
   const { text: message } = ctx.message;
   if (message.match(new RegExp(`^${text(16)}$`))) {
     ctx.reply(
+      infoText +
       text(4),
       Extra
         .load(reply)
@@ -418,6 +473,7 @@ const confirmation = ctx => {
   //Done
   if (message.match(new RegExp(`^${text(15)}$`))) {
     ctx.reply(
+      infoText +
       text(15),
       Extra
         .load(reply)
@@ -431,8 +487,6 @@ const confirmation = ctx => {
       declareRevolutionaryDemands(country, id, tag),
       Extra.load({
         chat_id: `@${country.chat}`,
-        reply_to_message_id: ctx.message.message_id,
-        parse_mode: 'Markdown',
         reply_markup: Markup.inlineKeyboard([
           Markup.callbackButton(text(19), 'revolt'),
           Markup.callbackButton(text(20), 'reaction')
@@ -442,6 +496,7 @@ const confirmation = ctx => {
     return;
   }
   ctx.reply(
+    infoText +
     text(5),
     Extra
       .load(reply)

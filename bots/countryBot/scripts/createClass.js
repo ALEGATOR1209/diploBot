@@ -31,7 +31,7 @@ const answer = (ctx, text, markup) => ctx.reply(
   Extra
     .load({
       reply_to_message_id: ctx.message.message_id,
-      parse_mode: 'Markdown',
+      parse_mode: 'HTML',
     })
     .markup(markup)
 );
@@ -62,11 +62,16 @@ const enteringName = ctx => {
     return;
   }
 
-  const name = ctx.message.text
-    .trim();
+  let name = ctx.message.text;
 
   if (!name) {
     reply(text(0) + text(4));
+    return;
+  }
+  name = name.trim();
+  if (country.classes[name] && Object.keys(country.classes[name]).length > 0) {
+    reply(text(0) + text(19));
+    setState(id, 'creatingClass', null);
     return;
   }
 

@@ -2,14 +2,14 @@
 
 const {
   getAdmins,
-  getCountry,
+  getGame,
   findUser,
   setState,
   getText
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
-    'getCountry',
+    'getGame',
     'getText',
     'findUser',
     'setState'
@@ -18,10 +18,13 @@ const text = t => getText('addclass')[t];
 
 const addclass = ctx => {
   const { username: uTag, id: uId } = ctx.message.from;
-  const { username: cTag, id: cId } = ctx.message.chat;
   const reply = { reply_to_message_id: ctx.message.message_id };
 
   const userCountry = findUser(uTag) || findUser(uId);
+  if (getGame('turn') === 0) {
+    ctx.reply(getText('0turnAlert'));
+    return;
+  }
 
   if (getAdmins().includes(uTag) || getAdmins().includes(uId)) {
     ctx.reply(text(0) + text(1), reply);

@@ -1,60 +1,49 @@
 'use strict';
 
+const Extra = require('telegraf/extra');
+const Markup = require('telegraf/markup');
 const {
   getAllClasses,
   findUser,
-  getCountry,
-  rightsString,
-  getText
+  getText,
+  setState,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAllClasses',
     'findUser',
-    'getCountry',
-    'rightsString',
     'getText',
+    'setState',
   ]);
 const text = t => getText('showclass')[t];
 
 const showclass = ctx => {
-  const { text: messageText, chat } = ctx.message;
   const { id, username } = ctx.message.from;
-  let userCountry;
+  const tag = username || id;
+  const reply = { reply_to_message_id: ctx.message.message_id };
 
-  if (chat.type === 'private') {
-    userCountry = findUser(username) || findUser(id);
-    if (!userCountry) {
-      ctx.reply(text(1));
-      return;
-    }
-  } else userCountry = getCountry(chat.username) || getCountry(chat.id);
-  if (!userCountry) return;
-
-  const className = messageText
-    .slice('/showclass'.length)
-    .trim();
-
-  if (!className) {
-    ctx.reply(text(2));
+  const userCountry = findUser(tag);
+  if (!userCountry) {
+    ctx.reply(text(0) + text(1), reply);
     return;
   }
+  if (Object.keys(userCountry).length < 1) {
+    ctx.reply(text(0) + text(9), reply);
+    return;
+  }
+
   const classList = getAllClasses(userCountry.chat);
-  const userClass = classList[className];
-  if (!userClass || userClass.creator) {
-    ctx.reply(text(3));
-    return;
-  }
-  const number = Object.keys(userCountry.citizens)
-    .filter(man => userCountry.citizens[man].class === className).length;
   ctx.reply(
-    text(4) + className + '\n' +
-    (userClass.parentClass ? `${text(5)}: ${userClass.parentClass}\n` : '') +
-    rightsString(userClass.rights) + text(6) + ': ' +
-    (userClass.number ? `${userClass.number}\n` :
-      `${text(7)}\n`) +
-    `${text(8)}: ${number}`,
-    { reply_to_message_id: ctx.message.message_id }
+    text(0) +
+    text(11),
+    Extra
+      .load(reply)
+      .markup(Markup.keyboard(Object.keys(classList))
+        .oneTime()
+        .resize()
+        .selective(true)
+      )
   );
+  setState(id, 'showClass', 1);
 };
 
 module.exports = showclass;

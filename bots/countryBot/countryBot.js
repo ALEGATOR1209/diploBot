@@ -2,15 +2,43 @@
 
 //Telegraf stuff
 const Telegraf = require('telegraf');
-const TOKEN = require('./token');
+const TOKEN = process.env.TOKEN || require('./token');
+const URL = process.env.HEROKU_URL;
 const imports = require('../imports');
 const bot = new Telegraf(TOKEN);
 
+//Initializing databases
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+
+low(new FileSync('./databases/graveyard.json'))
+  .defaults({ cemetery: {} })
+  .write();
+
+low(new FileSync('./databases/countries.json'))
+  .defaults({ countries: {} })
+  .write();
+
+low(new FileSync('./databases/states.json'))
+  .defaults({})
+  .write();
+
+low(new FileSync('./databases/game.json'))
+  .defaults({
+    'turn': 0,
+    'deathTime': 5,
+    'adminChat': -378840305,
+    'gameChannel': '@ceppelinBE',
+  })
+  .write();
+
 bot.start(ctx => ctx.reply('Hi!'));
 bot.help(ctx => ctx.reply('`No help.`'));
+
 const setCommands = commands => commands.forEach(command =>
-  bot.command(command, imports.countryBot.commands(command))
+  bot.command(command, () => {})
 );
+
 const commands = [ /* asterisk comments marks command for admins */
   'whereami',      //shows info about current citizenship
   'addcountry',    /* create new country in current chat */
@@ -40,14 +68,14 @@ const commands = [ /* asterisk comments marks command for admins */
   'rmlaw',         //remove law from lawlist
   'sendorders',    //send army orders
   'showorders',    //show last orders
-  'setadminschat'  /* sets this chat as admin chat */
-  //TODO: *ADMINS* show country orders 'orders'
-  //TODO: *ADMINS* start new turn      'turn'
+  'setadminschat', /* sets this chat as admin chat */
+  'orders',        /* show country orders */
+  'panic',         //reset state and remove keyboards
+  'turn',          /* start new turn */
 ];
 
 setCommands(commands);
 bot.on('message', imports.countryBot.commands('handleText'));
-bot.on('new_chat_members', imports.countryBot.commands('newCitizens'));
 
 const setActions = actions => actions.forEach(action =>
   bot.action(action, imports.countryBot.actions(action))
@@ -56,7 +84,8 @@ const actions = [
   'revolt',      //support rebels
   'reaction',    //support government
 ];
+
 setActions(actions);
 
-bot.catch(console.log);
+bot.catch(e => console.log('\x1b[0;31mERROR:\x1b[0m', e, '\n'));
 bot.launch();

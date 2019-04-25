@@ -21,6 +21,7 @@ const opendoors = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
   if (!country) {
     ctx.reply(
+      text(0) +
       text(1),
       reply
     );
@@ -28,9 +29,11 @@ const opendoors = ctx => {
   }
   if (country.hasRevolution) {
     ctx.reply(
+      text(0) +
       text(10),
       reply
     );
+    return;
   }
   const userClass = country.classes[
     country
@@ -39,6 +42,7 @@ const opendoors = ctx => {
   ];
   if (!userClass.rights.includes('Право изгонять из страны')) {
     ctx.reply(
+      text(0) +
       text(2),
       reply
     );
@@ -48,6 +52,7 @@ const opendoors = ctx => {
   const blacklist = country.blacklist;
   if (!blacklist) {
     ctx.reply(
+      text(0) +
       text(3),
       reply
     );
@@ -58,6 +63,7 @@ const opendoors = ctx => {
   list.push(text(5));
   list.push(text(6));
   ctx.reply(
+    text(0) +
     text(4),
     Extra
       .load(reply)

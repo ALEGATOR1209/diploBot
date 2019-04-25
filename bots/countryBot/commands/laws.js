@@ -21,7 +21,7 @@ const laws = ctx => {
   const tag = username || id;
   const reply = {
     reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'Markdown',
+    parse_mode: 'HTML',
   };
   let country;
   if (ctx.message.chat.type === 'private') {

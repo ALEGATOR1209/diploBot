@@ -5,8 +5,8 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapterStates = new FileSync('./databases/countries.json');
 
 const newClass = (country, name, options) => {
-  const DBcoutnries = low(adapterStates);
-  const classes = DBcoutnries.get(`countries.${country}.classes`);
+  const DBcountries = low(adapterStates);
+  const classes = DBcountries.get(`countries.${country}.classes`);
 
   const userClass = classes.get(name).value();
   if (userClass) {

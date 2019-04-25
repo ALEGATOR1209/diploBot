@@ -23,16 +23,28 @@ const whereami = ctx => {
   if (dead && Object.keys(dead).length > 0) {
     const deathTime = getGame('deathTime');
     const turn = getGame('turn');
-    ctx.reply(text(1) + (dead.dateOfDeath + deathTime - turn) + text(2), reply);
+    ctx.reply(
+      text(13).replace('{turn}', getGame('turn')) +
+      text(1) +
+      (dead.dateOfDeath + deathTime - turn) +
+      text(2),
+      reply
+    );
     return;
   }
   const country = findUser(link);
   if (!country) {
-    ctx.reply(text(4), reply);
+    ctx.reply(
+      text(13).replace('{turn}', getGame('turn')) +
+      text(4),
+      reply
+    );
     return;
   }
 
-  const messageText = text(3) +
+  const messageText =
+    text(13).replace('{turn}', getGame('turn')) +
+    text(3) +
     country.name +
     (country.hasRevolution ? text(11) : text(12)) +
     text(5) +

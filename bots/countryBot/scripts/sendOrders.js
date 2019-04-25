@@ -20,30 +20,35 @@ const {
   ]);
 const showorders = require('../../imports').countryBot.commands('showorders');
 const text = t => getText('sendOrders')[t];
+const infoText = getText('sendorders')[0];
 
 const sendOrders = ctx => {
   const { username, id } = ctx.message.from;
   const reply = { reply_to_message_id: ctx.message.message_id };
   const tag = username || id;
   if (getAdmins().includes(tag)) {
-    ctx.reply(text(1), reply);
+    ctx.reply(infoText + text(1), reply);
+    setState(id, 'sendingOrders', null);
     return;
   }
 
   if (getDead(tag)) {
-    ctx.reply(text(2), reply);
+    ctx.reply(infoText + text(2), reply);
+    setState(id, 'sendingOrders', null);
     return;
   }
   const country = findUser(tag);
   if (!country) {
-    ctx.reply(text(3), reply);
+    ctx.reply(infoText + text(3), reply);
+    setState(id, 'sendingOrders', null);
     return;
   }
 
   const userClassName = country.citizens[tag].class;
   const userClass = country.classes[userClassName];
   if (!userClass.rights.includes('Право на управление армией')) {
-    ctx.reply(text(4), reply);
+    ctx.reply(infoText + text(4), reply);
+    setState(id, 'sendingOrders', null);
     return;
   }
 
@@ -71,7 +76,7 @@ const sendOrders = ctx => {
     audio,
   });
   setState(id, 'sendingOrders', null);
-  ctx.reply(text(5), reply).then(() => {
+  ctx.reply(infoText + text(5), reply).then(() => {
     ctx.message.chat.id = getAdminsChat();
     showorders(ctx);
   });

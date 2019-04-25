@@ -6,6 +6,9 @@ const adapterStates = new FileSync('./databases/countries.json');
 
 const setRevolution = (country, id, revolution = null, fired = false) => {
   const countries = low(adapterStates).get(`countries.${country}`);
+  countries
+    .set('hasRevolution', fired)
+    .write();
   if (revolution === null) {
     countries
       .unset(`revolution.${id}`)
@@ -14,8 +17,6 @@ const setRevolution = (country, id, revolution = null, fired = false) => {
   }
   countries
     .set('revolution', { [id]: revolution })
-    .write();
-  countries.set('hasRevolution', fired)
     .write();
 };
 

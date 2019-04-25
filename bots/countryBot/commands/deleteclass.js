@@ -10,6 +10,7 @@ const {
   getAllClasses,
   setState,
   getMigrationClass,
+  getGame,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -19,6 +20,7 @@ const {
     'getAllClasses',
     'setState',
     'getMigrationClass',
+    'getGame',
   ]);
 const text = t => getText('deleteclass')[t];
 
@@ -26,8 +28,13 @@ const deleteclass = ctx => {
   const { username, id } = ctx.message.from;
   const reply = {
     reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'Markdown',
   };
+
+  if (getGame('turn') === 0) {
+    ctx.reply(getText('0turnAlert'));
+    return;
+  }
+
 
   const tag = username || id;
   if (getAdmins().includes(tag)) {

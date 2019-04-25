@@ -1,4 +1,3 @@
 node_modules/*
-databases/*
 bots/*/token.js
 .idea/*

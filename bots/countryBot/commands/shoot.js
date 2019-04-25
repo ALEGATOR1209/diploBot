@@ -8,6 +8,7 @@ const {
   getText,
   getDead,
   getKillPhrase,
+  getGame,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -17,17 +18,26 @@ const {
     'getText',
     'getDead',
     'getKillPhrase',
+    'getGame',
   ]);
 const text = t => getText('shoot')[t];
 
 const shoot = ctx => {
+  if (getGame('turn') === 0) {
+    ctx.reply(getText('0turnAlert'));
+    return;
+  }
+
   const reply = { reply_to_message_id: ctx.message.message_id };
   const { username: countryTag, id: countryId } = ctx.message.chat;
   const { username, id } = ctx.message.from;
   const tag = username || id;
 
   const country = getCountry(countryTag) || getCountry(countryId);
-  if (!country) return;
+  if (!country) {
+    ctx.reply(text(8), reply);
+    return;
+  }
 
   if (getAdmins().includes(tag)) {
     ctx.reply(text(1), reply);
@@ -50,7 +60,7 @@ const shoot = ctx => {
   }
 
   if (getDead(victim)) {
-    ctx.reply(text(8));
+    ctx.reply(text(7));
     return;
   }
 

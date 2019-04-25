@@ -3,12 +3,14 @@
 const {
   getAdmins,
   findUser,
+  getGame,
   getText,
   jail,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'findUser',
+    'getGame',
     'getText',
     'jail',
   ]);
@@ -18,6 +20,11 @@ const arrest = ctx => {
   const { username, id } = ctx.message.from;
   const tag = username || id;
   const reply = { reply_to_message_id: ctx.message.message_id };
+
+  if (getGame('turn') === 0) {
+    ctx.reply(getText('0turnAlert'));
+    return;
+  }
 
   if (getAdmins().includes(tag)) {
     ctx.reply(text(0) + text(1), reply);

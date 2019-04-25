@@ -8,6 +8,7 @@ const {
   getChildClasses,
   getAllClasses,
   setState,
+  getGame,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getText',
@@ -15,6 +16,7 @@ const {
     'getChildClasses',
     'getAllClasses',
     'setState',
+    'getGame',
   ]);
 const text = t => getText('migrantclass')[t];
 
@@ -24,16 +26,21 @@ const migrantclass = ctx => {
   const country = findUser(tag);
   const reply = { reply_to_message_id: ctx.message.message_id };
 
+  if (getGame('turn') === 0) {
+    ctx.reply(getText('0turnAlert'));
+    return;
+  }
+
   if (!country) {
-    ctx.reply(text(1), reply);
+    ctx.reply(text(0) + text(1), reply);
     return;
   }
   if (country.hasRevolution) {
-    ctx.reply(text(6), reply);
+    ctx.reply(text(0) + text(6), reply);
     return;
   }
   if (country.citizens[tag].inPrison) {
-    ctx.reply(text(6), reply);
+    ctx.reply(text(0) + text(6), reply);
     return;
   }
 
@@ -43,19 +50,21 @@ const migrantclass = ctx => {
     .rights
     .includes('Право на принятие законов');
   if (!hasLawRights) {
-    ctx.reply(text(2), reply);
+    ctx.reply(text(0) + text(2), reply);
     return;
   }
 
   const classlist = getAllClasses(country.chat);
   const childClasses = getChildClasses(userClass, classlist);
   if (childClasses.length < 1) {
-    ctx.reply(text(3), reply);
+    ctx.reply(text(0) + text(3), reply);
     return;
   }
+  childClasses.filter(cl => country.classes[cl].number);
 
   childClasses.push(text(4));
   ctx.reply(
+    text(0) +
     text(5),
     Extra
       .load(reply)

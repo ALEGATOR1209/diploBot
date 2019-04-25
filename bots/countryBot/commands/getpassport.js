@@ -27,6 +27,10 @@ const getpassport = ctx => {
   }
 
   const { username, id } = ctx.message.from;
+  if (!username) {
+    ctx.reply(text(0), { reply_to_message_id: ctx.message.message_id });
+    return;
+  }
   if (getAdmins().includes(username) || getAdmins().includes(id)) {
     ctx.reply(text(1), { reply_to_message_id: ctx.message.message_id });
     return;
@@ -43,6 +47,13 @@ const getpassport = ctx => {
     );
     return;
   }
+  if (country.blacklist[username]) {
+    ctx.reply(
+      text(7),
+      { reply_to_message_id: ctx.message.message_id }
+    );
+    return;
+  }
 
   if (username) {
     givePassport(country, username);
@@ -53,9 +64,8 @@ const getpassport = ctx => {
     );
     return;
   }
-  givePassport(country, id);
   ctx.reply(
-    `${text(3)} ${country.name}!\n` + text(4) + country.migrantClass,
+    text(0),
     { reply_to_message_id: ctx.message.message_id }
   );
 };

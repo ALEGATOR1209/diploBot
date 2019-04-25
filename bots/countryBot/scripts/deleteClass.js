@@ -67,6 +67,7 @@ const deleteClass = ctx => {
         .load(reply)
         .markup(Markup.removeKeyboard(true).selective(true))
     );
+    setState(id, 'deletingClass', null);
     return;
   }
 

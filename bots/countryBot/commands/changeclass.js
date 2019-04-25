@@ -9,6 +9,7 @@ const {
   setState,
   getChildClasses,
   getText,
+  getGame,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -17,6 +18,7 @@ const {
     'setState',
     'getChildClasses',
     'getText',
+    'getGame',
   ]);
 const text = t => getText('changeclass')[t];
 
@@ -24,8 +26,14 @@ const changeclass = ctx => {
   const { username, id } = ctx.message.from;
   const reply = {
     reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'Markdown',
+    parse_mode: 'HTML',
   };
+
+  if (getGame('turn') === 0) {
+    ctx.reply(getText('0turnAlert'));
+    return;
+  }
+
   const tag = username || id;
   if (getAdmins().includes(tag)) {
     ctx.repl(text(0) + text(1), reply);
@@ -53,30 +61,13 @@ const changeclass = ctx => {
     return;
   }
 
-  let slave = ctx.message.text
-    .match(/@.*$/g);
-  if (!slave) {
-    ctx.reply(text(0) + text(5), reply);
-    return;
-  }
-  slave = slave[0].trim();
-
-  if (slave[0] === '@') slave = slave.slice(1);
-  if (!slave) slave = username || id;
-
-  const slaveCountry = findUser(slave);
-  if (!slaveCountry || slaveCountry.chat !== country.chat) {
-    ctx.reply(text(0) + text(6), reply);
-    return;
-  }
-
-  const slaveClass = slaveCountry.citizens[slave].class;
-  if (
-    !childClasses.find(x => x === slaveClass) &&
-    slaveClass !== 'default' &&
-    slave !== tag
-  ) {
-    ctx.reply(text(0) + text(7), reply);
+  const slavelist = Object.keys(country.citizens)
+    .filter(man =>
+      childClasses.includes(country.citizens[man].class) ||
+      man === tag
+    );
+  if (slavelist.length < 1) {
+    ctx.reply(text(0) + text(11), reply);
     return;
   }
 
@@ -84,14 +75,13 @@ const changeclass = ctx => {
     text(0) + text(8),
     Extra
       .load(reply)
-      .markup(Markup.keyboard([text(9), ...childClasses])
+      .markup(Markup.keyboard([...slavelist, text(9)])
         .oneTime()
         .resize()
         .selective(true)
       )
   );
-
-  setState(id, 'changingUserClass', slave);
+  setState(id, 'changingUserClass', 'choosingTarget');
 };
 
 module.exports = changeclass;

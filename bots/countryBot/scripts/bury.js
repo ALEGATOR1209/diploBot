@@ -18,7 +18,7 @@ const bury = user => {
     .write();
   const dateOfDeath = getTurn();
   DBgraveyard
-    .set(user, { dateOfDeath })
+    .set(`cemetery.${user}`, { dateOfDeath })
     .write();
 };
 

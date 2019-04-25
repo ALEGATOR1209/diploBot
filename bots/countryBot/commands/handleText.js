@@ -15,6 +15,8 @@ const {
   addLaw,
   removeLaw,
   sendOrders,
+  showCountryOrders,
+  showClass,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -30,19 +32,23 @@ const {
     'addLaw',
     'removeLaw',
     'sendOrders',
+    'showCountryOrders',
+    'showClass',
   ]);
 const text = t => getText('handleText')[t];
 const STATE_HANDLERS = {
-  creatingClass: createClass,
-  changingUserClass: changeUserClass,
-  deletingClass: deleteClass,
-  settingMigrantClass: setMigrantClass,
-  preparingRevolution: startRevolution,
-  choosingPeopleToUnban: unbanPeople,
-  choosingLaw: showLaw,
-  addingLaw: addLaw,
-  removingLaw: removeLaw,
-  sendingOrders: sendOrders,
+  creatingClass           : createClass,
+  changingUserClass       : changeUserClass,
+  deletingClass           : deleteClass,
+  settingMigrantClass     : setMigrantClass,
+  preparingRevolution     : startRevolution,
+  choosingPeopleToUnban   : unbanPeople,
+  choosingLaw             : showLaw,
+  addingLaw               : addLaw,
+  removingLaw             : removeLaw,
+  sendingOrders           : sendOrders,
+  watchingOrders          : showCountryOrders,
+  showClass               : showClass,
 };
 
 const handleText = ctx => {
@@ -51,7 +57,11 @@ const handleText = ctx => {
 
   const states = getStates(id);
   if (states) {
-      STATE_HANDLERS[Object.keys(states)[0]](ctx);
+    STATE_HANDLERS[Object.keys(states)[0]](ctx);
+    return;
+  }
+  if (ctx.message.text[0] === '/') {
+    ctx.reply(text(3), { reply_to_message_id: ctx.message.message_id });
     return;
   }
 

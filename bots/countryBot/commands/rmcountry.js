@@ -29,7 +29,6 @@ const rmcountry = ctx => {
     return;
   }
   const countries = deleteCountry(link);
-  console.log(countries);
   ctx.reply(`${ctx.message.chat.title} ${getText(3)}.`);
   ctx.reply(
     getText(4) + '\n\n' +
