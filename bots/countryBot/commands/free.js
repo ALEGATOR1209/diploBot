@@ -58,12 +58,19 @@ const free = ctx => {
     return;
   }
 
-  ctx.reply(text(6), reply);
+  if (ctx.message.chat.username !== country.chat) ctx.reply(text(6), reply);
   jail(country.chat, victim, false);
-  ctx.reply(
-    `@${victim}` + text(7),
-    { chat_id: `@${country.chat}` }
-  );
+  if (victim === tag) {
+    ctx.reply(
+      text(10) + victim + text(11),
+      { chat_id: `@${country.chat}` }
+    );
+  } else {
+    ctx.reply(
+      `@${victim}` + text(7),
+      { chat_id: `@${country.chat}` }
+    );
+  }
 };
 
 module.exports = free;

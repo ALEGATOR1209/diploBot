@@ -20,7 +20,7 @@ const whereami = ctx => {
   const reply = { reply_to_message_id: ctx.message.message_id };
   const link = ctx.message.from.username || ctx.message.from.id;
   const dead = getDead(link);
-  if (dead) {
+  if (dead && Object.keys(dead).length > 0) {
     const deathTime = getGame('deathTime');
     const turn = getGame('turn');
     ctx.reply(text(1) + (dead.dateOfDeath + deathTime - turn) + text(2), reply);
@@ -29,6 +29,7 @@ const whereami = ctx => {
   const country = findUser(link);
   if (!country) {
     ctx.reply(text(4), reply);
+    return;
   }
 
   const messageText = text(3) +

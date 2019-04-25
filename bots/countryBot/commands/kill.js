@@ -7,6 +7,7 @@ const {
   bury,
   getText,
   getDead,
+  getKillPhrase,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -14,7 +15,8 @@ const {
     'getRandomChoice',
     'bury',
     'getText',
-    'getDead'
+    'getDead',
+    'getKillPhrase',
   ]);
 const text = t => getText('kill')[t];
 
@@ -30,7 +32,7 @@ const kill = ctx => {
     return;
   }
   if (country.hasRevolution) {
-    ctx.reply(text(11));
+    ctx.reply(text(6));
     return;
   }
 
@@ -50,7 +52,7 @@ const kill = ctx => {
     return;
   }
   if (getDead(victim)) {
-    ctx.reply(text(10));
+    ctx.reply(text(5));
     return;
   }
   if (!country.citizens[victim]) {
@@ -59,14 +61,20 @@ const kill = ctx => {
   }
   const killed = parseInt(Math.random() * 100);
   const incognito = parseInt(Math.random() * 100);
+  const killerText = incognito > 40 ? text(7) : `@${tag}`;
+  const victimText = `@${victim}`;
+  const phrase = getRandomChoice(getKillPhrase(killed > 60))
+    .replace('{killer}', killerText)
+    .replace('{victim}', victimText) + '\n';
   ctx.reply(
-    `${text(5)} @${victim}!\n` +
-    `🎲${killed}  ` + (killed < 60 ? text(6) : text(7)) + '\n' +
-    `🎲${incognito}  ` +
-    (incognito < 40 ? text(8) : text(9) +
-    `${tag ? '@' + tag : ctx.message.from.firs_name}.`),
-    { chat_id: `@${country.chat}` }
-  ).catch(() => console.log(country.chat, 'not found.'));
+    phrase +
+    text(8) + killed + text(9) +
+    text(8) + incognito + text(10),
+    {
+      chat_id: `@${country.chat}`,
+      parse_mode: 'Markdown',
+    }
+  );
   if (killed > 60) bury(victim);
 };
 

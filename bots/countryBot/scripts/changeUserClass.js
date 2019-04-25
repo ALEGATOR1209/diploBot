@@ -65,7 +65,7 @@ const changeUserClass = ctx => {
   setState(id, 'changingUserClass', null);
   reply(text(3));
   ctx.reply(
-    `@${slave} ${text(4)} ${newClass}`,
+    `@${slave} ${getText('changeUserClass')(4)} ${newClass}`,
     { chat_id: `@${slaveCountry.chat}` }
   );
 };

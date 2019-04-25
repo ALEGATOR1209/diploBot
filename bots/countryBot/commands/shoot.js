@@ -6,7 +6,8 @@ const {
   getRandomChoice,
   bury,
   getText,
-  getDead
+  getDead,
+  getKillPhrase,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -15,6 +16,7 @@ const {
     'bury',
     'getText',
     'getDead',
+    'getKillPhrase',
   ]);
 const text = t => getText('shoot')[t];
 
@@ -57,10 +59,15 @@ const shoot = ctx => {
     return;
   }
   const killed = parseInt(Math.random() * 100);
+  const killerText = `@${tag}`;
+  const victimText = `@${victim}`;
+  const phrase = getRandomChoice(getKillPhrase(killed > 40))
+    .replace('{killer}', killerText)
+    .replace('{victim}', victimText) + '\n';
   ctx.reply(
-    `${text(5)} @${victim}!\n` +
-    `🎲${killed}  ` + (killed < 40 ? text(6) : text(7)),
-    reply
+    phrase +
+    text(5) + killed + text(6),
+    { chat_id: `@${country.chat}` }
   );
   if (killed > 40) bury(victim);
 };
