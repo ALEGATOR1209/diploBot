@@ -9,7 +9,7 @@ const {
     'checkDead',
     'getText',
   ]);
-const text = t => getText('orders')[t];
+const text = t => getText('dead')[t];
 
 
 const dead = ctx => {
