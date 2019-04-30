@@ -36,7 +36,7 @@ bot.start(ctx => ctx.reply('Hi!'));
 bot.help(ctx => ctx.reply('`No help.`'));
 
 const setCommands = commands => commands.forEach(command =>
-  bot.command(command, () => {})
+  bot.command(command, imports.countryBot.commands(command))
 );
 
 const commands = [ /* asterisk comments marks command for admins */
