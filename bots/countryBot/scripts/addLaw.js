@@ -66,6 +66,10 @@ const enteringLaw = ctx => {
     return;
   }
   const lawName = law.shift();
+  if (lawName.match(/\./gi)) {
+    ctx.reply(text(0) + text(13), reply);
+    return;
+  }
   const lawText = law.join('\n');
   setLaw(country.chat, lawName, {
     text: lawText,

@@ -60,7 +60,7 @@ const handleText = ctx => {
     STATE_HANDLERS[Object.keys(states)[0]](ctx);
     return;
   }
-  if (ctx.message.text[0] === '/') {
+  if (ctx.message.text && ctx.message.text[0] === '/') {
     ctx.reply(text(3), { reply_to_message_id: ctx.message.message_id });
     return;
   }

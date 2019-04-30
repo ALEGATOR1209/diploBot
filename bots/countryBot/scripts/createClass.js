@@ -69,6 +69,10 @@ const enteringName = ctx => {
     return;
   }
   name = name.trim();
+  if (name.match(/\./gi)) {
+    reply(text(0) + text(20));
+    return;
+  }
   if (country.classes[name] && Object.keys(country.classes[name]).length > 0) {
     reply(text(0) + text(19));
     setState(id, 'creatingClass', null);
