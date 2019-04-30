@@ -21,7 +21,7 @@ const checkDead = ctx => {
   let resurrectionList = text(1);
 
   for (const corpse in cemetery) {
-    if (turn - cemetery[corpse].dateOfDeath > deathTime) {
+    if (turn - cemetery[corpse].dateOfDeath >= deathTime) {
       resurrect(corpse);
       resurrectionList += `${text(2)} @${corpse}\n`;
     }

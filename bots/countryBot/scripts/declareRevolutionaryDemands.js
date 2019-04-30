@@ -39,7 +39,7 @@ const declareRevolutionaryDemands = (country, id, tag) => {
     text(6) + tag +
     text(7) +
     text(12) + rebelsPercent + text(13) +
-    text(12) + reactionersPercent + text(13);
+    text(14) + reactionersPercent + text(13);
 };
 
 module.exports = declareRevolutionaryDemands;

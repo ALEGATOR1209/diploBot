@@ -72,6 +72,7 @@ const commands = [ /* asterisk comments marks command for admins */
   'orders',        /* show country orders */
   'panic',         //reset state and remove keyboards
   'turn',          /* start new turn */
+  'dead',          /* check list of dead people */
 ];
 
 setCommands(commands);
