@@ -46,7 +46,7 @@ const revolt = ctx => {
 
   ctx.editMessageText(
     declareRevolutionaryDemands(country, id, tag),
-    Extra.markdown().markup(Markup.inlineKeyboard([
+    Extra.HTML().markup(Markup.inlineKeyboard([
       Markup.callbackButton(text(3), 'revolt'),
       Markup.callbackButton(text(4), 'reaction')
     ]))

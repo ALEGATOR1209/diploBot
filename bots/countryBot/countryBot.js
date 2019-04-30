@@ -2,8 +2,7 @@
 
 //Telegraf stuff
 const Telegraf = require('telegraf');
-const TOKEN = process.env.TOKEN || require('./token');
-const URL = process.env.HEROKU_URL;
+const TOKEN = require('./token');
 const imports = require('../imports');
 const bot = new Telegraf(TOKEN);
 
@@ -27,7 +26,6 @@ low(new FileSync('./databases/game.json'))
   .defaults({
     'turn': 0,
     'deathTime': 5,
-    'adminChat': -378840305,
     'gameChannel': '@ceppelinBE',
   })
   .write();

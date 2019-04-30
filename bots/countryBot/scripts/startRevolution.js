@@ -490,7 +490,8 @@ const confirmation = ctx => {
         reply_markup: Markup.inlineKeyboard([
           Markup.callbackButton(text(19), 'revolt'),
           Markup.callbackButton(text(20), 'reaction')
-        ])
+        ]),
+        parse_mode: 'HTML',
       })
     );
     return;

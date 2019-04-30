@@ -33,7 +33,7 @@ const rights = ctx => {
   const country = findUser(tag);
   if (getAdmins().includes(tag)) {
     ctx.reply(
-      `@${tag} ${text(1)}:\n\n${text(2)}`,
+      text(1).replace('{user}', `@${tag}`) + text(2),
       reply
     );
     return;
