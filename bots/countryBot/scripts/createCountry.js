@@ -17,13 +17,15 @@ const createCountry = (name, chat) => {
       citizens: {},
       classes: {
         default: {
-          rights: DBrights.get('rights').value()
+          rights: Object.keys(DBrights.get('rights').value())
         },
       },
       blacklist: {},
       migrantClass: 'default',
       laws: {},
       orders: {},
+      emigrantQueue: [],
+      immigrantQueue: [],
     }
   ).write();
   return countries.value();
