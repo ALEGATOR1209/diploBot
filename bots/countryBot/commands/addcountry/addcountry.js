@@ -5,7 +5,7 @@ const {
   getCountry,
   createCountry,
   getText,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'getCountry',

@@ -39,7 +39,7 @@ const setCommands = commands => commands.forEach(command =>
 
 const commands = [ /* asterisk comments marks command for admins */
   // 'whereami',      //shows info about current citizenship
-  // 'addcountry',    /* create new country in current chat */
+  'addcountry',    /* create new country in current chat */
   // 'rmcountry',     /* delete country in current chat */
   // 'rightslist',    //list of all in-game rights
   // 'rights',        //list of player's personal rights
