@@ -6,7 +6,7 @@ const {
   setRevolution,
   newClass,
   getGame,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../../imports').few('countryBot', 'scripts',
   [
     'getText',
     'getAllCountries',

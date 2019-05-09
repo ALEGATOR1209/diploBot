@@ -34,7 +34,11 @@ bot.start(ctx => ctx.reply('Hi!'));
 bot.help(ctx => ctx.reply('`No help.`'));
 
 const setCommands = commands => commands.forEach(command =>
-  bot.command(command, imports.countryBot.commands(command))
+  bot.command(command, ctx =>
+    imports
+      .countryBot
+      .commands(command)(Object.assign(ctx, { bot }))
+  )
 );
 
 const commands = [ /* asterisk comments marks command for admins */
@@ -69,7 +73,7 @@ const commands = [ /* asterisk comments marks command for admins */
   // 'setadminschat', /* sets this chat as admin chat */
   // 'orders',        /* show country orders */
   // 'panic',         //reset state and remove keyboards
-  // 'turn',          /* start new turn */
+  'turn',          /* start new turn */
   // 'dead',          /* check list of dead people */
 ];
 

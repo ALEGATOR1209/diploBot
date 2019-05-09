@@ -1,20 +1,20 @@
 'use strict';
 
+const checkDead = require('./scripts/checkDead');
+const checkRevolts = require('./scripts/checkRevolts');
+const checkMigrants = require('./scripts/checkMigrants');
+
 const {
   getAdmins,
   getText,
   getGame,
   setTurn,
-  checkDead,
-  checkRevolts,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'getText',
     'getGame',
     'setTurn',
-    'checkDead',
-    'checkRevolts',
   ]);
 const text = t => getText('turn')[t];
 
@@ -29,6 +29,7 @@ const turn = ctx => {
   setTurn(turn + 1);
   checkDead(ctx);
   checkRevolts(ctx);
+  checkMigrants(ctx);
   ctx.reply(text(2) + getGame('turn'));
 };
 

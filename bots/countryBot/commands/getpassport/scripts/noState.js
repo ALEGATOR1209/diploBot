@@ -60,6 +60,9 @@ const noState = ctx => {
   const countries = getAllCountries();
   for (const country in countries) {
     if (countries[country].blacklist[id]) continue;
+    if (countries[country].immigrantQueue.includes(id)) {
+      ctx.reply(text(0) + text(13))
+    }
     countrylist.push(countries[country].name);
   }
   if (countrylist.length < 1) {

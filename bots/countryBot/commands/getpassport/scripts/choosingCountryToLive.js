@@ -4,7 +4,7 @@ const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const noState = require('./noState');
 const {
-  addToMigrantQueue,
+  setMigrantQueue,
   getAdmins,
   findUser,
   getAllCountries,
@@ -13,7 +13,7 @@ const {
   setState,
 } = require('../../../../imports').few('countryBot', 'scripts',
   [
-    'addToMigrantQueue',
+    'setMigrantQueue',
     'getAdmins',
     'givePassport',
     'findUser',
@@ -39,7 +39,7 @@ const choosingCountryToLive = ctx => {
     return;
   }
 
-  const { id } = ctx.message.from;
+  const { id } = ctx.message.chat;
   if (getAdmins().includes(id)) {
     reply(text(0) + text(2));
     setState(id, 'getpassport', null);
@@ -78,8 +78,14 @@ const choosingCountryToLive = ctx => {
       return;
     }
 
+    if (country.immigrantQueue.includes(id)) {
+      reply(text(0) + text(12));
+      setState(id, 'getpassport', null);
+      return;
+    }
+
     reply(text(0) + text(11));
-    addToMigrantQueue(country.chat, id);
+    setMigrantQueue(country.chat, [...country.immigrantQueue, id]);
     setState(id, 'getpassport', null);
 
   } catch (e) {

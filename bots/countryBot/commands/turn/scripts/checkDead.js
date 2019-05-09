@@ -5,7 +5,7 @@ const {
   getGame,
   getDead,
   resurrect,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../../imports').few('countryBot', 'scripts',
   [
     'getText',
     'getGame',
