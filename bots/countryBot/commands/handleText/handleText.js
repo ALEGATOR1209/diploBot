@@ -5,12 +5,12 @@ const {
   getAdmins,
   getText,
   getStates,
- } = require('../../../imports').few('countryBot', 'scripts',
-   [
-     'getAdmins',
-     'getText',
-     'getStates',
-   ]);
+} = require('../../../imports').few('countryBot', 'scripts',
+  [
+    'getAdmins',
+    'getText',
+    'getStates',
+  ]);
 
 const {
   getpassport,

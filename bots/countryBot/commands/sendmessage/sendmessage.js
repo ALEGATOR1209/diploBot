@@ -3,7 +3,7 @@
 const {
   getAdmins,
   getText
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'getText',
@@ -11,8 +11,8 @@ const {
 const text = t => getText('sendmessage')[t];
 
 const sendmessage = ctx => {
-  const { username, id } = ctx.message.from;
-  if (!(getAdmins().includes(username) || getAdmins().includes(id))) {
+  const { id } = ctx.message.from;
+  if (!getAdmins().includes(id)) {
     ctx.reply(text(1));
     return;
   }

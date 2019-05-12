@@ -7,28 +7,6 @@ const imports = require('../imports');
 const bot = new Telegraf(TOKEN);
 
 //Initializing databases
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-
-low(new FileSync('./databases/graveyard.json'))
-  .defaults({ cemetery: {} })
-  .write();
-
-low(new FileSync('./databases/countries.json'))
-  .defaults({ countries: {} })
-  .write();
-
-low(new FileSync('./databases/states.json'))
-  .defaults({})
-  .write();
-
-low(new FileSync('./databases/game.json'))
-  .defaults({
-    'turn': 0,
-    'deathTime': 5,
-    'gameChannel': '@ceppelinBE',
-  })
-  .write();
 
 bot.start(ctx => ctx.reply('Hi!'));
 bot.help(ctx => ctx.reply('`No help.`'));
@@ -41,17 +19,19 @@ const setCommands = commands => commands.forEach(command =>
   )
 );
 
+imports.countryBot.scripts('initBases')();
+
 const commands = [ /* asterisk comments marks command for admins */
-  // 'whereami',      //shows info about current citizenship
+  'whereami',      //shows info about current citizenship
   'addcountry',    /* create new country in current chat */
-  // 'rmcountry',     /* delete country in current chat */
-  // 'rightslist',    //list of all in-game rights
-  // 'rights',        //list of player's personal rights
+  'rmcountry',     /* delete country in current chat */
+  'rightslist',    //list of all in-game rights
+  'rights',        //list of player's personal rights
   'getpassport',   //get citizenship of current chat country
-  // 'droppassport',  //became stateless
+  'droppassport',  //became stateless
   // 'kill',          //try to assassinate someone in hidden way
   // 'shoot',         //try to make public assassination attempt
-  // 'sendmessage',   /* send message from bot's name to some chat */
+  'sendmessage',   /* send message from bot's name to some chat */
   // 'addclass',      //create subclass of player's current class
   // 'classlist',     //show all classes of player's country
   // 'showclass',     //show info about player's class

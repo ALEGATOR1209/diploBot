@@ -5,7 +5,7 @@ const {
   getCountry,
   deleteCountry,
   getText,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'getCountry',
@@ -15,8 +15,8 @@ const {
 const text = t => getText('rmcountry')[t];
 
 const rmcountry = ctx => {
-  const username = ctx.message.from.username;
-  if (!getAdmins().includes(username)) {
+  const { id } = ctx.message.from;
+  if (!getAdmins().includes(id)) {
     ctx.reply(text(1));
     return;
   }
@@ -25,13 +25,13 @@ const rmcountry = ctx => {
 
   const country = getCountry(link);
   if (!country) {
-    ctx.reply(getText(2));
+    ctx.reply(text(2));
     return;
   }
   const countries = deleteCountry(link);
-  ctx.reply(`${ctx.message.chat.title} ${getText(3)}.`);
+  ctx.reply(`${ctx.message.chat.title} ${text(3)}.`);
   ctx.reply(
-    getText(4) + '\n\n' +
+    text(4) + '\n\n' +
     Object.keys(countries)
       .map(country => countries[country].name)
       .join('\n')
