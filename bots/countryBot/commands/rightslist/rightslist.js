@@ -1,15 +1,19 @@
 'use strict';
 
 const {
-  getAllRights
-} = require('../../imports').few('countryBot', 'scripts',
+  getAllRights,
+  getText
+} = require('../../../imports').few('countryBot', 'scripts',
   [
-    'getAllRights'
+    'getAllRights',
+    'getText'
   ]);
+const text = id => getText('rightslist')[id];
 
 const rightslist = ctx => ctx.reply(
-  'Все права:\n\n✅ ' + getAllRights
-    .join('\n✅ '),
+  text(1) + text(2) + Object.keys(getAllRights)
+    .map(right => getAllRights[right])
+    .join(text(2)),
   { reply_to_message_id: ctx.message.message_id }
 );
 

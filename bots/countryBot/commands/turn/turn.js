@@ -19,9 +19,9 @@ const {
 const text = t => getText('turn')[t];
 
 const turn = ctx => {
-  const { username } = ctx.message.from;
+  const { id } = ctx.message.from;
   const reply = { reply_to_message_id: ctx.message.message_id };
-  if (!getAdmins().includes(username)) {
+  if (!getAdmins().includes(id)) {
     ctx.reply(text(1), reply);
     return;
   }

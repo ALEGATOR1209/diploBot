@@ -15,8 +15,8 @@ const {
 const text = t => getText('addcountry')[t];
 
 const addcountry = ctx => {
-  const username = ctx.message.from.username;
-  if (!getAdmins().includes(username)) {
+  const { id } = ctx.message.from;
+  if (!getAdmins().includes(id)) {
     ctx.reply(text(1));
     return;
   }

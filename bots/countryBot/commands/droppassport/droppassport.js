@@ -3,35 +3,37 @@
 const {
   getAdmins,
   findUser,
-  retakePassport,
+  setEmigrantQueue,
   getText,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'findUser',
-    'retakePassport',
+    'setEmigrantQueue',
     'getText',
   ]);
 const text = t => getText('droppassport')[t];
 
 const droppassport = ctx => {
-  const { username, id } = ctx.message.from;
-  if (getAdmins().includes(username) || getAdmins().includes(id)) {
-    ctx.reply(text(1), { reply_to_message_id: ctx.message.message_id });
+  const reply = { reply_to_message_id: ctx.message.message_id };
+  const { id } = ctx.message.from;
+  if (getAdmins().includes(id)) {
+    ctx.reply(text(1), reply);
     return;
   }
 
-  const userCountry = findUser(username) || findUser(id);
-  if (!userCountry) {
-    ctx.reply(text(2), { reply_to_message_id: ctx.message.message_id });
+  const country = findUser(id);
+  if (!country) {
+    ctx.reply(text(2), reply);
     return;
   }
-  if (userCountry.citizens[username].inPrison) {
-    ctx.reply(text(4), { reply_to_message_id: ctx.message.message_id });
+  if (country.citizens[id].inPrison) {
+    ctx.reply(text(4), reply);
     return;
   }
-  if (username) retakePassport(userCountry, username);
-  else retakePassport(userCountry, id);
+
+  const queue = country.emigrantQueue;
+  setEmigrantQueue(country.chat, [...queue, id]);
   ctx.reply(text(3), { reply_to_message_id: ctx.message.message_id });
 };
 
