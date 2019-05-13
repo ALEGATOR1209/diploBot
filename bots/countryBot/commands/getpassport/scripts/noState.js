@@ -9,6 +9,8 @@ const {
   getText,
   getDead,
   setState,
+  getPlayers,
+  setPlayer,
 } = require('../../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
@@ -18,6 +20,8 @@ const {
     'getText',
     'getDead',
     'setState',
+    'getPlayers',
+    'setPlayer',
   ]);
 const text = id => getText('getpassport')[id];
 
@@ -40,6 +44,7 @@ const noState = ctx => {
     return;
   }
 
+  if (!getPlayers().includes(id)) setPlayer(id);
   if (getDead(id)) {
     ctx.reply(
       text(0) + text(3),

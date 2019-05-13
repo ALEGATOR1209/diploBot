@@ -29,8 +29,8 @@ const commands = [ /* asterisk comments marks command for admins */
   'rights',        //list of player's personal rights
   'getpassport',   //get citizenship of current chat country
   'droppassport',  //became stateless
-  // 'kill',          //try to assassinate someone in hidden way
-  // 'shoot',         //try to make public assassination attempt
+  'kill',          //try to assassinate someone in hidden way
+  'shoot',         //try to make public assassination attempt
   'sendmessage',   /* send message from bot's name to some chat */
   // 'addclass',      //create subclass of player's current class
   // 'classlist',     //show all classes of player's country
