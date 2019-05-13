@@ -16,11 +16,16 @@ const initDataBases = () => {
     .defaults({})
     .write();
 
+  low(new FileSync('./databases/players.json'))
+    .defaults({ players: [] })
+    .write();
+
   low(new FileSync('./databases/game.json'))
     .defaults({
       'turn': 0,
       'deathTime': 5,
       'gameChannel': '@ceppelinBE',
+      'shootTimeout': 43200000,
     })
     .write();
 };
