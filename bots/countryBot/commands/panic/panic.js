@@ -8,7 +8,7 @@ const {
   getText,
   findUser,
   removeClass,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getStates',
     'setState',
@@ -19,12 +19,12 @@ const {
 const text = t => getText('panic')[t];
 
 const panic = ctx => {
-  const { username, id } = ctx.message.from;
+  const { id } = ctx.message.from;
   const states = getStates(id);
   for (const state in states) {
     setState(id, state, null);
   }
-  const country = findUser(username);
+  const country = findUser(id);
 
   //Cleaning unfinished classes
   if (country) {

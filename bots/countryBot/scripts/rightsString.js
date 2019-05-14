@@ -7,10 +7,10 @@ const {
     'getAllRights',
   ]);
 
-const rightsString = rights => getAllRights.reduce(
+const rightsString = rights => Object.keys(getAllRights).reduce(
   (acc, freedom) => acc + (
     rights.includes(freedom) ? '✅ ' : '❌ '
-  ) + freedom + '\n', ''
+  ) + getAllRights[freedom] + '\n', ''
 );
 
 module.exports = rightsString;

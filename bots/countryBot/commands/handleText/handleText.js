@@ -14,14 +14,21 @@ const {
 
 const {
   getpassport,
+  addclass,
+  showclass,
+  changeclass,
 } = require('../../../imports').few('countryBot', 'commands', [
   'getpassport',
+  'addclass',
+  'showclass',
+  'changeclass',
 ]);
 const text = t => getText('handleText')[t];
 const STATE_HANDLERS = {
-  getpassport
-//   creatingClass           : createClass,
-//   changingUserClass       : changeUserClass,
+  getpassport,
+  addclass,
+  showclass,
+  changeclass,
 //   deletingClass           : deleteClass,
 //   settingMigrantClass     : setMigrantClass,
 //   preparingRevolution     : startRevolution,
@@ -31,7 +38,6 @@ const STATE_HANDLERS = {
 //   removingLaw             : removeLaw,
 //   sendingOrders           : sendOrders,
 //   watchingOrders          : showCountryOrders,
-//   showClass               : showClass,
 };
 
 const handleText = ctx => {

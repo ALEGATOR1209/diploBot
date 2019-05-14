@@ -1,21 +1,19 @@
 'use strict';
 const {
   getAdmins,
-  checkDead,
   getText,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
-    'checkDead',
     'getText',
   ]);
+const checkDead = require('../turn/scripts/checkDead');
 const text = t => getText('dead')[t];
 
-
 const dead = ctx => {
-  const { username } = ctx.message.from;
+  const { id } = ctx.message.from;
   const reply = { reply_to_message_id: ctx.message.message_id };
-  if (!getAdmins().includes(username)) {
+  if (!getAdmins().includes(id)) {
     ctx.reply(text(1), reply);
     return;
   }

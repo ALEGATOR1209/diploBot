@@ -4,7 +4,7 @@ const {
   getAllClasses,
   findUser,
   getText,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAllClasses',
     'findUser',
@@ -13,9 +13,8 @@ const {
 const text = t => getText('classlist')[t];
 
 const classlist = ctx => {
-  const { username, id } = ctx.message.from;
-  const tag = username || id;
-  const userCountry = findUser(tag);
+  const { id } = ctx.message.from;
+  const userCountry = findUser(id);
 
   if (!userCountry) {
     ctx.reply(text(1));
@@ -25,7 +24,8 @@ const classlist = ctx => {
   const classList = Object.keys(getAllClasses(userCountry.chat));
   ctx.reply(
     `${text(2)} ${userCountry.name}:\n\n` + text(3) +
-    classList.join('\n' + text(3))
+    classList.join('\n' + text(3)),
+    { reply_to_message_id: ctx.message.message_id }
   );
 };
 

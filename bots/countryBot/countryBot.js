@@ -32,12 +32,12 @@ const commands = [ /* asterisk comments marks command for admins */
   'kill',          //try to assassinate someone in hidden way
   'shoot',         //try to make public assassination attempt
   'sendmessage',   /* send message from bot's name to some chat */
-  // 'addclass',      //create subclass of player's current class
-  // 'classlist',     //show all classes of player's country
-  // 'showclass',     //show info about player's class
-  // 'changeclass',   //change one of player's class subclasses
-  // 'deport',        //deport user from the country
+  'addclass',      //create subclass of player's current class
+  'classlist',     //show all classes of player's country
+  'showclass',     //show info about player's class
+  'changeclass',   //change one of player's class subclasses
   // 'deleteclass',   //delete one of player's class subclasses
+  // 'deport',        //deport user from the country
   // 'migrantclass',  //set default class for new players
   // 'revolution',    //start a revolution
   // 'arrest',        //arrest player
@@ -52,9 +52,9 @@ const commands = [ /* asterisk comments marks command for admins */
   // 'showorders',    //show last orders
   // 'setadminschat', /* sets this chat as admin chat */
   // 'orders',        /* show country orders */
-  // 'panic',         //reset state and remove keyboards
+  'panic',         //reset state and remove keyboards
   'turn',          /* start new turn */
-  // 'dead',          /* check list of dead people */
+  'dead',          /* check list of dead people */
 ];
 
 setCommands(commands);

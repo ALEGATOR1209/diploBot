@@ -5,37 +5,37 @@ const Markup = require('telegraf/markup');
 const {
   getAllClasses,
   findUser,
-  getCountry,
   rightsString,
   getText,
   setState,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../../imports').few('countryBot', 'scripts',
   [
     'getAllClasses',
     'findUser',
-    'getCountry',
     'rightsString',
     'getText',
     'setState',
   ]);
 const text = t => getText('showclass')[t];
 
-const showClass = ctx => {
+const show = ctx => {
   const { text: messageText } = ctx.message;
-  const { id, username } = ctx.message.from;
+  const { id } = ctx.message.from;
   const reply = { reply_to_message_id: ctx.message.message_id };
-  const tag = username || id;
 
-  const userCountry = findUser(tag);
+  const userCountry = findUser(id);
   if (!userCountry) {
     ctx.reply(
       text(0) +
-      text(9),
+      text(1),
       Extra
         .load(reply)
-        .markup(Markup.removeKeyboard(true).selective(true))
+        .markup(Markup
+          .removeKeyboard(true)
+          .selective(true)
+        )
     );
-    setState(id, 'showClass', null);
+    setState(id, 'showclass', null);
     return;
   }
 
@@ -47,12 +47,12 @@ const showClass = ctx => {
   if (!className) {
     ctx.reply(
       text(0) +
-      text(10),
+      text(3),
       Extra
         .load(reply)
         .markup(Markup.removeKeyboard(true).selective(true))
     );
-    setState(id, 'showClass', null);
+    setState(id, 'showclass', null);
     return;
   }
 
@@ -60,24 +60,25 @@ const showClass = ctx => {
   if (!userClass || userClass.creator) {
     ctx.reply(
       text(0) +
-      text(3),
+      text(4),
       Extra
         .load(reply)
         .markup(Markup.removeKeyboard(true).selective(true))
     );
-    setState(id, 'showClass', null);
+    setState(id, 'showclass', null);
     return;
   }
   const number = Object.keys(userCountry.citizens)
     .filter(man => userCountry.citizens[man].class === className).length;
   ctx.reply(
-    text(4) + className + '\n' +
-    (userClass.parentClass ? `${text(5)}: ${userClass.parentClass}\n` : '') +
-    rightsString(userClass.rights) + text(6) + ': ' +
-    (userClass.number ? `${userClass.number}\n` :
-      `${text(7)}\n`) +
-    `${text(8)}: ${number}` +
-    (userClass.number && number >= userClass.number ? text(12) : ''),
+    text(5) + className + '\n' +
+    (userClass.parentClass ? `${text(6)}: ${userClass.parentClass}\n` : '') +
+    rightsString(userClass.rights) + text(7) + ': ' +
+    (userClass.number ?
+      `${userClass.number}\n` : `${text(8)}\n`
+    ) +
+    `${text(9)}: ${number}` +
+    (userClass.number && number >= userClass.number ? text(10) : ''),
     Extra
       .load({
         reply_to_message_id: ctx.message.message_id,
@@ -85,7 +86,7 @@ const showClass = ctx => {
       })
       .markup(Markup.removeKeyboard(true).selective(true))
   );
-  setState(id, 'showClass', null);
+  setState(id, 'showclass', null);
 };
 
-module.exports = showClass;
+module.exports = show;
