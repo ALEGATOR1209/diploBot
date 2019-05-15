@@ -8,6 +8,7 @@ const {
   getText,
   getAllClasses,
   getChildClasses,
+  getPlayers,
 } = require('../../../../imports').few('countryBot', 'scripts',
   [
     'setState',
@@ -15,6 +16,7 @@ const {
     'getText',
     'getAllClasses',
     'getChildClasses',
+    'getPlayers',
   ]);
 const text = t => getText('changeclass')[t];
 
@@ -75,11 +77,53 @@ const choosingTarget = ctx => {
     return;
   }
 
-  ctx.bot
+  const target = ctx.message.text;
+  if (!target) {
+    reply(text(0) + text(8));
+    setState(id, 'changeclass', null);
+    return;
+  }
+  const players = getPlayers();
+  let found = false;
+  const getTag = () => ctx.bot
     .telegram
-    .getChat('alegator1209')
-    .then(console.dir)
+    .getChat(players.pop())
+    .then(({ id: targetId, username }) => {
+      if (username === target) {
+        const targetCountry = findUser(targetId);
+        found = true;
+        if (targetCountry.chat !== country.chat) {
+          reply(text(0) + text(9));
+          setState(id, 'changeclass', null);
+          return;
+        }
+
+        const targetClass = country.citizens[targetId].class;
+        if (!childClasses.includes(targetClass) && targetId !== id) {
+          reply(text(0) + text(10));
+          setState(id, 'changeclass', null);
+          return;
+        }
+
+        reply(
+          text(0) + text(13),
+          Markup.keyboard([...childClasses, text(11)])
+            .oneTime()
+            .resize()
+            .selective(true)
+        );
+        setState(id, 'changeclass', targetId);
+        return;
+      }
+      if (players.length < 1 && !found) {
+        reply(text(0) + text(14));
+        setState(id, 'changeclass', null);
+        return;
+      }
+      getTag();
+    })
     .catch(console.error);
+  getTag();
 };
 
 module.exports = choosingTarget;
