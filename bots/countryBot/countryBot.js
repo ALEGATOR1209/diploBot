@@ -36,7 +36,7 @@ const commands = [ /* asterisk comments marks command for admins */
   'classlist',     //show all classes of player's country
   'showclass',     //show info about player's class
   'changeclass',   //change one of player's class subclasses
-  // 'deleteclass',   //delete one of player's class subclasses
+  'deleteclass',   //delete one of player's class subclasses
   // 'deport',        //deport user from the country
   // 'migrantclass',  //set default class for new players
   // 'revolution',    //start a revolution
@@ -58,7 +58,12 @@ const commands = [ /* asterisk comments marks command for admins */
 ];
 
 setCommands(commands);
-bot.on('message', imports.countryBot.commands('handleText'));
+bot.on(
+  'message',
+  ctx => imports
+    .countryBot
+    .commands('handleText')(Object.assign(ctx, { bot }))
+);
 
 const setActions = actions => actions.forEach(action =>
   bot.action(action, imports.countryBot.actions(action))
