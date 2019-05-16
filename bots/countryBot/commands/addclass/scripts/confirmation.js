@@ -24,11 +24,12 @@ const answer = (
   text,
   markup = Markup
     .removeKeyboard(true)
-    .selective(true)
+    .selective(true),
+  options = {}
 ) => ctx.reply(
   text,
   Extra
-    .load({
+    .load(options || {
       reply_to_message_id: ctx.message.message_id,
       parse_mode: 'HTML',
     })
@@ -74,6 +75,18 @@ const confirmation = ctx => {
   //Yes
   if (message.match(new RegExp(`^${text(17)}$`, 'gi'))) {
     reply(text(0) + text(20));
+    if (country.chat !== ctx.message.chat.username)
+      ctx.bot
+        .telegram
+        .getChat(id)
+        .catch(console.error)
+        .then(({ username }) => reply(
+          text(26)
+            .replace('{username}', `@${username}`)
+            .replace('{class}', userClassName),
+          null,
+          { chat_id: `@${country.chat}` }
+        ));
     setState(id, 'addclass', null);
     userClass.creator = undefined;
     newClass(country.chat, userClassName, userClass);

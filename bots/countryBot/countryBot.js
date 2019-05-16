@@ -37,8 +37,8 @@ const commands = [ /* asterisk comments marks command for admins */
   'showclass',     //show info about player's class
   'changeclass',   //change one of player's class subclasses
   'deleteclass',   //delete one of player's class subclasses
-  // 'deport',        //deport user from the country
-  // 'migrantclass',  //set default class for new players
+  'migrantclass',  //set default class for new players0
+  'deport',        //deport user from the country
   // 'revolution',    //start a revolution
   // 'arrest',        //arrest player
   // 'free',          //liberate player
