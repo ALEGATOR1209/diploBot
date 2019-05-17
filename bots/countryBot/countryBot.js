@@ -39,12 +39,12 @@ const commands = [ /* asterisk comments marks command for admins */
   'deleteclass',   //delete one of player's class subclasses
   'migrantclass',  //set default class for new players0
   'deport',        //deport user from the country
-  // 'revolution',    //start a revolution
-  // 'arrest',        //arrest player
-  // 'free',          //liberate player
+  'opendoors',     //remove users from blacklist
+  'arrest',        //arrest player
+  //'free',          //liberate player
   // 'execute',       //execute prisoner
   // 'blacklist',     //list of banned users
-  // 'opendoors',     //remove users from blacklist
+  // 'revolution',    //start a revolution
   // 'laws',          //list of laws
   // 'addlaw',        //add a law to lawlist
   // 'rmlaw',         //remove law from lawlist
