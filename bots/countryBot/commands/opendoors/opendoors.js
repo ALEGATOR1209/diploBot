@@ -1,23 +1,22 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
 const {
   findUser,
   getText,
-  setState,
-} = require('../../imports').few('countryBot', 'scripts',
+  getPlayers,
+  unban,
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'findUser',
     'getText',
-    'setState',
+    'getPlayers',
+    'unban',
   ]);
 const text = t => getText('opendoors')[t];
 
 const opendoors = ctx => {
-  const { username, id } = ctx.message.from;
-  const tag = username || id;
-  const country = findUser(tag);
+  const { id } = ctx.message.from;
+  const country = findUser(id);
   const reply = { reply_to_message_id: ctx.message.message_id };
   if (!country) {
     ctx.reply(
@@ -37,10 +36,10 @@ const opendoors = ctx => {
   }
   const userClass = country.classes[
     country
-      .citizens[tag]
+      .citizens[id]
       .class
   ];
-  if (!userClass.rights.includes('Право изгонять из страны')) {
+  if (!userClass.rights.includes('BORDER_MANAGEMENT')) {
     ctx.reply(
       text(0) +
       text(2),
@@ -50,7 +49,7 @@ const opendoors = ctx => {
   }
 
   const blacklist = country.blacklist;
-  if (!blacklist) {
+  if (Object.keys(blacklist).length < 1) {
     ctx.reply(
       text(0) +
       text(3),
@@ -59,21 +58,47 @@ const opendoors = ctx => {
     return;
   }
 
-  const list = Object.keys(blacklist);
-  list.push(text(5));
-  list.push(text(6));
-  ctx.reply(
-    text(0) +
-    text(4),
-    Extra
-      .load(reply)
-      .markup(Markup.keyboard(list)
-        .oneTime()
-        .resize()
-        .selective(true)
-      )
+  let targetTag = ctx
+    .message
+    .text
+    .match(/@.*/gi);
+  if (!targetTag) {
+    ctx.reply(text(0) + text(7));
+    return;
+  }
+  targetTag = targetTag[0].trim();
+  if (targetTag.match(/^@/)) targetTag = targetTag.slice(1);
+
+  const players = getPlayers();
+  let targetFound = false;
+  players.forEach(player => ctx.bot
+    .telegram
+    .getChat(player)
+    .then(user => {
+      if (user.username === targetTag) {
+        targetFound = true;
+        if (blacklist[user.id] === undefined) {
+          ctx.reply(text(0) + text(12), reply);
+          return;
+        }
+        ctx.reply(text(0) + text(8), reply);
+        if (country.chat !== ctx.message.chat.username)
+          ctx.reply(
+            text(0) + text(13)
+              .replace('{player}', `@${targetTag}`),
+            { chat_id: `@${country.chat}` }
+          );
+        unban(country.chat, user.id);
+      }
+    })
+    .finally(() => {
+      if (!targetFound) {
+        ctx.reply(text(0) + text(11), reply);
+        return;
+      } else players.length = 0;
+    })
+    .catch(e => console.error(e))
   );
-  setState(id, 'choosingPeopleToUnban', []);
 };
 
 module.exports = opendoors;
