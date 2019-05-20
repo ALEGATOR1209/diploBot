@@ -5,22 +5,21 @@ const Extra = require('telegraf/extra');
 const {
   findUser,
   getText,
-  declareRevolutionaryDemands,
+  revoltToString,
   setRevolution,
 } = require('../../imports').few('countryBot', 'scripts',
   [
     'findUser',
     'getText',
-    'declareRevolutionaryDemands',
+    'revoltToString',
     'setRevolution',
   ]);
 const text = t => getText('reaction')[t];
 
 const reaction = ctx => {
-  const { username, id } = ctx.update.callback_query.from;
+  const { id } = ctx.update.callback_query.from;
   const { username: chat } = ctx.update.callback_query.message.chat;
-  const tag = username || id;
-  const country = findUser(tag);
+  const country = findUser(id);
 
   if (!country || country.chat !== chat) {
     ctx.answerCbQuery(text(5));
@@ -36,20 +35,22 @@ const reaction = ctx => {
     return;
   }
   ctx.answerCbQuery(text(2));
-  if (currentRebellion.reactioners.includes(tag)) return;
-  if (currentRebellion.rebels.includes(tag)) {
+  if (currentRebellion.reactioners.includes(id)) return;
+  if (currentRebellion.rebels.includes(id)) {
     currentRebellion.rebels = currentRebellion.rebels
-      .filter(rebel => rebel !== tag);
+      .filter(rebel => rebel !== id);
   }
-  currentRebellion.reactioners.push(tag);
+  currentRebellion.reactioners.push(id);
   setRevolution(country.chat, currentRebellionId, currentRebellion, true);
 
   ctx.editMessageText(
-    declareRevolutionaryDemands(country, id, tag),
-    Extra.HTML().markup(Markup.inlineKeyboard([
-      Markup.callbackButton(text(3), 'revolt'),
-      Markup.callbackButton(text(4), 'reaction')
-    ]))
+    revoltToString(country, id),
+    Extra
+      .HTML()
+      .markup(Markup.inlineKeyboard([
+        Markup.callbackButton(text(3), 'revolt'),
+        Markup.callbackButton(text(4), 'reaction')
+      ]))
   );
 };
 

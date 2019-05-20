@@ -7,35 +7,19 @@ const imports = require('../imports');
 const bot = new Telegraf(TOKEN);
 
 //Initializing databases
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-
-low(new FileSync('./databases/graveyard.json'))
-  .defaults({ cemetery: {} })
-  .write();
-
-low(new FileSync('./databases/countries.json'))
-  .defaults({ countries: {} })
-  .write();
-
-low(new FileSync('./databases/states.json'))
-  .defaults({})
-  .write();
-
-low(new FileSync('./databases/game.json'))
-  .defaults({
-    'turn': 0,
-    'deathTime': 5,
-    'gameChannel': '@ceppelinBE',
-  })
-  .write();
 
 bot.start(ctx => ctx.reply('Hi!'));
 bot.help(ctx => ctx.reply('`No help.`'));
 
 const setCommands = commands => commands.forEach(command =>
-  bot.command(command, imports.countryBot.commands(command))
+  bot.command(command, ctx =>
+    imports
+      .countryBot
+      .commands(command)(Object.assign(ctx, { bot }))
+  )
 );
+
+imports.countryBot.scripts('initBases')();
 
 const commands = [ /* asterisk comments marks command for admins */
   'whereami',      //shows info about current citizenship
@@ -52,16 +36,17 @@ const commands = [ /* asterisk comments marks command for admins */
   'classlist',     //show all classes of player's country
   'showclass',     //show info about player's class
   'changeclass',   //change one of player's class subclasses
-  'deport',        //deport user from the country
   'deleteclass',   //delete one of player's class subclasses
-  'migrantclass',  //set default class for new players
-  'revolution',    //start a revolution
+  'migrantclass',  //set default class for new players0
+  'deport',        //deport user from the country
+  'opendoors',     //remove users from blacklist
   'arrest',        //arrest player
   'free',          //liberate player
   'execute',       //execute prisoner
   'blacklist',     //list of banned users
-  'opendoors',     //remove users from blacklist
+  'revolution',    //start a revolution
   'laws',          //list of laws
+  'showlaw',       //show law
   'addlaw',        //add a law to lawlist
   'rmlaw',         //remove law from lawlist
   'sendorders',    //send army orders
@@ -74,7 +59,12 @@ const commands = [ /* asterisk comments marks command for admins */
 ];
 
 setCommands(commands);
-bot.on('message', imports.countryBot.commands('handleText'));
+bot.on(
+  'message',
+  ctx => imports
+    .countryBot
+    .commands('handleText')(Object.assign(ctx, { bot }))
+);
 
 const setActions = actions => actions.forEach(action =>
   bot.action(action, imports.countryBot.actions(action))

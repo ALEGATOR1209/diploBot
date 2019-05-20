@@ -6,7 +6,7 @@ const actions = 'actions';
 const cb = 'countryBot';
 const exporter = {
   countryBot: {
-    commands: module => require(`./${cb}/${commands}/${module}`),
+    commands: module => require(`./${cb}/${commands}/${module}/${module}`),
     scripts: script => require(`./${cb}/${scripts}/${script}`),
     actions: action => require(`./${cb}/${actions}/${action}`),
   },
