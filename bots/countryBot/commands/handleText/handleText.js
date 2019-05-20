@@ -19,6 +19,7 @@ const {
   changeclass,
   deleteclass,
   migrantclass,
+  revolution,
 } = require('../../../imports').few('countryBot', 'commands', [
   'getpassport',
   'addclass',
@@ -26,6 +27,7 @@ const {
   'changeclass',
   'deleteclass',
   'migrantclass',
+  'revolution',
 ]);
 const text = t => getText('handleText')[t];
 const STATE_HANDLERS = {
@@ -35,8 +37,7 @@ const STATE_HANDLERS = {
   changeclass,
   deleteclass,
   migrantclass,
-//   preparingRevolution     : startRevolution,
-//   choosingPeopleToUnban   : unbanPeople,
+  revolution,
 //   choosingLaw             : showLaw,
 //   addingLaw               : addLaw,
 //   removingLaw             : removeLaw,

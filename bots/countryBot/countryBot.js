@@ -26,7 +26,7 @@ const commands = [ /* asterisk comments marks command for admins */
   'addcountry',    /* create new country in current chat */
   'rmcountry',     /* delete country in current chat */
   'rightslist',    //list of all in-game rights
-  'rights',        //list of player's personal rights
+  //  'rights',        //list of player's personal rights
   'getpassport',   //get citizenship of current chat country
   'droppassport',  //became stateless
   'kill',          //try to assassinate someone in hidden way
@@ -41,10 +41,10 @@ const commands = [ /* asterisk comments marks command for admins */
   'deport',        //deport user from the country
   'opendoors',     //remove users from blacklist
   'arrest',        //arrest player
-  //'free',          //liberate player
-  // 'execute',       //execute prisoner
-  // 'blacklist',     //list of banned users
-  // 'revolution',    //start a revolution
+  'free',          //liberate player
+  'execute',       //execute prisoner
+  'blacklist',     //list of banned users
+  'revolution',    //start a revolution
   // 'laws',          //list of laws
   // 'addlaw',        //add a law to lawlist
   // 'rmlaw',         //remove law from lawlist
@@ -69,8 +69,8 @@ const setActions = actions => actions.forEach(action =>
   bot.action(action, imports.countryBot.actions(action))
 );
 const actions = [
-  // 'revolt',      //support rebels
-  // 'reaction',    //support government
+  'revolt',      //support rebels
+  'reaction',    //support government
 ];
 
 setActions(actions);

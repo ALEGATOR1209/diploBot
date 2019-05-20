@@ -5,24 +5,21 @@ const {
   findUser,
   getText,
   bury,
-  getExecution,
-  getRandomChoice,
   getGame,
-} = require('../../imports').few('countryBot', 'scripts',
+  getPlayers,
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'findUser',
     'getText',
     'bury',
-    'getExecution',
-    'getRandomChoice',
     'getGame',
+    'getPlayers'
   ]);
 const text = t => getText('execute')[t];
 
 const arrest = ctx => {
-  const { username, id } = ctx.message.from;
-  const tag = username || id;
+  const { id } = ctx.message.from;
   const reply = { reply_to_message_id: ctx.message.message_id };
 
   if (getGame('turn') === 0) {
@@ -30,12 +27,12 @@ const arrest = ctx => {
     return;
   }
 
-  if (getAdmins().includes(tag)) {
+  if (getAdmins().includes(id)) {
     ctx.reply(text(0) + text(1), reply);
     return;
   }
 
-  const country = findUser(tag);
+  const country = findUser(id);
   if (!country) {
     ctx.reply(text(0) + text(2), reply);
     return;
@@ -45,9 +42,13 @@ const arrest = ctx => {
     return;
   }
 
-  const userClass = country.citizens[tag].class;
-  if (!country.classes[userClass].rights.includes('Право на казнь')) {
+  const userClass = country.citizens[id].class;
+  if (!country.classes[userClass].rights.includes('EXECUTION')) {
     ctx.reply(text(0) + text(3), reply);
+    return;
+  }
+  if (country.citizens[id].inPrison) {
+    ctx.reply(text(0) + text(10), reply);
     return;
   }
 
@@ -60,23 +61,43 @@ const arrest = ctx => {
   victim = victim[0]
     .trim()
     .slice(1);
-  const victimCountry = findUser(victim);
-  if (!victimCountry || victimCountry.chat !== country.chat) {
-    ctx.reply(text(0) + text(5) + country.name, reply);
-    return;
-  }
-  if (!country.citizens[victim].inPrison) {
-    ctx.reply(text(0) + text(6), reply);
-    return;
-  }
+  const players = getPlayers();
+  let targetFound = false;
+  players.forEach((pid, i) => ctx.bot
+    .telegram
+    .getChat(pid)
+    .then(({ id: targetId, username }) => {
+      if (username !== victim) return;
+      targetFound = true;
+      const victimCountry = findUser(targetId);
+      if (!victimCountry || victimCountry.chat !== country.chat) {
+        ctx.reply(text(0) + text(5) + country.name, reply);
+        return;
+      }
+      if (!country.citizens[targetId].inPrison) {
+        ctx.reply(text(0) + text(6), reply);
+        return;
+      }
 
-  ctx.reply(text(0) + text(7), reply);
-  bury(victim);
-  if (ctx.message.chat.username !== country.chat)
-    ctx.reply(
-      `@${victim}` + getRandomChoice(getExecution()),
-      { chat_id: `@${country.chat}` }
-    );
+      ctx.reply(text(0) + text(7), reply);
+      bury(targetId);
+      if (ctx.message.chat.username !== country.chat)
+        ctx.reply(
+          `@${victim}` + text('executions'),
+          { chat_id: `@${country.chat}` }
+        );
+    })
+    .catch(console.error)
+    .finally(() => {
+      if (targetFound) {
+        players.length = 0;
+        return;
+      }
+      if (i === players.length - 1 && !targetFound) {
+        ctx.reply(text(0) + text(9), reply);
+      }
+    })
+  );
 };
 
 module.exports = arrest;
