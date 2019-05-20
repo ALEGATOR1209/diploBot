@@ -1,31 +1,26 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
 const {
   findUser,
   getText,
   getCountry,
-  setState,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'findUser',
     'getText',
     'getCountry',
-    'setState',
   ]);
 const text = t => getText('laws')[t];
 
 const laws = ctx => {
-  const { username, id } = ctx.message.from;
-  const tag = username || id;
+  const { id } = ctx.message.from;
   const reply = {
     reply_to_message_id: ctx.message.message_id,
     parse_mode: 'HTML',
   };
   let country;
   if (ctx.message.chat.type === 'private') {
-    country = findUser(tag);
+    country = findUser(id);
     if (!country) {
       ctx.reply(text(1), reply);
       return;
@@ -44,25 +39,13 @@ const laws = ctx => {
     ctx.reply(text(6), reply);
     return;
   }
-  let answer = text(2) + `*${country.name.toUpperCase()}*\n\n`;
+  let answer = text(2) + `<b>${country.name.toUpperCase()}</b>\n\n`;
   for (const law of list) {
     answer +=
       `${text(3)} ${law} ${text(3)}\n` +
       `${text(4)}${lawlist[law].date}${text(5)}\n\n`;
   }
-
-  answer += `\n${text(7)}`;
-  ctx.reply(
-    answer,
-    Extra
-      .load(reply)
-      .markup(Markup.keyboard([...list, text(8)])
-        .oneTime()
-        .resize()
-        .selective(true)
-      )
-  );
-  setState(id, 'choosingLaw', country.chat);
+  ctx.reply(answer, reply);
 };
 
 module.exports = laws;

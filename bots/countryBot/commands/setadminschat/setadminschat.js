@@ -4,7 +4,7 @@ const {
   getAdmins,
   setAdminChat,
   getText,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'setAdminChat',
@@ -13,9 +13,9 @@ const {
 const text = t => getText('setadminschat')[t];
 
 const setadminschat = ctx => {
-  const { username } = ctx.message.from;
+  const { id } = ctx.message.from;
 
-  if (!getAdmins().includes(username)) {
+  if (!getAdmins().includes(id)) {
     ctx.reply(text(1));
     return;
   }

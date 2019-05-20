@@ -8,6 +8,6 @@ const DICT = {
   confirmation: require('./scripts/confirmation'),
 };
 
-const getpassport = (ctx, { state } = {}) => DICT[state || 'noState'](ctx);
+const revolution = (ctx, { state } = {}) => DICT[state || 'noState'](ctx);
 
-module.exports = getpassport;
+module.exports = revolution;

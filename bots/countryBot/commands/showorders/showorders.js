@@ -6,7 +6,7 @@ const {
   getText,
   getDead,
   getOrders,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'getAdmins',
     'findUser',
@@ -44,28 +44,27 @@ const ordersHandlers = {
 };
 
 const showorders = ctx => {
-  const { username, id } = ctx.message.from;
-  const tag = username || id;
+  const { id } = ctx.message.from;
 
-  if (getAdmins().includes(tag)) {
+  if (getAdmins().includes(id)) {
     ctx.reply(text(1));
     return;
   }
 
-  if (getDead(tag)) {
+  if (getDead(id)) {
     ctx.reply(text(2));
     return;
   }
 
-  const country = findUser(tag);
+  const country = findUser(id);
   if (!country) {
     ctx.reply(text(3));
     return;
   }
 
-  const userClassName = country.citizens[tag].class;
+  const userClassName = country.citizens[id].class;
   const userClass = country.classes[userClassName];
-  if (!userClass.rights.includes('Право на управление армией')) {
+  if (!userClass.rights.includes('COMMAND_ARMIES')) {
     ctx.reply(4);
     return;
   }

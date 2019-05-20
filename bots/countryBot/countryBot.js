@@ -26,7 +26,7 @@ const commands = [ /* asterisk comments marks command for admins */
   'addcountry',    /* create new country in current chat */
   'rmcountry',     /* delete country in current chat */
   'rightslist',    //list of all in-game rights
-  //  'rights',        //list of player's personal rights
+  'rights',        //list of player's personal rights
   'getpassport',   //get citizenship of current chat country
   'droppassport',  //became stateless
   'kill',          //try to assassinate someone in hidden way
@@ -45,13 +45,14 @@ const commands = [ /* asterisk comments marks command for admins */
   'execute',       //execute prisoner
   'blacklist',     //list of banned users
   'revolution',    //start a revolution
-  // 'laws',          //list of laws
-  // 'addlaw',        //add a law to lawlist
-  // 'rmlaw',         //remove law from lawlist
-  // 'sendorders',    //send army orders
-  // 'showorders',    //show last orders
-  // 'setadminschat', /* sets this chat as admin chat */
-  // 'orders',        /* show country orders */
+  'laws',          //list of laws
+  'showlaw',       //show law
+  'addlaw',        //add a law to lawlist
+  'rmlaw',         //remove law from lawlist
+  'sendorders',    //send army orders
+  'showorders',    //show last orders
+  'setadminschat', /* sets this chat as admin chat */
+  'orders',        /* show country orders */
   'panic',         //reset state and remove keyboards
   'turn',          /* start new turn */
   'dead',          /* check list of dead people */
