@@ -4,7 +4,7 @@ const {
   findUser,
   getText,
   getCountry,
-} = require('../../imports').few('countryBot', 'scripts',
+} = require('../../../imports').few('countryBot', 'scripts',
   [
     'findUser',
     'getText',
@@ -13,15 +13,14 @@ const {
 const text = t => getText('blacklist')[t];
 
 const blacklist = ctx => {
-  const { username, id } = ctx.message.from;
-  const tag = username || id;
+  const { id } = ctx.message.from;
   const reply = {
     reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'Markdown',
+    parse_mode: 'HTML',
   };
   let country;
   if (ctx.message.chat.type === 'private') {
-    country = findUser(tag);
+    country = findUser(id);
     if (!country) {
       ctx.reply(text(1), reply);
       return;
@@ -37,17 +36,24 @@ const blacklist = ctx => {
     return;
   }
 
-  const blacklist = country.blacklist;
-  if (Object.keys(blacklist).length < 1) {
+  const blacklist = Object.keys(country.blacklist);
+  if (blacklist.length < 1) {
     ctx.reply(text(6), reply);
     return;
   }
-  let answer = text(2) + `*${country.name}*`;
-  for (const person in blacklist) {
-    answer += `${text(5)}@${person} ` +
-      `- ${text(3) + blacklist[person].banTurn + text(4)}.`;
-  }
-  ctx.reply(answer, reply);
+  let answer = text(2) + `<b>${country.name}</b>\n`;
+
+  blacklist
+    .forEach((pid, i) => ctx.bot
+      .telegram
+      .getChat(pid)
+      .then(({ username }) => answer +=
+        `${text(5)}@${username} ` +
+        `- ${text(3) + country.blacklist[pid].banTurn + text(4)}.`
+      )
+      .catch(console.error)
+      .finally(() => i !== blacklist.length - 1 || ctx.reply(answer, reply))
+    );
 };
 
 module.exports = blacklist;
