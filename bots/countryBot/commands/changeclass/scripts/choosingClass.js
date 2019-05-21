@@ -1,17 +1,15 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  setState,
-  findUser,
-  getText,
-  getAllClasses,
-  getChildClasses,
-  getStates,
-  editUser,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const choosingClass = async charon => {
+  const {
+    setState,
+    findUser,
+    getText,
+    getAllClasses,
+    getChildClasses,
+    getStates,
+    editUser,
+  } = charon.get([
     'setState',
     'findUser',
     'getText',
@@ -20,36 +18,22 @@ const {
     'getStates',
     'editUser',
   ]);
-const text = t => getText('changeclass')[t];
 
-const answer = (ctx, text, markup) => ctx.reply(
-  text,
-  Extra
-    .load({
-      reply_to_message_id: ctx.message.message_id,
-    })
-    .markup(markup || Markup
-      .removeKeyboard(true)
-      .selective(true)
-    )
-);
-
-const choosingClass = ctx => {
-  const reply = answer.bind(null, ctx);
-  const { id } = ctx.message.from;
+  const text = t => getText('changeclass')[t];
+  const { id } = charon.message.from;
   const userCountry = findUser(id);
   const slave = getStates(id).changeclass;
   const slaveCountry = findUser(slave);
-  const newClass = ctx.message.text
+  const newClass = charon.message.text
     .trim();
 
   if (!userCountry) {
-    reply(text(0) + text(2));
+    charon.reply(text(0) + text(2));
     setState(id, 'changeclass', null);
     return;
   }
   if (userCountry.citizens[id].inPrison) {
-    reply(text(0) + text(4));
+    charon.reply(text(0) + text(4));
     setState(id, 'changeclass', null);
     return;
   }
@@ -58,7 +42,7 @@ const choosingClass = ctx => {
 
   const childClasses = getChildClasses(userClassName, classlist);
   if (childClasses.length < 1) {
-    reply(text(0) + text(5));
+    charon.reply(text(0) + text(5));
     setState(id, 'changeclass', null);
     return;
   }
@@ -69,29 +53,29 @@ const choosingClass = ctx => {
       man === id + ''
     );
   if (slavelist.length < 1) {
-    reply(text(0) + text(6));
+    charon.reply(text(0) + text(6));
     setState(id, 'changeclass', null);
     return;
   }
-  if (ctx.message.text === text(11)) {
+  if (charon.message.text === text(11)) {
     setState(id, 'changeclass', null);
-    reply(text(0) + text(12));
+    charon.reply(text(0) + text(12));
     return;
   }
 
   if (!slaveCountry || slaveCountry.chat !== userCountry.chat) {
     setState(id, 'changeclass', null);
-    reply(text(0) + text(9));
+    charon.reply(text(0) + text(9));
     return;
   }
   if (!getAllClasses(userCountry.chat)[newClass]) {
     setState(id, 'changeclass', null);
-    reply(text(0) + text(2));
+    charon.reply(text(0) + text(2));
     return;
   }
   if (userCountry.hasRevolution) {
     setState(id, 'changeclass', null);
-    reply(text(0) + text(3));
+    charon.reply(text(0) + text(3));
     return;
   }
   const classCapacity = userCountry.classes[newClass].number;
@@ -102,13 +86,13 @@ const choosingClass = ctx => {
     classCapacity > 0           &&
     classUsers.length >= classCapacity
   ) {
-    reply(text(0) + text(12));
+    charon.reply(text(0) + text(12));
     setState(id, 'changeclass', null);
     return;
   }
 
   if (userCountry.citizens[slave].class === newClass) {
-    reply(
+    charon.reply(
       text(0) +
       text(17)
         .replace('{slaveClass}', newClass)
@@ -119,20 +103,17 @@ const choosingClass = ctx => {
 
   editUser(userCountry.chat, slave, { class: newClass });
   setState(id, 'changeclass', null);
-  ctx.bot
-    .telegram
-    .getChat(slave)
-    .then(({ username }) => {
-      if (ctx.message.chat.username !== userCountry.chat)
-        reply(text(0) + text(18));
-      ctx.reply(
-        text(19)
-          .replace('{username}', `@${username}`)
-          .replace('{class}', newClass),
-        { chat_id: `@${slaveCountry.chat}` }
-      );
-    })
-    .catch(console.error);
+
+  const { username: tag } = await charon.getChat(slave);
+  if (charon.message.chat.username !== userCountry.chat)
+    charon.reply(text(0) + text(18));
+  charon.reply(
+    text(19)
+      .replace('{username}', `@${tag}`)
+      .replace('{class}', newClass),
+    null,
+    { chat_id: `@${slaveCountry.chat}` }
+  );
 };
 
 module.exports = choosingClass;

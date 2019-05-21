@@ -1,25 +1,22 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getStates,
-  setState,
-  getText,
-  findUser,
-  removeClass,
-} = require('../../../imports').few('countryBot', 'scripts',
-  [
+const panic = charon => {
+  const {
+    getStates,
+    setState,
+    getText,
+    findUser,
+    removeClass,
+  } = charon.get([
     'getStates',
     'setState',
     'getText',
     'findUser',
     'removeClass',
   ]);
-const text = t => getText('panic')[t];
+  const text = t => getText('panic')[t];
 
-const panic = ctx => {
-  const { id } = ctx.message.from;
+  const { id } = charon.message.from;
   const states = getStates(id);
   for (const state in states) {
     setState(id, state, null);
@@ -33,12 +30,7 @@ const panic = ctx => {
       .forEach(cl => removeClass(country.chat, cl));
   }
 
-  ctx.reply(
-    text(1),
-    Extra
-      .load({ reply_to_message_id: ctx.message.message_id })
-      .markup(Markup.removeKeyboard(true).selective(true))
-  );
+  charon.reply(text(1));
 };
 
 module.exports = panic;

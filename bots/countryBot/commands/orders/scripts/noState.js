@@ -1,37 +1,33 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getAdmins,
-  getAllCountries,
-  getAdminsChat,
-  setState,
-  getText,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const noState = charon => {
+  const {
+    getAdmins,
+    getAllCountries,
+    getAdminsChat,
+    setState,
+    getText,
+  } = charon.get([
     'getAdmins',
     'getAllCountries',
     'getAdminsChat',
     'setState',
     'getText',
   ]);
-const text = t => getText('orders')[t];
+  const text = t => getText('orders')[t];
 
-const noState = ctx => {
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
+  const { id } = charon.message.from;
   if (!getAdmins().includes(id)) {
-    ctx.reply(text(1), reply);
+    charon.reply(text(1));
     return;
   }
-  const rightChat = ctx.message.chat.id === getAdminsChat() ||
+  const rightChat = charon.message.chat.id === getAdminsChat() ||
     (
-      ctx.message.chat.type === 'private' &&
-      getAdmins().includes(ctx.message.chat.id)
+      charon.message.chat.type === 'private' &&
+      getAdmins().includes(charon.message.chat.id)
     );
   if (!rightChat) {
-    ctx.reply(text(2), reply);
+    charon.reply(text(2));
     return;
   }
 
@@ -39,19 +35,13 @@ const noState = ctx => {
   const list = Object.keys(countries)
     .map(country => countries[country].name);
   if (list.length < 1) {
-    ctx.reply(text(3), reply);
+    charon.reply(text(3));
     return;
   }
 
-  ctx.reply(
+  charon.reply(
     text(4),
-    Extra
-      .load(reply)
-      .markup(Markup.keyboard(list)
-        .oneTime()
-        .resize()
-        .selective(true)
-      )
+    { buttons: list }
   );
   setState(id, 'orders', 'choosingCountry');
 };

@@ -1,17 +1,15 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  findUser,
-  getText,
-  getRevolution,
-  setState,
-  setRevolution,
-  getAllRights: rightlist,
-  rightsString,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const choosingRights = charon => {
+  const {
+    findUser,
+    getText,
+    getRevolution,
+    setState,
+    setRevolution,
+    getAllRights: rightlist,
+    rightsString,
+  } = charon.get([
     'findUser',
     'getText',
     'getRevolution',
@@ -20,32 +18,13 @@ const {
     'getAllRights',
     'rightsString',
   ]);
-const text = t => getText('revolution')[t];
-const answer = (
-  ctx,
-  text,
-  markup = Markup
-    .removeKeyboard(true)
-    .selective(true),
-  options = null
-) => ctx
-  .reply(
-    text,
-    Extra
-      .load(options || {
-        reply_to_message_id: ctx.message.message_id,
-        parse_mode: 'HTML',
-      })
-      .markup(markup)
-  );
+  const text = t => getText('revolution')[t];
 
-const choosingRights = ctx => {
-  const reply = answer.bind(null, ctx);
-  const { id } = ctx.message.from;
+  const { id } = charon.message.from;
 
   const country = findUser(id);
   if (!country) {
-    reply(text(0) + text(2));
+    charon.reply(text(0) + text(2));
     setState(id, 'revolution', null);
     setRevolution(country.chat, id);
     return;
@@ -53,33 +32,31 @@ const choosingRights = ctx => {
 
   const inPrison = country.citizens[id].inPrison;
   if (inPrison) {
-    reply(text(0) + text(3));
+    charon.reply(text(0) + text(3));
     setState(id, 'revolution', null);
     setRevolution(country.chat, id);
     return;
   }
   if (country.hasRevolution) {
-    reply(text(0) + text(4));
+    charon.reply(text(0) + text(4));
     setRevolution(country.chat, id);
     setState(id, 'revolution', null);
     return;
   }
 
-  const right = ctx.message.text;
+  const right = charon.message.text;
   //Cancel
   if (right.match(new RegExp(`^${text(5)}$`))) {
-    reply(text(0) + text(7));
+    charon.reply(text(0) + text(7));
     setState(id, 'revolution', null);
     setRevolution(country.chat, id);
     return;
   }
   //Done
   if (right.match(new RegExp(`^${text(12)}$`))) {
-    reply(text(0) + text(14), Markup
-      .keyboard([text(15), text(16)])
-      .oneTime()
-      .resize()
-      .selective(true)
+    charon.reply(
+      text(0) + text(14),
+      { buttons: [text(15), text(16)] }
     );
     setState(id, 'revolution', 'confirmation');
     return;
@@ -92,7 +69,7 @@ const choosingRights = ctx => {
 
   const revolution = getRevolution(country.chat, id);
   if (!revolution) {
-    reply(text(0) + text(17));
+    charon.reply(text(0) + text(17));
     setState(id, 'revolution', null);
     return;
   }
@@ -102,48 +79,40 @@ const choosingRights = ctx => {
     el => !revolution.demands.includes(el)
   ).map(el => rightlist[el]);
   if (!rightCode) {
-    reply(text(0) + text(19) + text(21), Markup
-      .keyboard([text(12), text(5), ...otherRights])
-      .oneTime()
-      .resize()
-      .selective(true)
+    charon.reply(
+      text(0) + text(19) + text(21),
+      { buttons: [text(12), text(5), ...otherRights] }
     );
     return;
   }
   if (country.classes[userClass].rights.includes(right)) {
-    reply(text(0) + text(18), Markup
-      .keyboard([text(12), text(5), ...otherRights])
-      .oneTime()
-      .resize()
-      .selective(true)
+    charon.reply(
+      text(0) + text(18),
+      { buttons: [text(12), text(5), ...otherRights] }
     );
     return;
   }
   if (!parentRights.includes(rightCode)) {
-    reply(text(0) + text(20), Markup
-      .keyboard([text(12), text(5), ...otherRights])
-      .oneTime()
-      .resize()
-      .selective(true)
+    charon.reply(
+      text(0) + text(20),
+      { buttons: [text(12), text(5), ...otherRights] }
     );
     return;
   }
 
   revolution.demands.push(rightCode);
   setRevolution(country.chat, id, revolution);
-  reply(
+  charon.reply(
     text(0) + text(22) + text(21) +
     rightsString([...country.classes[userClass].rights, ...revolution.demands]),
-    Markup
-      .keyboard([
+    {
+      buttons: [
         text(12),
         text(5),
         ...otherRights
           .filter(freedom => freedom !== right)
-      ])
-      .oneTime()
-      .resize()
-      .selective(true)
+      ]
+    }
   );
 };
 

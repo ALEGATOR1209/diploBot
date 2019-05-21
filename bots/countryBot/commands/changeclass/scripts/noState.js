@@ -1,17 +1,15 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getAdmins,
-  getAllClasses,
-  findUser,
-  setState,
-  getChildClasses,
-  getText,
-  getGame,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const changeclass = async charon => {
+  const {
+    getAdmins,
+    getAllClasses,
+    findUser,
+    setState,
+    getChildClasses,
+    getText,
+    getGame,
+  } = charon.get([
     'getAdmins',
     'getAllClasses',
     'findUser',
@@ -20,35 +18,29 @@ const {
     'getText',
     'getGame',
   ]);
-const text = t => getText('changeclass')[t];
-
-const changeclass = ctx => {
-  const { id } = ctx.message.from;
-  const reply = {
-    reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'HTML',
-  };
+  const text = t => getText('changeclass')[t];
+  const { id } = charon.message.from;
 
   if (getGame('turn') === 0) {
-    ctx.reply(getText('0turnAlert'));
+    charon.reply(getText('0turnAlert'));
     return;
   }
 
   if (getAdmins().includes(id)) {
-    ctx.repl(text(0) + text(1), reply);
+    charon.reply(text(0) + text(1));
     return;
   }
   const country = findUser(id);
   if (!country) {
-    ctx.reply(text(0) + text(2), reply);
+    charon.reply(text(0) + text(2));
     return;
   }
   if (country.hasRevolution) {
-    ctx.reply(text(0) + text(3), reply);
+    charon.reply(text(0) + text(3));
     return;
   }
   if (country.citizens[id].inPrison) {
-    ctx.reply(text(0) + text(4), reply);
+    charon.reply(text(0) + text(4));
     return;
   }
   const classlist = getAllClasses(country.chat);
@@ -56,7 +48,7 @@ const changeclass = ctx => {
 
   const childClasses = getChildClasses(userClassName, classlist);
   if (childClasses.length < 1) {
-    ctx.reply(text(0) + text(5), reply);
+    charon.reply(text(0) + text(5));
     return;
   }
 
@@ -67,33 +59,20 @@ const changeclass = ctx => {
     );
 
   if (slavelist.length < 1) {
-    ctx.reply(text(0) + text(6), reply);
+    charon.reply(text(0) + text(6));
     return;
   }
 
   const slaveTags = [];
-  const getUsername = () => ctx.bot
-    .telegram
-    .getChat(slavelist.pop())
-    .then(({ username }) => {
-      slaveTags.push(username);
-      if (slavelist.length >= slaveTags.length) {
-        return getUsername();
-      }
-      ctx.reply(
-        text(0) + text(7),
-        Extra
-          .load(reply)
-          .markup(Markup.keyboard([...slaveTags, text(11)])
-            .oneTime()
-            .resize()
-            .selective(true)
-          )
-      );
-      setState(id, 'changeclass', 'choosingTarget');
-    })
-    .catch(console.error);
-  getUsername();
+  for (const slave of slavelist) {
+    const { username } = await charon.getChat(slave);
+    slaveTags.push(`@${username}`);
+  }
+  charon.reply(
+    text(0) + text(7),
+    { buttons: [...slaveTags, text(11)] }
+  );
+  setState(id, 'changeclass', 'choosingTarget');
 };
 
 module.exports = changeclass;

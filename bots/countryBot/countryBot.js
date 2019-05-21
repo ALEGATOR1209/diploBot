@@ -1,25 +1,7 @@
 'use strict';
 
-//Telegraf stuff
-const Telegraf = require('telegraf');
 const TOKEN = require('./token');
-const imports = require('../imports');
-const bot = new Telegraf(TOKEN);
-
-//Initializing databases
-
-bot.start(ctx => ctx.reply('Hi!'));
-bot.help(ctx => ctx.reply('`No help.`'));
-
-const setCommands = commands => commands.forEach(command =>
-  bot.command(command, ctx =>
-    imports
-      .countryBot
-      .commands(command)(Object.assign(ctx, { bot }))
-  )
-);
-
-imports.countryBot.scripts('initBases')();
+const Charon = require('../Charon');
 
 const commands = [ /* asterisk comments marks command for admins */
   'whereami',      //shows info about current citizenship
@@ -58,23 +40,15 @@ const commands = [ /* asterisk comments marks command for admins */
   'dead',          /* check list of dead people */
 ];
 
-setCommands(commands);
-bot.on(
-  'message',
-  ctx => imports
-    .countryBot
-    .commands('handleText')(Object.assign(ctx, { bot }))
-);
-
-const setActions = actions => actions.forEach(action =>
-  bot.action(action, imports.countryBot.actions(action))
-);
 const actions = [
   'revolt',      //support rebels
   'reaction',    //support government
 ];
 
-setActions(actions);
 
-bot.catch(e => console.log('\x1b[0;31mERROR:\x1b[0m', e, '\n'));
-bot.launch();
+Charon.fromToken(TOKEN)
+  .commands(commands)
+  .actions(actions)
+  .initBases()
+  .on('message', 'handleText')
+  .launch();

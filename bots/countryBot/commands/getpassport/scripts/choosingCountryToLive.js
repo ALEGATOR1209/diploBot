@@ -1,18 +1,16 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const noState = require('./noState');
-const {
-  setMigrantQueue,
-  getAdmins,
-  findUser,
-  getAllCountries,
-  getText,
-  getDead,
-  setState,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const choosingCountryToLive = charon => {
+  const {
+    setMigrantQueue,
+    getAdmins,
+    findUser,
+    getAllCountries,
+    getText,
+    getDead,
+    setState,
+    noState,
+  } = charon.get([
     'setMigrantQueue',
     'getAdmins',
     'givePassport',
@@ -21,48 +19,37 @@ const {
     'getText',
     'getDead',
     'setState',
+    'noState',
   ]);
-const text = id => getText('getpassport')[id];
-
-const choosingCountryToLive = ctx => {
-  const DEFAULT_MARKUP = Markup
-    .removeKeyboard(true)
-    .selective(true);
-  const reply = (text, markup = DEFAULT_MARKUP) => ctx.reply(
-    text,
-    Extra
-      .HTML()
-      .load({ reply_to_message_id: ctx.message.message_id })
-      .markup(markup)
-  );
-  if (ctx.message.chat.type !== 'private') {
+  const text = id => getText('getpassport')[id];
+  if (charon.message.chat.type !== 'private') {
     return;
   }
 
-  const { id } = ctx.message.chat;
+  const { id } = charon.message.chat;
   if (getAdmins().includes(id)) {
-    reply(text(0) + text(2));
+    charon.reply(text(0) + text(2));
     setState(id, 'getpassport', null);
     return;
   }
 
   if (getDead(id)) {
-    reply(text(0) + text(3));
+    charon.reply(text(0) + text(3));
     setState(id, 'getpassport', null);
     return;
   }
   const motherland = findUser(id);
   if (motherland) {
-    reply(text(0) + text(3).replace('{country}', motherland.name));
+    charon.reply(text(0) + text(3).replace('{country}', motherland.name));
     setState(id, 'getpassport', null);
     return;
   }
 
   try {
-    const countryName = ctx.message.text
+    const countryName = charon.message.text
       .trim();
     if (countryName === text(8)) {
-      reply(text(0) + text(9));
+      charon.reply(text(0) + text(9));
       setState(id, 'getpassport', null);
       return;
     }
@@ -73,25 +60,25 @@ const choosingCountryToLive = ctx => {
         country = countrylist[realm];
     }
     if (country.blacklist[id]) {
-      reply(text(0) + text(10));
+      charon.reply(text(0) + text(10));
       setState(id, 'getpassport', null);
       return;
     }
 
     if (country.immigrantQueue.includes(id)) {
-      reply(text(0) + text(12));
+      charon.reply(text(0) + text(12));
       setState(id, 'getpassport', null);
       return;
     }
 
-    reply(text(0) + text(11));
+    charon.reply(text(0) + text(11));
     setMigrantQueue(country.chat, [...country.immigrantQueue, id]);
     setState(id, 'getpassport', null);
 
   } catch (e) {
-    reply(text(0) + text(7));
+    charon.reply(text(0) + text(7))
+      .then(() => noState(charon));
     setState(id, 'getpassport', null);
-    setTimeout(() => noState(ctx), 0);
   }
 };
 

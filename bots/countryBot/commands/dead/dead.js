@@ -1,24 +1,23 @@
 'use strict';
-const {
-  getAdmins,
-  getText,
-} = require('../../../imports').few('countryBot', 'scripts',
-  [
+
+const dead = charon => {
+  const {
+    getAdmins,
+    getText,
+  } = charon.get([
     'getAdmins',
     'getText',
   ]);
-const checkDead = require('../turn/scripts/checkDead');
-const text = t => getText('dead')[t];
+  const checkDead = require('../turn/scripts/checkDead');
+  const text = t => getText('dead')[t];
 
-const dead = ctx => {
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
+  const { id } = charon.message.from;
   if (!getAdmins().includes(id)) {
-    ctx.reply(text(1), reply);
+    charon.reply(text(1));
     return;
   }
-  ctx.reply(text(2), reply);
-  checkDead(ctx);
+  charon.reply(text(2));
+  checkDead(charon);
 };
 
 module.exports = dead;

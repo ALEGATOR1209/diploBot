@@ -1,28 +1,25 @@
 'use strict';
 
-const Markup = require('telegraf/markup');
-const Extra = require('telegraf/extra');
-const {
-  findUser,
-  getText,
-  revoltToString,
-  setRevolution,
-} = require('../../imports').few('countryBot', 'scripts',
-  [
+const reaction = async charon => {
+  const {
+    findUser,
+    getText,
+    revoltToString,
+    setRevolution,
+  } = charon.get([
     'findUser',
     'getText',
     'revoltToString',
     'setRevolution',
   ]);
-const text = t => getText('reaction')[t];
+  const text = t => getText('reaction')[t];
 
-const reaction = ctx => {
-  const { id } = ctx.update.callback_query.from;
-  const { username: chat } = ctx.update.callback_query.message.chat;
+  const { id } = charon.update.callback_query.from;
+  const { username: chat } = charon.update.callback_query.message.chat;
   const country = findUser(id);
 
   if (!country || country.chat !== chat) {
-    ctx.answerCbQuery(text(5));
+    charon.answerCbQuery(text(5));
     return;
   }
 
@@ -31,10 +28,10 @@ const reaction = ctx => {
     .find(rev => country.revolution[rev].active);
   const currentRebellion = country.revolution[currentRebellionId];
   if (!currentRebellion) {
-    ctx.answerCbQuery(text(1));
+    charon.answerCbQuery(text(1));
     return;
   }
-  ctx.answerCbQuery(text(2));
+  charon.answerCbQuery(text(2));
   if (currentRebellion.reactioners.includes(id)) return;
   if (currentRebellion.rebels.includes(id)) {
     currentRebellion.rebels = currentRebellion.rebels
@@ -43,14 +40,16 @@ const reaction = ctx => {
   currentRebellion.reactioners.push(id);
   setRevolution(country.chat, currentRebellionId, currentRebellion, true);
 
-  ctx.editMessageText(
-    revoltToString(country, id),
-    Extra
-      .HTML()
-      .markup(Markup.inlineKeyboard([
-        Markup.callbackButton(text(3), 'revolt'),
-        Markup.callbackButton(text(4), 'reaction')
-      ]))
+  const { username: tag } = await charon.getChat(currentRebellionId);
+  charon.editMessageText(
+    revoltToString(country, id).replace('{leader}', `@${tag}`),
+    {
+      buttons: [
+        { text: text(3), action: 'revolt' },
+        { text: text(4), action: 'reaction' }
+      ],
+      type: 'inlineKeyboard',
+    }
   );
 };
 

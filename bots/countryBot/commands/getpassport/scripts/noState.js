@@ -1,18 +1,14 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getAdmins,
-  findUser,
-  getAllCountries,
-  getText,
-  getDead,
-  setState,
-  getPlayers,
-  setPlayer,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const noState = charon => {
+  const {
+    getAdmins,
+    findUser,
+    getAllCountries,
+    getText,
+    getDead,
+    setState,
+  } = charon.get([
     'getAdmins',
     'givePassport',
     'findUser',
@@ -20,44 +16,27 @@ const {
     'getText',
     'getDead',
     'setState',
-    'getPlayers',
-    'setPlayer',
   ]);
-const text = id => getText('getpassport')[id];
+  const text = id => getText('getpassport')[id];
 
-const noState = ctx => {
-  const reply = { reply_to_message_id: ctx.message.message_id };
-  if (ctx.message.chat.type !== 'private') {
-    ctx.reply(
-      text(0) + text(1),
-      reply
-    );
+  if (charon.message.chat.type !== 'private') {
+    charon.reply(text(0) + text(1));
     return;
   }
 
-  const { id } = ctx.message.from;
+  const { id } = charon.message.from;
   if (getAdmins().includes(id)) {
-    ctx.reply(
-      text(0) + text(3),
-      reply
-    );
+    charon.reply(text(0) + text(3));
     return;
   }
 
-  if (!getPlayers().includes(id)) setPlayer(id);
   if (getDead(id)) {
-    ctx.reply(
-      text(0) + text(3),
-      reply
-    );
+    charon.reply(text(0) + text(3));
     return;
   }
   const country = findUser(id);
   if (country) {
-    ctx.reply(
-      text(0) + text(4).replace('{country}', country.name),
-      reply
-    );
+    charon.reply(text(0) + text(4).replace('{country}', country.name));
     return;
   }
 
@@ -66,24 +45,17 @@ const noState = ctx => {
   for (const country in countries) {
     if (countries[country].blacklist[id]) continue;
     if (countries[country].immigrantQueue.includes(id)) {
-      ctx.reply(text(0) + text(13))
+      charon.reply(text(0) + text(13));
     }
     countrylist.push(countries[country].name);
   }
   if (countrylist.length < 1) {
-    ctx.reply(text(0) + text(5));
+    charon.reply(text(0) + text(5));
     return;
   }
-  ctx.reply(
+  charon.reply(
     text(0) + text(6),
-    Extra
-      .load(reply)
-      .markup(
-        Markup.keyboard([...countrylist, text(8)])
-          .oneTime()
-          .resize()
-          .selective(true)
-      )
+    { buttons: [...countrylist, text(8)] }
   );
   setState(id, 'getpassport', 'choosingCountryToLive');
 };
