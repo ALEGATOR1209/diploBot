@@ -1,105 +1,85 @@
 'use strict';
 
-const {
-  getAdmins,
-  findUser,
-  getGame,
-  getText,
-  getPlayers,
-  jail,
-} = require('../../../imports').few('countryBot', 'scripts',
-  [
+const arrest = charon => {
+  const {
+    getAdmins,
+    findUser,
+    getGame,
+    getText,
+    jail,
+  } = charon.get([
     'getAdmins',
     'findUser',
     'getGame',
     'getText',
-    'getPlayers',
     'jail',
   ]);
-const text = t => getText('arrest')[t];
-
-const arrest = ctx => {
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
+  const text = t => getText('arrest')[t];
+  const { id } = charon.message.from;
 
   if (getGame('turn') === 0) {
-    ctx.reply(getText('0turnAlert'));
+    charon.reply(getText('0turnAlert'));
     return;
   }
 
   if (getAdmins().includes(id)) {
-    ctx.reply(text(0) + text(1), reply);
+    charon.reply(text(0) + text(1));
     return;
   }
 
   const country = findUser(id);
   if (!country) {
-    ctx.reply(text(0) + text(2), reply);
+    charon.reply(text(0) + text(2));
     return;
   }
   if (country.hasRevolution) {
-    ctx.reply(text(0) + text(10), reply);
+    charon.reply(text(0) + text(10));
     return;
   }
   const userClass = country.citizens[id].class;
   if (!country.classes[userClass].rights.includes('ARREST_AND_RELEASE')) {
-    ctx.reply(text(0) + text(3), reply);
+    charon.reply(text(0) + text(3));
     return;
   }
   if (country.citizens[id].inPrison) {
-    ctx.reply(text(0) + text(9), reply);
+    charon.reply(text(0) + text(9));
     return;
   }
 
-  let victim = ctx.message.text
-    .match(/ @.*/gi);
-  if (!victim) {
-    ctx.reply(text(0) + text(4), reply);
+  const { mentions } = charon;
+  if (!mentions) {
+    charon.reply(text(0) + text(4));
     return;
   }
-  victim = victim[0]
-    .trim()
-    .slice(1);
-  const players = getPlayers();
-  const getNext = () => ctx.bot
-    .telegram
-    .getChat(players.pop())
-    .then(({ id: victimId, username }) => {
-      if (username !== victim) {
-        if (players.length > 0) return getNext();
-        ctx.reply(text(0) + text(5) + country.name, reply);
-        return;
-      }
+  for (const target of charon.mentions) {
+    const targetCountry = findUser(target.id);
+    if (!targetCountry || targetCountry.chat !== country.chat) {
+      charon.reply(text(0) + text(5) + country.name);
+      continue;
+    }
+    if (country.citizens[target.id].inPrison) {
+      charon.reply(text(8));
+      continue;
+    }
 
-      const victimCountry = findUser(victimId);
-      if (!victimCountry || victimCountry.chat !== country.chat) {
-        ctx.reply(text(0) + text(5) + country.name, reply);
-        return;
-      }
-      if (country.citizens[id].inPrison) {
-        ctx.reply(text(8), reply);
-        return;
-      }
-
-      if (ctx.message.chat.username !== country.chat) {
-        ctx.reply(text(0) + text(6).replace('{username}', victim), reply);
-      }
-      jail(country.chat, victimId, true);
-      if (victimId === id) {
-        ctx.reply(
-          text(12) + `@${victim} ` + text(11),
-          { chat_id: `@${country.chat}` }
-        );
-      } else {
-        ctx.reply(
-          `@${victim}` + text(7),
-          { chat_id: `@${country.chat}` }
-        );
-      }
-
-    })
-    .catch(console.error);
-  getNext();
+    if (charon.message.chat.username !== country.chat) {
+      charon.reply(text(0) + text(6).replace('{username}', target.username));
+    }
+    jail(country.chat, target.id, true);
+    if (target.id === id) {
+      charon.reply(
+        text(12) + `@${target.username} ` + text(11),
+        null,
+        { chat_id: `@${country.chat}` }
+      );
+    } else {
+      charon.reply(
+        `@${target.username}` + text(7),
+        null,
+        { chat_id: `@${country.chat}` }
+      );
+    }
+  }
 };
 
 module.exports = arrest;

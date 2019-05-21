@@ -1,69 +1,72 @@
 'use strict';
 
-const Markup = require('telegraf/markup');
-const {
-  getAdmins,
-  getText,
-  getStates,
-} = require('../../../imports').few('countryBot', 'scripts',
-  [
+const handleText = charon => {
+  const {
+    getAdmins,
+    getText,
+    getStates,
+    getpassport,
+    addclass,
+    showclass,
+    changeclass,
+    deleteclass,
+    migrantclass,
+    revolution,
+    showlaw,
+    addlaw,
+    rmlaw,
+    orders,
+    sendorders,
+  } = charon.get([
     'getAdmins',
     'getText',
     'getStates',
+    'getpassport',
+    'addclass',
+    'showclass',
+    'changeclass',
+    'deleteclass',
+    'migrantclass',
+    'revolution',
+    'showlaw',
+    'addlaw',
+    'rmlaw',
+    'orders',
+    'sendorders',
   ]);
+  const text = t => getText('handleText')[t];
+  const STATE_HANDLERS = {
+    getpassport,
+    addclass,
+    showclass,
+    changeclass,
+    deleteclass,
+    migrantclass,
+    revolution,
+    showlaw,
+    addlaw,
+    rmlaw,
+    orders,
+    sendorders,
+  };
 
-const {
-  getpassport,
-  addclass,
-  showclass,
-  changeclass,
-  deleteclass,
-  migrantclass,
-  revolution,
-} = require('../../../imports').few('countryBot', 'commands', [
-  'getpassport',
-  'addclass',
-  'showclass',
-  'changeclass',
-  'deleteclass',
-  'migrantclass',
-  'revolution',
-]);
-const text = t => getText('handleText')[t];
-const STATE_HANDLERS = {
-  getpassport,
-  addclass,
-  showclass,
-  changeclass,
-  deleteclass,
-  migrantclass,
-  revolution,
-//   choosingLaw             : showLaw,
-//   addingLaw               : addLaw,
-//   removingLaw             : removeLaw,
-//   sendingOrders           : sendOrders,
-//   watchingOrders          : showCountryOrders,
-};
-
-const handleText = ctx => {
-  const { type } = ctx.message.chat;
-  const { id } = ctx.message.from;
+  const { type } = charon.message.chat;
+  const { id } = charon.message.from;
 
   const states = getStates(id);
   if (states) {
     const state = Object.keys(states)[0];
-    STATE_HANDLERS[state](ctx, { state: states[state] });
+    STATE_HANDLERS[state](charon, { state: states[state] });
     return;
   }
-  if (ctx.message.text && ctx.message.text[0] === '/') {
-    ctx.reply(text(3), { reply_to_message_id: ctx.message.message_id });
+  if (charon.message.text && charon.message.text[0] === '/') {
+    charon.reply(text(3), { reply_to_message_id: charon.message.message_id });
     return;
   }
 
   if (type === 'private') {
     const admins = getAdmins();
-    ctx.reply(text(1), Markup.removeKeyboard(true).selective(true));
-    ctx.reply(text(2) + `\n@${admins.join('\n@')}`);
+    charon.reply(text(1) + '\n\n' + text(2) + `\n@${admins.join('\n@')}`);
   }
 };
 

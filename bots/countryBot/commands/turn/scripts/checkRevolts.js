@@ -67,6 +67,7 @@ const checkRevolts = ctx => {
       answer += '\n\n' + (victory ? text(8) : text(7));
       ctx.reply(
         answer,
+        null,
         { chat_id: getGame('gameChannel') }
       );
     }
