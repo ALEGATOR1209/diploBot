@@ -5,7 +5,6 @@ const {
   getText,
   getDead,
   getGame,
-  getMigrationClass,
   getAllCountries,
 } = require('../../../imports')
   .few('countryBot', 'scripts',
@@ -14,16 +13,11 @@ const {
       'getText',
       'getDead',
       'getGame',
-      'getMigrationClass',
       'getAllCountries',
     ]);
 const text = t => getText('whereami')[t];
-const whereami = ctx => {
-  const reply = {
-    reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'HTML',
-  };
-  const { id } = ctx.message.from;
+const whereami = charon => {
+  const { id } = charon.message.from;
   const dead = getDead(id);
   const turn = getGame('turn');
 
@@ -66,7 +60,7 @@ const whereami = ctx => {
     if (!migrant) message += text(6);
   }
 
-  ctx.reply(message, reply);
+  charon.reply(message);
 };
 
 module.exports = whereami;

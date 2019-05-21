@@ -1,16 +1,14 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getAdmins,
-  findUser,
-  getText,
-  setState,
-  getTurn,
-  setLaw,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const enteringLaw = charon => {
+  const {
+    getAdmins,
+    findUser,
+    getText,
+    setState,
+    getTurn,
+    setLaw,
+  } = charon.get([
     'getAdmins',
     'findUser',
     'getText',
@@ -18,25 +16,23 @@ const {
     'getTurn',
     'setLaw',
   ]);
-const text = t => getText('addlaw')[t];
+  const text = t => getText('addlaw')[t];
+  const { id } = charon.message.from;
 
-const enteringLaw = ctx => {
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
   if (getAdmins().includes(id)) {
-    ctx.reply(text(0) + text(1), reply);
+    charon.reply(text(0) + text(1));
     setState(id, 'addlaw', null);
     return;
   }
 
   const country = findUser(id);
   if (!country) {
-    ctx.reply(text(0) + text(2), reply);
+    charon.reply(text(0) + text(2));
     setState(id, 'addlaw', null);
     return;
   }
   if (country.hasRevolution) {
-    ctx.reply(text(0) + text(12), reply);
+    charon.reply(text(0) + text(12));
     setState(id, 'addlaw', null);
     return;
   }
@@ -44,27 +40,27 @@ const enteringLaw = ctx => {
   const userClassName = country.citizens[id].class;
   const userClass = country.classes[userClassName];
   if (!userClass.rights.includes('ADOPTING_LAWS')) {
-    ctx.reply(text(0) + text(3), reply);
+    charon.reply(text(0) + text(3));
     setState(id, 'addlaw', null);
     return;
   }
   if (country.citizens[id].inPrison) {
-    ctx.reply(text(0) + text(4), reply);
+    charon.reply(text(0) + text(4));
     setState(id, 'addlaw', null);
     return;
   }
 
-  const law = ctx.message.text
+  const law = charon.message.text
     .split('\n')
     .filter(s => s.length > 0);
   if (law.length < 2) {
-    ctx.reply(text(0) + text(8), reply);
+    charon.reply(text(0) + text(8));
     setState(id, 'addlaw', null);
     return;
   }
   const lawName = law.shift();
   if (lawName.match(/\./gi)) {
-    ctx.reply(text(0) + text(13), reply);
+    charon.reply(text(0) + text(13));
     return;
   }
   const lawText = law.join('\n');
@@ -74,17 +70,9 @@ const enteringLaw = ctx => {
     WIP: id,
   });
   setState(id, 'addlaw', 'confirmation');
-  ctx.reply(
-    text(0) +
-    text(11),
-    Extra
-      .load(reply)
-      .markup(
-        Markup.keyboard([text(6), text(7)])
-          .oneTime()
-          .resize()
-          .selective(true)
-      )
+  charon.reply(
+    text(0) + text(11),
+    { buttons: [text(6), text(7)] }
   );
 };
 
