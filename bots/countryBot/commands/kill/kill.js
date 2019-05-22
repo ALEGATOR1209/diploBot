@@ -39,6 +39,10 @@ const kill = charon => {
   const { mentions } = charon;
   let victim;
   let victimTag;
+  if (mentions.length === 0 && charon.message.entities.length > 1) {
+    charon.reply(text(12));
+    return;
+  }
   if (!mentions) {
     charon.reply(text(2));
     victim = getRandomChoice(Object.keys(findUser(id).citizens));

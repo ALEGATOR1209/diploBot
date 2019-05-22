@@ -1,14 +1,14 @@
 'use strict';
 
-const {
-  getAdmins,
-  findUser,
-  getText,
-  getDead,
-  setState,
-  getGame,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const noState = charon => {
+  const {
+    getAdmins,
+    findUser,
+    getText,
+    getDead,
+    setState,
+    getGame,
+  } = charon.get([
     'getAdmins',
     'findUser',
     'getText',
@@ -16,37 +16,35 @@ const {
     'setState',
     'getGame',
   ]);
-const text = t => getText('sendorders')[t];
+  const text = t => getText('sendorders')[t];
 
-const noState = ctx => {
   if (getGame('turn') === 0) {
-    ctx.reply(getText('0turnAlert'));
+    charon.reply(getText('0turnAlert'));
     return;
   }
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
+  const { id } = charon.message.from;
   if (getAdmins().includes(id)) {
-    ctx.reply(text(0) + text(1), reply);
+    charon.reply(text(0) + text(1));
     return;
   }
 
   if (getDead(id)) {
-    ctx.reply(text(0) + text(2), reply);
+    charon.reply(text(0) + text(2));
     return;
   }
   const country = findUser(id);
   if (!country) {
-    ctx.reply(text(0) + text(3), reply);
+    charon.reply(text(0) + text(3));
     return;
   }
 
   const userClassName = country.citizens[id].class;
   const userClass = country.classes[userClassName];
   if (!userClass.rights.includes('COMMAND_ARMIES')) {
-    ctx.reply(text(0) + text(4), reply);
+    charon.reply(text(0) + text(4));
     return;
   }
-  ctx.reply(text(0) + text(5), reply);
+  charon.reply(text(0) + text(5));
   setState(id, 'sendorders', country.chat);
 };
 

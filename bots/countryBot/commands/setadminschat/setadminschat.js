@@ -1,28 +1,26 @@
 'use strict';
 
-const {
-  getAdmins,
-  setAdminChat,
-  getText,
-} = require('../../../imports').few('countryBot', 'scripts',
-  [
+const setadminschat = charon => {
+  const {
+    getAdmins,
+    setAdminChat,
+    getText,
+  } = charon.get([
     'getAdmins',
     'setAdminChat',
     'getText',
   ]);
-const text = t => getText('setadminschat')[t];
-
-const setadminschat = ctx => {
-  const { id } = ctx.message.from;
+  const text = t => getText('setadminschat')[t];
+  const { id } = charon.message.from;
 
   if (!getAdmins().includes(id)) {
-    ctx.reply(text(1));
+    charon.reply(text(1));
     return;
   }
 
-  const chat = ctx.message.chat.id;
+  const chat = charon.message.chat.id;
   setAdminChat(chat);
-  ctx.reply(text(2));
+  charon.reply(text(2));
 };
 
 module.exports = setadminschat;

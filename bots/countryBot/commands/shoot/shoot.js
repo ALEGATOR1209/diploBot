@@ -1,156 +1,116 @@
 'use strict';
 
-const {
-  getAdmins,
-  getCountry,
-  getRandomChoice,
-  bury,
-  findUser,
-  getPlayers,
-  editUser,
-  getText,
-  getDead,
-  getKillPhrase,
-  getGame,
-} = require('../../../imports').few('countryBot', 'scripts',
-  [
+const shoot = async charon => {
+  const {
+    getAdmins,
+    getCountry,
+    getRandomChoice,
+    bury,
+    findUser,
+    editUser,
+    getText,
+    getDead,
+    getKillPhrase,
+    getGame,
+  } = charon.get([
     'getAdmins',
     'getCountry',
     'getRandomChoice',
     'bury',
     'findUser',
-    'getPlayers',
     'editUser',
     'getText',
     'getDead',
     'getKillPhrase',
     'getGame',
   ]);
-const text = t => getText('shoot')[t];
+  const text = t => getText('shoot')[t];
 
-const shoot = ctx => {
   if (getGame('turn') === 0) {
-    ctx.reply(getText('0turnAlert'));
+    charon.reply(getText('0turnAlert'));
     return;
   }
-
-  const reply = {
-    reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'HTML',
-  };
-
-  const assassinate = (killer, victim) => {
-    const country = findUser(killer);
-    if (!country) {
-      ctx.reply(text(8));
-      return;
-    }
-
-    const timeout = getGame('shootTimeout');
-    const shootDifference = new Date() - new Date(country
-      .citizens[killer]
-      .shoot
-    ) || Infinity;
-    if (shootDifference < timeout) {
-      const timeToShoot = Date.parse(country.citizens[killer].shoot) + timeout;
-      const timeoutTime = new Date(timeToShoot - new Date().valueOf());
-      ctx.reply(
-        text(11)
-          .replace('{timeout}', new Date(timeout).getUTCHours())
-          .replace('{hours}', timeoutTime.getUTCHours())
-          .replace('{minutes}', timeoutTime.getUTCMinutes()),
-        reply
-      );
-      return;
-    }
-    if (getAdmins().includes(victim)) {
-      ctx.reply(text(3), reply);
-      return;
-    }
-    if (getDead(victim)) {
-      ctx.reply(text(7));
-      return;
-    }
-    if (!country.citizens[victim]) {
-      ctx.reply(`${text(4)} ${country.name}.`, reply);
-      return;
-    }
-    const killed = parseInt(Math.random() * 100);
-    const phrase = getRandomChoice(getKillPhrase(killed > 40));
-
-    ctx.bot.telegram.getChat(killer)
-      .then(man => {
-        const edited = phrase.replace('{killer}', `@${man.username}`);
-        ctx.bot.telegram.getChat(victim)
-          .then(man => {
-            const final = edited.replace('{victim}', `@${man.username}`);
-            ctx.reply(
-              final +
-              text(5) + killed + text(6),
-              {
-                chat_id: `@${country.chat}`,
-                parse_mode: 'HTML',
-              }
-            );
-          }).catch(console.error);
-      }).catch(console.error);
-
-    editUser(country.chat, killer, {
-      shoot: new Date(),
-    });
-    if (killed > 40) bury(victim);
-  };
-
-  const { username: countryTag } = ctx.message.chat;
-  const { id } = ctx.message.from;
+  const { username: countryTag } = charon.message.chat;
+  const { id, username } = charon.message.from;
 
   const country = getCountry(countryTag);
   if (!findUser(id)) {
-    ctx.reply(text(8), reply);
+    charon.reply(text(8));
     return;
   }
   if (!country || country.chat !== findUser(id).chat) {
-    ctx.reply(text(12), reply);
+    charon.reply(text(12));
     return;
   }
 
   if (getAdmins().includes(id)) {
-    ctx.reply(text(1), reply);
+    charon.reply(text(1));
     return;
   }
 
   if (!country.citizens[id]) {
-    ctx.reply(text(2));
+    charon.reply(text(2));
     return;
   }
 
-  let victim = ctx.message.text
-    .match(/ .*$/);
-  if (!victim) {
-    ctx.reply(text(2), reply);
-    assassinate(id, getRandomChoice(Object.keys(findUser(id).citizens)));
+  const { mentions } = charon;
+  let victim;
+  if (mentions.length === 0 && charon.message.entities.length > 1) {
+    charon.reply(text(10));
     return;
   }
-  victim = victim[0].trim().slice(1);
+  if (!mentions.length) {
+    charon.reply(text(9));
+    victim = await charon.getChat(
+      getRandomChoice(
+        Object.keys(country.citizens)
+      )
+    );
+  } else victim = mentions[0];
 
-  const players = getPlayers();
-  let targetFound = false;
-  players.forEach(player => ctx.bot
-    .telegram
-    .getChat(player)
-    .then(user => {
-      if (user.username === victim) {
-        assassinate(id, user.id);
-        targetFound = true;
-      }
-    })
-    .finally(() => {
-      if (!targetFound) {
-        ctx.reply(text(10), reply);
-      }
-    })
-    .catch(e => console.error(e))
+  const timeout = getGame('shootTimeout');
+  const shootDifference = new Date() - new Date(country
+    .citizens[id]
+    .shoot
+  ) || Infinity;
+  if (shootDifference < timeout) {
+    const timeToShoot = Date.parse(country.citizens[id].shoot) + timeout;
+    const timeoutTime = new Date(timeToShoot - new Date().valueOf());
+    charon.reply(
+      text(11)
+        .replace('{timeout}', new Date(timeout).getUTCHours())
+        .replace('{hours}', timeoutTime.getUTCHours())
+        .replace('{minutes}', timeoutTime.getUTCMinutes())
+    );
+    return;
+  }
+  if (getAdmins().includes(victim.id)) {
+    charon.reply(text(3));
+    return;
+  }
+  if (getDead(victim.id)) {
+    charon.reply(text(7));
+    return;
+  }
+  if (!country.citizens[victim.id]) {
+    charon.reply(`${text(4)} ${country.name}.`);
+    return;
+  }
+  const killed = parseInt(Math.random() * 100);
+  const phrase = getRandomChoice(getKillPhrase(killed > 40));
+
+  charon.reply(
+    phrase
+      .replace('{killer}', `@${username}`)
+      .replace('{victim}', `@${victim.username}`) +
+    text(5) + killed + text(6),
+    null,
+    { chat_id: `@${country.chat}` }
   );
+  editUser(country.chat, id, {
+    shoot: new Date(),
+  });
+ if (killed > 40) bury(victim.id);
 };
 
 module.exports = shoot;

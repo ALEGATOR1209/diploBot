@@ -1,15 +1,16 @@
 'use strict';
 
-const {
-  getAdmins,
-  findUser,
-  getText,
-  getDead,
-  setState,
-  setOrders,
-  getAdminsChat,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const enteringOrders = charon => {
+  const {
+    getAdmins,
+    findUser,
+    getText,
+    getDead,
+    setState,
+    setOrders,
+    getAdminsChat,
+    showorders,
+  } = charon.get([
     'getAdmins',
     'findUser',
     'getText',
@@ -17,29 +18,25 @@ const {
     'setState',
     'setOrders',
     'getAdminsChat',
+    'showorders'
   ]);
-const showorders = require('../../../../imports')
-  .countryBot
-  .commands('showorders');
-const text = t => getText('sendorders')[t];
+  const text = t => getText('sendorders')[t];
 
-const enteringOrders = ctx => {
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
+  const { id } = charon.message.from;
   if (getAdmins().includes(id)) {
-    ctx.reply(text(0) + text(1), reply);
+    charon.reply(text(0) + text(1));
     setState(id, 'sendorders', null);
     return;
   }
 
   if (getDead(id)) {
-    ctx.reply(text(0) + text(2), reply);
+    charon.reply(text(0) + text(2));
     setState(id, 'sendorders', null);
     return;
   }
   const country = findUser(id);
   if (!country) {
-    ctx.reply(text(0) + text(3), reply);
+    charon.reply(text(0) + text(3));
     setState(id, 'sendorders', null);
     return;
   }
@@ -47,7 +44,7 @@ const enteringOrders = ctx => {
   const userClassName = country.citizens[id].class;
   const userClass = country.classes[userClassName];
   if (!userClass.rights.includes('COMMAND_ARMIES')) {
-    ctx.reply(text(0) + text(4), reply);
+    charon.reply(text(0) + text(4));
     setState(id, 'sendorders', null);
     return;
   }
@@ -61,7 +58,7 @@ const enteringOrders = ctx => {
     sticker,
     document,
     audio,
-  } = ctx.message;
+  } = charon.message;
 
   setOrders(country.chat, {
     text: messageText,
@@ -76,9 +73,9 @@ const enteringOrders = ctx => {
     audio,
   });
   setState(id, 'sendorders', null);
-  ctx.reply(text(0) + text(6), reply).then(() => {
-    ctx.message.chat.id = getAdminsChat();
-    showorders(ctx);
+  charon.reply(text(0) + text(6)).then(() => {
+    charon.message.chat.id = getAdminsChat();
+    showorders(charon);
   });
 };
 

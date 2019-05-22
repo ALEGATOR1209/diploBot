@@ -1,20 +1,19 @@
 'use strict';
 
-const {
-  getText,
-  getGame,
-  getDead,
-  resurrect,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const checkDead = charon => {
+  const {
+    getText,
+    getGame,
+    getDead,
+    resurrect,
+  } = charon.get([
     'getText',
     'getGame',
     'getDead',
     'resurrect',
   ]);
-const text = t => getText('checkDead')[t];
+  const text = t => getText('checkDead')[t];
 
-const checkDead = ctx => {
   const cemetery = getDead();
   const turn = getGame('turn');
   const deathTime = getGame('deathTime');
@@ -32,7 +31,7 @@ const checkDead = ctx => {
     .filter(str => str.length)
     .length;
   if (resurrectedNum > 0)
-    ctx.reply(
+    charon.reply(
       resurrectionList,
       { chat_id: getGame('gameChannel') }
     );

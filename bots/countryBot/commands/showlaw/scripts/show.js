@@ -1,39 +1,23 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getText,
-  getCountry,
-  setState,
-  getStates,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const show = charon => {
+  const {
+    getText,
+    getCountry,
+    setState,
+    getStates,
+  } = charon.get([
     'getText',
     'getCountry',
     'setState',
     'getStates',
   ]);
-const text = t => getText('showlaw')[t];
-const answer = (ctx, text) => ctx.reply(
-  text,
-  Extra
-    .load({
-      reply_to_message_id: ctx.message.message_id,
-      parse_mode: 'HTML',
-    })
-    .markup(Markup
-      .removeKeyboard(true)
-      .selective(true)
-    )
-);
+  const text = t => getText('showlaw')[t];
 
-const show = ctx => {
-  const { id } = ctx.message.from;
-  const reply = answer.bind(null, ctx);
+  const { id } = charon.message.from;
   const country = getCountry(getStates(id).showlaw);
   if (!country) {
-    reply(text(0) + text(1));
+    charon.reply(text(0) + text(1));
     setState(id, 'showlaw', null);
     return;
   }
@@ -41,23 +25,23 @@ const show = ctx => {
   const list = Object.keys(lawlist)
     .filter(law => !law.WIP);
   if (list.length < 1) {
-    reply(text(2));
+    charon.reply(text(2));
     setState(id, 'showlaw', null);
     return;
   }
-  const law = ctx.message.text;
+  const law = charon.message.text;
   if (law === text(6)) {
-    reply(text(0) + text(7));
+    charon.reply(text(0) + text(7));
     setState(id, 'showlaw', null);
     return;
   }
   if (!list.includes(law)) {
-    reply(text(0) + text(3));
+    charon.reply(text(0) + text(3));
     setState(id, 'showlaw', null);
     return;
   }
 
-  reply(
+  charon.reply(
     text(4).replace('{name}', law) +
     `<b>${country.name}</b>` +
     text(5).replace('{date}', lawlist[law].date) +

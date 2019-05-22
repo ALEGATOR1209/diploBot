@@ -6,20 +6,18 @@ const rights = charon => {
     getText,
     findUser,
     getDead,
-    getPlayers,
   } = charon.get([
     'rightsString',
     'getText',
     'findUser',
     'getDead',
-    'getPlayers',
   ]);
   const text = t => getText('rights')[t];
 
-  const { mentions } = charon;
+  const  { mentions } = charon;
   if (!mentions.length) {
-    charon.reply(text(12));
-    return;
+    const { id, username } = charon.message.from;
+    mentions.push({ id, username });
   }
   for (const person of mentions) {
     const { username: pTag, id: pId } = person;

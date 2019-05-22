@@ -1,16 +1,16 @@
 'use strict';
 
-const {
-  getText,
-  getCountry,
-  givePassport,
-  retakePassport,
-  findUser,
-  getAllCountries,
-  setMigrantQueue,
-  setEmigrantQueue,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const checkMigrants = charon => {
+  const {
+    getText,
+    getCountry,
+    givePassport,
+    retakePassport,
+    findUser,
+    getAllCountries,
+    setMigrantQueue,
+    setEmigrantQueue,
+  } = charon.get([
     'getText',
     'getCountry',
     'givePassport',
@@ -20,31 +20,27 @@ const {
     'setMigrantQueue',
     'setEmigrantQueue',
   ]);
-const text = t => getText('checkMigrants')[t];
+  const text = t => getText('checkMigrants')[t];
 
-const checkMigrants = ctx => {
-  const resolveImmigrats = country => {
+  const resolveImmigrats = async country => {
     const { immigrantQueue } = country;
     for (const migrant of immigrantQueue) {
       if (country.blacklist[migrant]) {
-        ctx.bot
-          .telegram
-          .getChat(migrant)
-          .then(({ username }) => {
-            ctx.reply(
-              text(1)
-                .replace('{user}', username)
-                .replace('{country}', country.name) +
-              text(2),
-              { chat_id: `@${country.chat}` }
-            );
+        const { username } = charon.getChat(migrant);
+        charon.reply(
+          text(1)
+            .replace('{user}', username)
+            .replace('{country}', country.name) +
+          text(2),
+          null,
+          { chat_id: `@${country.chat}` }
+        );
 
-            ctx.reply(
-              text(3)
-                .replace('{country}', country.name),
-              { chat_id: migrant }
-            );
-          });
+        charon.reply(
+          text(3)
+            .replace('{country}', country.name),
+          { chat_id: migrant }
+        );
 
         const queue = getCountry(country.chat).immigrantQueue
           .filter(el => el !== migrant);
@@ -54,10 +50,11 @@ const checkMigrants = ctx => {
 
       const motherland = findUser(migrant);
       if (motherland) {
-        ctx.reply(
+        charon.reply(
           text(4)
             .replace('{country1}', country.name)
             .replace('{country2}', motherland.name),
+          null,
           { chat_id: migrant }
         );
         const queue = getCountry(country.chat).immigrantQueue
@@ -70,34 +67,32 @@ const checkMigrants = ctx => {
       const queue = getCountry(country.chat).immigrantQueue
         .filter(el => el !== migrant);
       setMigrantQueue(country.chat, queue);
-      ctx.reply(
+      charon.reply(
         text(5)
           .replace('{country_name}', country.name)
           .replace('{country_chat}', country.chat),
+        null,
         { chat_id: migrant }
       );
-      ctx.bot
-        .telegram
-        .getChat(migrant)
-        .then(({ username }) => ctx.reply(
-          text(6)
-            .replace('{username}', username)
-            .replace('{class}', country.migrantClass),
-          {
-            parse_mode: 'HTML',
-            chat_id: `@${country.chat}`,
-          }
-        ));
+      const { username } = await charon.getChat(migrant);
+      charon.reply(
+        text(6)
+          .replace('{username}', username)
+          .replace('{class}', country.migrantClass),
+        null,
+        { chat_id: `@${country.chat}`, }
+      );
     }
   };
 
-  const resolveEmigrants = country => {
+  const resolveEmigrants = async country => {
     const { emigrantQueue } = country;
     for (const emigrant of emigrantQueue) {
       if (!country.citizens[emigrant]) {
-        ctx.reply(
+        charon.reply(
           text(7)
             .replace('{country}', country.name),
+          null,
           { chat_id: emigrant }
         );
         const queue = getCountry(country.chat).emigrantQueue
@@ -107,9 +102,10 @@ const checkMigrants = ctx => {
       }
 
       if (country.citizens[emigrant].inPrison) {
-        ctx.reply(
+        charon.reply(
           text(8)
             .replace('{country}', country.name),
+          null,
           { chat_id: emigrant }
         );
         const queue = getCountry(country.chat).emigrantQueue
@@ -119,22 +115,19 @@ const checkMigrants = ctx => {
       }
 
       retakePassport(country, emigrant);
-      ctx.reply(
+      charon.reply(
         text(9).replace('{country}', country.name),
+        null,
         { chat_id: emigrant }
       );
-      ctx.bot
-        .telegram
-        .getChat(emigrant)
-        .then(({ username }) => ctx.reply(
-          text(10)
-            .replace('{username}', username)
-            .replace('{country}', country.name),
-          {
-            parse_mode: 'HTML',
-            chat_id: `@${country.chat}`,
-          }
-        ));
+      const { username } = await charon.getChat(emigrant);
+      charon.reply(
+        text(10)
+          .replace('{username}', username)
+          .replace('{country}', country.name),
+        null,
+        { chat_id: `@${country.chat}` }
+      );
 
       const queue = getCountry(country.chat).emigrantQueue
         .filter(man => man !== emigrant);

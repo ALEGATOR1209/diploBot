@@ -4,12 +4,10 @@ const opendoors = charon => {
   const {
     findUser,
     getText,
-    getPlayers,
     unban,
   } = charon.get([
     'findUser',
     'getText',
-    'getPlayers',
     'unban',
   ]);
   const text = t => getText('opendoors')[t];

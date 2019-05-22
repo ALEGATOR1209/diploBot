@@ -1,22 +1,21 @@
 'use strict';
 
-const {
-  findUser,
-  getText,
-  getDead,
-  getGame,
-  getAllCountries,
-} = require('../../../imports')
-  .few('countryBot', 'scripts',
-    [
-      'findUser',
-      'getText',
-      'getDead',
-      'getGame',
-      'getAllCountries',
-    ]);
-const text = t => getText('whereami')[t];
 const whereami = charon => {
+  const {
+    findUser,
+    getText,
+    getDead,
+    getGame,
+    getAllCountries,
+  } = charon.get([
+    'findUser',
+    'getText',
+    'getDead',
+    'getGame',
+    'getAllCountries',
+  ]);
+  const text = t => getText('whereami')[t];
+
   const { id } = charon.message.from;
   const dead = getDead(id);
   const turn = getGame('turn');

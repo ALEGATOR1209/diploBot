@@ -134,7 +134,7 @@ class Charon {
     if (type === 'inlineKeyboard') {
       buttons = buttons.map(el => Markup.callbackButton(el.text, el.action));
     }
-    const markup = keyboard ?
+    const markup = type ?
       Markup[type](buttons)
         .oneTime()
         .resize() :

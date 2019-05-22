@@ -1,40 +1,27 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getAllClasses,
-  findUser,
-  rightsString,
-  getText,
-  setState,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const show = charon => {
+  const {
+    getAllClasses,
+    findUser,
+    rightsString,
+    getText,
+    setState,
+  } = charon.get([
     'getAllClasses',
     'findUser',
     'rightsString',
     'getText',
     'setState',
   ]);
-const text = t => getText('showclass')[t];
+  const text = t => getText('showclass')[t];
 
-const show = ctx => {
-  const { text: messageText } = ctx.message;
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
+  const { text: messageText } = charon.message;
+  const { id } = charon.message.from;
 
   const userCountry = findUser(id);
   if (!userCountry) {
-    ctx.reply(
-      text(0) +
-      text(1),
-      Extra
-        .load(reply)
-        .markup(Markup
-          .removeKeyboard(true)
-          .selective(true)
-        )
-    );
+    charon.reply(text(0) + text(1));
     setState(id, 'showclass', null);
     return;
   }
@@ -45,32 +32,20 @@ const show = ctx => {
     .trim();
 
   if (!className) {
-    ctx.reply(
-      text(0) +
-      text(3),
-      Extra
-        .load(reply)
-        .markup(Markup.removeKeyboard(true).selective(true))
-    );
+    charon.reply(text(0) + text(3));
     setState(id, 'showclass', null);
     return;
   }
 
   const userClass = classList[className];
   if (!userClass || userClass.creator) {
-    ctx.reply(
-      text(0) +
-      text(4),
-      Extra
-        .load(reply)
-        .markup(Markup.removeKeyboard(true).selective(true))
-    );
+    charon.reply(text(0) + text(4));
     setState(id, 'showclass', null);
     return;
   }
   const number = Object.keys(userCountry.citizens)
     .filter(man => userCountry.citizens[man].class === className).length;
-  ctx.reply(
+  charon.reply(
     text(5) + className + '\n' +
     (userClass.parentClass ? `${text(6)}: ${userClass.parentClass}\n` : '') +
     rightsString(userClass.rights) + text(7) + ': ' +
@@ -78,13 +53,7 @@ const show = ctx => {
       `${userClass.number}\n` : `${text(8)}\n`
     ) +
     `${text(9)}: ${number}` +
-    (userClass.number && number >= userClass.number ? text(10) : ''),
-    Extra
-      .load({
-        reply_to_message_id: ctx.message.message_id,
-        parse_mode: 'HTML',
-      })
-      .markup(Markup.removeKeyboard(true).selective(true))
+    (userClass.number && number >= userClass.number ? text(10) : '')
   );
   setState(id, 'showclass', null);
 };

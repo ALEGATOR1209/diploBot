@@ -5,6 +5,8 @@ const DICT = {
   enteringOrders: require('./scripts/enteringOrders'),
 };
 
-const sendorders = (ctx, { state } = {}) => DICT[state ? 'enteringOrders' : 'noState'](ctx);
+const sendorders = (ctx, { state } = {}) => DICT[
+  state ? 'enteringOrders' : 'noState'
+](ctx);
 
 module.exports = sendorders;
