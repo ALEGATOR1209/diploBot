@@ -68,6 +68,7 @@ const checkRevolts = charon => {
       answer += '\n\n' + (victory ? text(8) : text(7));
       charon.reply(
         answer,
+        null,
         { chat_id: getGame('gameChannel') }
       );
     }
