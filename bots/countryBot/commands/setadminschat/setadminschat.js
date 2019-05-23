@@ -1,23 +1,26 @@
 'use strict';
 
-const dead = charon => {
+const setadminschat = charon => {
   const {
     getAdmins,
+    setAdminChat,
     getText,
   } = charon.get([
     'getAdmins',
+    'setAdminChat',
     'getText',
   ]);
-  const checkDead = require('../turn/scripts/checkDead');
-  const text = t => getText('dead')[t];
-
+  const text = t => getText('setadminschat')[t];
   const { id } = charon.message.from;
+
   if (!getAdmins().includes(id)) {
     charon.reply(text(1));
     return;
   }
+
+  const chat = charon.message.chat.id;
+  setAdminChat(chat);
   charon.reply(text(2));
-  checkDead(charon);
 };
 
-module.exports = dead;
+module.exports = setadminschat;

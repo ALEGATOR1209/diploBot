@@ -1,41 +1,36 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getText,
-  findUser,
-  setState,
-  getGame,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const migrantclass = charon => {
+  const {
+    getText,
+    findUser,
+    setState,
+    getGame,
+  } = charon.get([
     'getText',
     'findUser',
     'setState',
     'getGame',
   ]);
-const text = t => getText('migrantclass')[t];
-
-const migrantclass = ctx => {
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
+  const text = t => getText('migrantclass')[t];
+  const { id } = charon.message.from;
 
   if (getGame('turn') === 0) {
-    ctx.reply(getText('0turnAlert'));
+    charon.reply(getText('0turnAlert'));
     return;
   }
 
   const country = findUser(id);
   if (!country) {
-    ctx.reply(text(0) + text(1), reply);
+    charon.reply(text(0) + text(1));
     return;
   }
   if (country.hasRevolution) {
-    ctx.reply(text(0) + text(6), reply);
+    charon.reply(text(0) + text(6));
     return;
   }
   if (country.citizens[id].inPrison) {
-    ctx.reply(text(0) + text(3), reply);
+    charon.reply(text(0) + text(3));
     return;
   }
 
@@ -45,7 +40,7 @@ const migrantclass = ctx => {
     .rights
     .includes('ADOPTING_LAWS');
   if (!hasLawRights) {
-    ctx.reply(text(0) + text(2), reply);
+    charon.reply(text(0) + text(2));
     return;
   }
 
@@ -53,25 +48,13 @@ const migrantclass = ctx => {
     .filter(cl => !(country.classes[cl].number || country.migrantClass === cl));
 
   if (classlist.length < 1) {
-    ctx.reply(
-      text(0) + text(11),
-      Extra
-        .load(reply)
-        .markup(Markup.removeKeyboard(true).selective(true))
-    );
+    charon.reply(text(0) + text(11));
     return;
   }
   classlist.push(text(4));
-  ctx.reply(
-    text(0) +
-    text(5),
-    Extra
-      .load(reply)
-      .markup(Markup.keyboard(classlist)
-        .oneTime()
-        .resize()
-        .selective(true)
-      )
+  charon.reply(
+    text(0) + text(5),
+    { buttons: classlist }
   );
 
   setState(id, 'migrantclass', 'choosingClass');

@@ -63,25 +63,36 @@ class Charon {
     return lib;
   }
   async execute(ctx, type, fn) { //execute script
+    const messanger = ctx.update.callback_query || ctx.message;
     try {
-      const { text, entities } = ctx.message;
-      const mentions = entities ?
-        await this.parseEntities(text, entities) : undefined;
+      const getPlayers = imports.countryBot.scripts('getPlayers');
+      const setPlayer = imports.countryBot.scripts('setPlayer');
+      const { id } = messanger.from;
+      if (!getPlayers().includes(id)) setPlayer(id);
+
+      let mentions;
+      if (!ctx.update.callback_query) {
+        const { text, entities } = ctx.update.message;
+        mentions = entities ?
+          await this.parseEntities(text, entities) : undefined;
+      }
 
       const charon = {
-        reply: Charon.reply.bind(null, ctx),
-        editMessageText: ctx.editMessageText,
-        replyWithPhoto: ctx.replyWithPhoto,
-        replyWithAudio: ctx.replyWithAudio,
-        replyWithDocument: ctx.replyWithDocument,
-        replyWithSticker: ctx.replyWithSticker,
-        replyWithVideo: ctx.replyWithVideo,
-        replyWithVideoNote: ctx.replyWithVideoNote,
-        replyWithVoice: ctx.replyWithVoice,
+        reply: Charon.reply.bind(null, ctx, 'reply'),
+        editMessageText: Charon.reply.bind(null, ctx, 'editMessageText'),
+        replyWithPhoto: Charon.reply.bind(null, ctx, 'replyWithPhoto'),
+        replyWithAudio: Charon.reply.bind(null, ctx, 'replyWithAudio'),
+        replyWithDocument: Charon.reply.bind(null, ctx, 'replyWithDocument'),
+        replyWithSticker: Charon.reply.bind(null, ctx, 'replyWithSticker'),
+        replyWithVideo: Charon.reply.bind(null, ctx, 'replyWithVideo'),
+        replyWithVideoNote: Charon.reply.bind(null, ctx, 'replyWithVideoNote'),
+        replyWithVoice: Charon.reply.bind(null, ctx, 'replyWithVoice'),
+        answerCbQuery: ctx.answerCbQuery,
         get: Charon.get,
         message: ctx.update.message,
         chat: ctx.chat,
-        getChat: ctx.getChat,
+        getChat: this.getChat.bind(this),
+        update: ctx.update,
         mentions,
       };
 
@@ -93,36 +104,44 @@ class Charon {
 
       Charon.reply( //we must say user that error has occured
         ctx,
+        'reply',
         getText('botError')
           .replace('{error}', e),
       );
 
       imports //clearing user states
         .countryBot
-        .scripts('setState')(ctx.message.from.id, '', null);
+        .scripts('setState')(messanger.from.id, '', null);
 
       console.error(e);
     }
   }
-  static reply(ctx, text, keyboard, options) { //reply to user
-    const buttons = keyboard ? keyboard.buttons : undefined;
+  static reply(ctx, type, text, keyboard, options) { //reply to user
+    return ctx[type](
+      text,
+      Extra
+        .load(options || {
+          reply_to_message_id: ctx.message ? ctx.message.message_id : undefined,
+        })
+        // eslint-disable-next-line new-cap
+        .HTML()
+        .markup(Charon.resolveMarkup(keyboard))
+    );
+  }
+  static resolveMarkup(keyboard) {
+    let buttons = keyboard ? keyboard.buttons : undefined;
     const type = buttons ? (keyboard.type || 'keyboard') : undefined;
-    const markup = keyboard ?
+    if (type === 'inlineKeyboard') {
+      buttons = buttons.map(el => Markup.callbackButton(el.text, el.action));
+    }
+    const markup = type ?
       Markup[type](buttons)
         .oneTime()
         .resize() :
       Markup
         .removeKeyboard(true);
     markup.selective_keyboard = true;
-    return ctx.reply(
-      text,
-      Extra
-        .load(options || {
-          reply_to_message_id: ctx.message_message_id,
-        })
-        .HTML()
-        .markup(markup)
-    );
+    return markup;
   }
   //returns an array of user IDs and tags
   async parseEntities(text, entities) {
@@ -147,6 +166,11 @@ class Charon {
       }
     }
     return mentioned;
+  }
+  async getChat(id) {
+    return await this.bot
+      .telegram
+      .getChat(id);
   }
 }
 

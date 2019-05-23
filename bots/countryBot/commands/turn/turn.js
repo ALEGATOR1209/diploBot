@@ -4,33 +4,31 @@ const checkDead = require('./scripts/checkDead');
 const checkRevolts = require('./scripts/checkRevolts');
 const checkMigrants = require('./scripts/checkMigrants');
 
-const {
-  getAdmins,
-  getText,
-  getGame,
-  setTurn,
-} = require('../../../imports').few('countryBot', 'scripts',
-  [
+const turn = charon => {
+  const {
+    getAdmins,
+    getText,
+    getGame,
+    setTurn,
+  } = charon.get([
     'getAdmins',
     'getText',
     'getGame',
     'setTurn',
   ]);
-const text = t => getText('turn')[t];
+  const text = t => getText('turn')[t];
 
-const turn = ctx => {
-  const { id } = ctx.message.from;
-  const reply = { reply_to_message_id: ctx.message.message_id };
+  const { id } = charon.message.from;
   if (!getAdmins().includes(id)) {
-    ctx.reply(text(1), reply);
+    charon.reply(text(1));
     return;
   }
   const turn = getGame('turn');
   setTurn(turn + 1);
-  checkDead(ctx);
-  checkRevolts(ctx);
-  checkMigrants(ctx);
-  ctx.reply(text(2) + getGame('turn'));
+  checkDead(charon);
+  checkRevolts(charon);
+  checkMigrants(charon);
+  charon.reply(text(2) + getGame('turn'));
 };
 
 module.exports = turn;

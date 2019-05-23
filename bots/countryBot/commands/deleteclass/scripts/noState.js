@@ -1,18 +1,16 @@
 'use strict';
 
-const Extra = require('telegraf/extra');
-const Markup = require('telegraf/markup');
-const {
-  getAdmins,
-  getText,
-  findUser,
-  getChildClasses,
-  getAllClasses,
-  setState,
-  getMigrationClass,
-  getGame,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const deleteclass = charon => {
+  const {
+    getAdmins,
+    getText,
+    findUser,
+    getChildClasses,
+    getAllClasses,
+    setState,
+    getMigrationClass,
+    getGame,
+  } = charon.get([
     'getAdmins',
     'getText',
     'findUser',
@@ -22,41 +20,36 @@ const {
     'getMigrationClass',
     'getGame',
   ]);
-const text = t => getText('deleteclass')[t];
-
-const deleteclass = ctx => {
-  const { id } = ctx.message.from;
-  const reply = {
-    reply_to_message_id: ctx.message.message_id,
-  };
+  const text = t => getText('deleteclass')[t];
+  const { id } = charon.message.from;
 
   if (getGame('turn') === 0) {
-    ctx.reply(getText('0turnAlert'));
+    charon.reply(getText('0turnAlert'));
     return;
   }
 
   if (getAdmins().includes(id)) {
-    ctx.reply(text(0) + text(1), reply);
+    charon.reply(text(0) + text(1));
     return;
   }
 
   const country = findUser(id);
   if (!country) {
-    ctx.reply(text(0) + text(2), reply);
+    charon.reply(text(0) + text(2));
     return;
   }
   if (country.hasRevolution) {
-    ctx.reply(text(0) + text(7), reply);
+    charon.reply(text(0) + text(7));
     return;
   }
   if (country.citizens[id].inPrison) {
-    ctx.reply(text(0) + text(9), reply);
+    charon.reply(text(0) + text(9));
   }
   const classlist = getAllClasses(country.chat);
   const userClass = country.citizens[id].class;
   const childClasses = getChildClasses(userClass, classlist);
   if (childClasses.length < 1) {
-    ctx.reply(text(0) + text(3), reply);
+    charon.reply(text(0) + text(3));
     return;
   }
   let emptyClasses = childClasses.filter(classname => {
@@ -72,19 +65,13 @@ const deleteclass = ctx => {
     );
 
   if (emptyClasses.length < 1) {
-    ctx.reply(text(0) + text(4), reply);
+    charon.reply(text(0) + text(4));
     return;
   }
   emptyClasses.push(text(6));
-  ctx.reply(
+  charon.reply(
     text(0) + text(5),
-    Extra
-      .load(reply)
-      .markup(Markup.keyboard(emptyClasses)
-        .oneTime()
-        .resize()
-        .selective(true)
-      )
+    { buttons: emptyClasses }
   );
 
   setState(id, 'deleteclass', 'choosingClass');

@@ -1,86 +1,53 @@
 'use strict';
 
-const {
-  getAdmins,
-  rightsString,
-  getText,
-  findUser,
-  getDead,
-} = require('../../imports').few('countryBot', 'scripts',
-  [
-    'getAdmins',
+const rights = charon => {
+  const {
+    rightsString,
+    getText,
+    findUser,
+    getDead,
+  } = charon.get([
     'rightsString',
     'getText',
     'findUser',
     'getDead',
   ]);
-const text = t => getText('rights')[t];
+  const text = t => getText('rights')[t];
 
-const rights = ctx => {
-  const reply = {
-    reply_to_message_id: ctx.message.message_id,
-    parse_mode: 'HTML',
-  };
-
-  let tag = ctx.message
-    .text
-    .match(/@[^@]*$/gi);
-  if (tag) tag = tag[0]
-    .trim()
-    .slice(1);
-  else tag = ctx.message.from.username || ctx.message.from.id;
-
-  const country = findUser(tag);
-  if (getAdmins().includes(tag)) {
-    ctx.reply(
-      text(1).replace('{user}', `@${tag}`) + text(2),
-      reply
-    );
-    return;
+  const  { mentions } = charon;
+  if (!mentions.length) {
+    const { id, username } = charon.message.from;
+    mentions.push({ id, username });
   }
-  if (getDead(tag)) {
-    ctx.reply(
-      text(8),
-      reply
-    );
-    return;
-  }
+  for (const person of mentions) {
+    const { username: pTag, id: pId } = person;
+    if (getDead(pId)) {
+      charon.reply(text(8));
+      return;
+    }
 
-  if (tag === 'dipl_countryBot') {
-    ctx.reply(
-      text(1).replace('{user}', `@${tag}`) + text(11),
-      reply
-    );
-    return;
-  }
+    const country = findUser(pId);
+    if (!country) {
+      charon.reply(text(9).replace('{user}', `@${pTag}`),);
+      return;
+    }
 
-  if (!country) {
-    ctx.reply(
-      text(9).replace('{user}', `@${tag}`),
-      reply
-    );
-    return;
-  }
+    const user = country.citizens[pId];
+    if (!user) {
+      charon.reply(`${text(3)} ${country.name}.`);
+      return;
+    }
 
-  const user = country.citizens[tag];
-  if (!user) {
-    ctx.reply(
-      `${text(3)} ${country.name}.`,
-      reply
+    const userClassName = country.citizens[pId].class;
+    const userClass = country.classes[user.class];
+    charon.reply(
+      text(1).replace('{user}', `@${pTag}`) +
+      rightsString(userClass.rights) + '\n' +
+      (user.inPrison ? text(4) : text(5)) +
+      text(6) + userClassName + text(7) + country.name +
+      (pId === charon.message.from.username ? text(10) : ''),
     );
-    return;
   }
-
-  const userClassName = country.citizens[tag].class;
-  const userClass = country.classes[user.class];
-  ctx.reply(
-    text(1).replace('{user}', `@${tag}`) +
-    rightsString(userClass.rights) + '\n' +
-    (user.inPrison ? text(4) : text(5)) +
-    text(6) + userClassName + text(7) + country.name +
-    (tag === ctx.message.from.username ? text(10) : ''),
-    reply
-  );
 };
 
 module.exports = rights;

@@ -1,22 +1,21 @@
 'use strict';
 
-const {
-  getStates,
-  setState,
-  getText,
-  findUser,
-  removeClass,
-} = require('../../../imports').few('countryBot', 'scripts',
-  [
+const panic = charon => {
+  const {
+    getStates,
+    setState,
+    getText,
+    findUser,
+    removeClass,
+  } = charon.get([
     'getStates',
     'setState',
     'getText',
     'findUser',
     'removeClass',
   ]);
-const text = t => getText('panic')[t];
+  const text = t => getText('panic')[t];
 
-const panic = charon => {
   const { id } = charon.message.from;
   const states = getStates(id);
   for (const state in states) {

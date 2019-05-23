@@ -1,40 +1,40 @@
 'use strict';
 
-const {
-  getText,
-  getAllCountries,
-  setRevolution,
-  newClass,
-  getGame,
-} = require('../../../../imports').few('countryBot', 'scripts',
-  [
+const checkRevolts = charon => {
+  const {
+    getText,
+    getAllCountries,
+    setRevolution,
+    newClass,
+    getGame,
+    getAllRights: rightslist,
+  } = charon.get([
     'getText',
     'getAllCountries',
     'setRevolution',
     'newClass',
     'getGame',
+    'getAllRights',
   ]);
-const text = t => getText('checkRevolts')[t];
+  const text = t => getText('checkRevolts')[t];
+  const revolutionsResolvers = {
+    CHANGE_PARENT: (country, id) => {
+      const { demands, revolter } = country.revolution[id];
+      newClass(country.chat, revolter, {
+        parentClass: demands,
+      });
+      setRevolution(country.chat, id);
+    },
+    RIGHTS: (country, id) => {
+      const { demands, revolter } = country.revolution[id];
+      const winnerClass = country.classes[revolter];
+      newClass(country.chat, revolter, {
+        rights: [...demands, ...winnerClass.rights],
+      });
+      setRevolution(country.chat, id);
+    },
+  };
 
-const revolutionsResolvers = {
-  CHANGE_PARENT: (country, id) => {
-    const { demands, revolter } = country.revolution[id];
-    newClass(country.chat, revolter, {
-      parentClass: demands,
-    });
-    setRevolution(country.chat, id);
-  },
-  RIGHTS: (country, id) => {
-    const { demands, revolter } = country.revolution[id];
-    const winnerClass = country.classes[revolter];
-    newClass(country.chat, revolter, {
-      rights: [...demands, ...winnerClass.rights],
-    });
-    setRevolution(country.chat, id);
-  },
-};
-
-const checkRevolts = ctx => {
   const countries = getAllCountries();
   for (const state in countries) {
     const country = countries[state];
@@ -61,11 +61,12 @@ const checkRevolts = ctx => {
           .replace('{child}', revolution.revolter)
       }   else {
         answer += '✅' + revolution.demands
+          .map(el => rightslist[el])
           .join('\n✅');
       }
 
       answer += '\n\n' + (victory ? text(8) : text(7));
-      ctx.reply(
+      charon.reply(
         answer,
         null,
         { chat_id: getGame('gameChannel') }

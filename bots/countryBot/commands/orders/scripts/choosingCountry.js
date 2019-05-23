@@ -4,83 +4,86 @@ const ordersHandlers = {
   text: ({ reply }, orders) => reply(orders.text),
   photo: ({ replyWithPhoto }, orders) => replyWithPhoto(
     orders.photo,
-    null,
     { caption: orders.caption }
   ),
   document: ({ replyWithDocument }, orders) => replyWithDocument(
     orders.document.file_id,
-    null,
     { caption: orders.caption }
   ),
   voice: ({ replyWithVoice }, orders) => replyWithVoice(
     orders.voice.file_id,
-    null,
     { caption: orders.caption }
   ),
   sticker: ({ replyWithSticker }, orders) => replyWithSticker(
-    orders.sticker.file_id,
-    null,
-    { caption: orders.caption }
+    orders.sticker.file_id
   ),
   video: ({ replyWithVideo }, orders) => replyWithVideo(
     orders.video.file_id,
-    null,
     { caption: orders.caption }
   ),
   audio: ({ replyWithAudio }, orders) => replyWithAudio(
     orders.audio.file_id,
-    null,
     { caption: orders.caption }
   ),
 };
 
-const showorders = charon => {
+const choosingCountry = charon => {
   const {
     getAdmins,
-    findUser,
+    getAllCountries,
+    getAdminsChat,
+    setState,
     getText,
-    getDead,
     getOrders,
   } = charon.get([
     'getAdmins',
-    'findUser',
+    'getAllCountries',
+    'getAdminsChat',
+    'setState',
     'getText',
-    'getDead',
     'getOrders',
   ]);
-  const text = t => getText('showorders')[t];
-  const reply = text => charon.reply(text, null, {});
+  const text = t => getText('orders')[t];
 
   const { id } = charon.message.from;
-
-  if (getAdmins().includes(id)) {
-    reply(text(1));
+  if (!getAdmins().includes(id)) {
+    charon.reply(text(1));
+    setState(id, 'orders', null);
+    return;
+  }
+  const rightChat = charon.message.chat.id === getAdminsChat() ||
+    (
+      charon.message.chat.type === 'private' &&
+      getAdmins().includes(charon.message.chat.id)
+    );
+  if (!rightChat) {
+    charon.reply(text(2));
+    setState(id, 'orders', null);
     return;
   }
 
-  if (getDead(id)) {
-    reply(text(2));
+  const countries = getAllCountries();
+  if (Object.keys(countries).length < 1) {
+    charon.reply(text(3));
+    setState(id, 'orders', null);
     return;
   }
 
-  const country = findUser(id);
+  const country = countries[
+    Object.keys(countries)
+      .find(state => countries[state].name === charon.message.text)
+  ];
   if (!country) {
-    reply(text(3));
+    charon.reply(text(6));
+    setState(id, 'orders', null);
     return;
   }
 
-  const userClassName = country.citizens[id].class;
-  const userClass = country.classes[userClassName];
-  if (!userClass.rights.includes('COMMAND_ARMIES')) {
-    reply(text(4));
-    return;
-  }
-
-  reply(text(5) + country.name)
+  charon.reply(text(5) + country.name)
     .then(() => {
-      const orders = getOrders(country.chat);
+      const orders = getOrders(country.chat) || {};
       if (Object.keys(orders) < 1) {
-        reply(text(6));
+        charon.reply(text(7));
         return;
       }
       for (const order in orders) {
@@ -88,6 +91,7 @@ const showorders = charon => {
         ordersHandlers[order](charon, orders);
       }
     });
+  setState(id, 'orders', null);
 };
 
-module.exports = showorders;
+module.exports = choosingCountry;
