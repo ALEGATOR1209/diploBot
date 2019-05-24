@@ -45,7 +45,6 @@ const actions = [
   'reaction',    //support government
 ];
 
-
 Charon.fromToken(TOKEN)
   .commands(commands)
   .actions(actions)

@@ -10,7 +10,6 @@ const shoot = async charon => {
     editUser,
     getText,
     getDead,
-    getKillPhrase,
     getGame,
   } = charon.get([
     'getAdmins',
@@ -21,7 +20,6 @@ const shoot = async charon => {
     'editUser',
     'getText',
     'getDead',
-    'getKillPhrase',
     'getGame',
   ]);
   const text = t => getText('shoot')[t];
@@ -97,7 +95,8 @@ const shoot = async charon => {
     return;
   }
   const killed = parseInt(Math.random() * 100);
-  const phrase = getRandomChoice(getKillPhrase(killed > 40));
+  const phrase = killed > 40 ?
+    getText('killPhrases').success : getText('killPhrases').fail;
 
   charon.reply(
     phrase
@@ -110,7 +109,7 @@ const shoot = async charon => {
   editUser(country.chat, id, {
     shoot: new Date(),
   });
- if (killed > 40) bury(victim.id);
+  if (killed > 40) bury(victim.id);
 };
 
 module.exports = shoot;
