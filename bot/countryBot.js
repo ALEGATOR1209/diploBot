@@ -50,4 +50,10 @@ Charon.fromToken(TOKEN)
   .actions(actions)
   .initBases()
   .on('message', 'handleText')
-  .launch();
+  .launch({
+    webHook: {
+      port: 3000,
+      key: './cert.pem',
+      cert: './key.pem',
+    }
+  });

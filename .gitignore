@@ -1,3 +1,5 @@
 node_modules/*
-bots/*/token.js
+token.js
+databases/*
 .idea/*
+*.pem

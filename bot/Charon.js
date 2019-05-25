@@ -32,19 +32,19 @@ class Charon {
     return new Charon(new Telegraf(token));
   }
   initBases() {
-    imports.countryBot.scripts('initBases')();
+    imports.scripts('initBases')();
     return this;
   }
   on(message, fn) {
     this.bot.on(message, ctx => this.execute(ctx, 'commands', fn));
     return this;
   }
-  launch() {
-    this.bot.launch();
+  launch(options) {
+    this.bot.launch(options);
     return this;
   }
   static get(files) {
-    const types = Object.keys(imports.countryBot);
+    const types = Object.keys(imports);
     const lib = {};
 
     for (const file of files) {
@@ -52,7 +52,7 @@ class Charon {
       let error;
       for (const type of types) {
         try {
-          imported = imports.countryBot[type](file);
+          imported = imports[type](file);
         } catch (e) {
           error = e;
         }
@@ -63,11 +63,11 @@ class Charon {
     return lib;
   }
   async execute(ctx, type, fn) {
-    const messanger = ctx.update.callback_query || ctx.message;
+    const messenger = ctx.update.callback_query || ctx.message;
     try {
-      const getPlayers = imports.countryBot.scripts('getPlayers');
-      const setPlayer = imports.countryBot.scripts('setPlayer');
-      const { id } = messanger.from;
+      const getPlayers = imports.scripts('getPlayers');
+      const setPlayer = imports.scripts('setPlayer');
+      const { id } = messenger.from;
       if (!getPlayers().includes(id)) setPlayer(id);
 
       let mentions;
@@ -96,11 +96,9 @@ class Charon {
         mentions,
       };
 
-      await imports.countryBot[type](fn)(charon);
+      await imports[type](fn)(charon);
     } catch (e) {
-      const getText = imports
-        .countryBot
-        .scripts('getText');
+      const getText = imports.scripts('getText');
 
       Charon.reply(
         ctx,
@@ -108,11 +106,7 @@ class Charon {
         getText('botError')
           .replace('{error}', e),
       );
-
-      imports
-        .countryBot
-        .scripts('setState')(messanger.from.id, '', null);
-
+      imports.scripts('setState')(messenger.from.id, '', null);
       console.error(e);
     }
   }
@@ -144,9 +138,7 @@ class Charon {
     return markup;
   }
   async parseEntities(text, entities) {
-    const getPlayers = imports
-      .countryBot
-      .scripts('getPlayers');
+    const getPlayers = imports.scripts('getPlayers');
     const players = getPlayers();
     const mentioned = [];
 
@@ -161,6 +153,7 @@ class Charon {
         const player = await this.bot
           .telegram
           .getChat(id);
+        if (player.isBot) continue;
         if (player.username === tag) mentioned.push({ id, username: tag });
       }
     }
