@@ -5,7 +5,7 @@
   "author": "ALEGATOR1209",
   "license": "MIT",
   "scripts": {
-    "start": "node ./bots/countryBot/countryBot.js"
+    "start": "node ./bot/countryBot.js"
   },
   "repository": {
     "type": "git",

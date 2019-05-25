@@ -10,7 +10,7 @@ class Charon {
   constructor(bot) {
     this.bot = bot;
   }
-  commands(commands) { //register commands in bot
+  commands(commands) {
     for (const command of commands) {
       this.bot.command(
         command,
@@ -19,7 +19,7 @@ class Charon {
     }
     return this;
   }
-  actions(actions) { //register actions in bot
+  actions(actions) {
     for (const action of actions) {
       this.bot.action(
         action,
@@ -28,22 +28,22 @@ class Charon {
     }
     return this;
   }
-  static fromToken(token) { //create a new bot from token
+  static fromToken(token) {
     return new Charon(new Telegraf(token));
   }
-  initBases() { //init databases
+  initBases() {
     imports.countryBot.scripts('initBases')();
     return this;
   }
-  on(message, fn) { //subscribe to bot event
+  on(message, fn) {
     this.bot.on(message, ctx => this.execute(ctx, 'commands', fn));
     return this;
   }
-  launch() { //launch bot
+  launch() {
     this.bot.launch();
     return this;
   }
-  static get(files) { //get some file by name
+  static get(files) {
     const types = Object.keys(imports.countryBot);
     const lib = {};
 
@@ -62,7 +62,7 @@ class Charon {
     }
     return lib;
   }
-  async execute(ctx, type, fn) { //execute script
+  async execute(ctx, type, fn) {
     const messanger = ctx.update.callback_query || ctx.message;
     try {
       const getPlayers = imports.countryBot.scripts('getPlayers');
@@ -102,21 +102,21 @@ class Charon {
         .countryBot
         .scripts('getText');
 
-      Charon.reply( //we must say user that error has occured
+      Charon.reply(
         ctx,
         'reply',
         getText('botError')
           .replace('{error}', e),
       );
 
-      imports //clearing user states
+      imports
         .countryBot
         .scripts('setState')(messanger.from.id, '', null);
 
       console.error(e);
     }
   }
-  static reply(ctx, type, text, keyboard, options) { //reply to user
+  static reply(ctx, type, text, keyboard, options) {
     return ctx[type](
       text,
       Extra
@@ -143,7 +143,6 @@ class Charon {
     markup.selective_keyboard = true;
     return markup;
   }
-  //returns an array of user IDs and tags
   async parseEntities(text, entities) {
     const getPlayers = imports
       .countryBot

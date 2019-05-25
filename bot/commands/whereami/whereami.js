@@ -23,7 +23,7 @@ const whereami = charon => {
   let message = text(1).replace('{turn}', turn);
   if (dead && Object.keys(dead).length > 0) {
     const deathTime = getGame('deathTime');
-    message += text(2).replace('{turn}', turn - deathTime);
+    message += text(2).replace('{turn}', dead.dateOfDeath + deathTime - turn);
   }
   const country = findUser(id);
   if (country) {

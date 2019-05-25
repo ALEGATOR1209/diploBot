@@ -1,7 +1,7 @@
 'use strict';
 
 const TOKEN = require('./token');
-const Charon = require('../Charon');
+const Charon = require('./Charon');
 
 const commands = [ /* asterisk comments marks command for admins */
   'whereami',      //shows info about current citizenship
