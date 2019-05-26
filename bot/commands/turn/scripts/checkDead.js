@@ -1,6 +1,6 @@
 'use strict';
 
-const checkDead = charon => {
+const checkDead = async charon => {
   const {
     getText,
     getGame,
@@ -22,7 +22,8 @@ const checkDead = charon => {
   for (const corpse in cemetery) {
     if (turn - cemetery[corpse].dateOfDeath >= deathTime) {
       resurrect(corpse);
-      resurrectionList += `${text(2)} @${corpse}\n`;
+      const { username } = await charon.getChat(corpse);
+      resurrectionList += `${text(2)} @${username}\n`;
     }
   }
   const resurrectedNum = resurrectionList

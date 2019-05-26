@@ -49,15 +49,12 @@ class Charon {
 
     for (const file of files) {
       let imported;
-      let error;
       for (const type of types) {
         try {
           imported = imports[type](file);
-        } catch (e) {
-          error = e;
-        }
+        } catch (e) { /* */ }
       }
-      if (!imported) throw error;
+      if (!imported) throw new Error(`Cannot find module: ${file}`);
       lib[file] = imported;
     }
     return lib;

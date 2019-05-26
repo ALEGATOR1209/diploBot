@@ -1,11 +1,6 @@
 'use strict';
 
-const {
-  getAllRights
-} = require('../../imports').few('countryBot', 'scripts',
-  [
-    'getAllRights',
-  ]);
+const getAllRights = require('./getAllRights');
 
 const rightsString = rights => Object.keys(getAllRights).reduce(
   (acc, freedom) => acc + (
