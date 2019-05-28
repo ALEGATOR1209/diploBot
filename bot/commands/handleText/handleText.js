@@ -1,6 +1,6 @@
 'use strict';
 
-const handleText = charon => {
+const handleText = async charon => {
   const {
     getAdmins,
     getText,
@@ -60,13 +60,18 @@ const handleText = charon => {
     return;
   }
   if (charon.message.text && charon.message.text[0] === '/') {
-    charon.reply(text(3), { reply_to_message_id: charon.message.message_id });
+    charon.reply(text(3));
     return;
   }
 
   if (type === 'private') {
-    const admins = getAdmins();
-    charon.reply(text(1) + '\n\n' + text(2) + `\n@${admins.join('\n@')}`);
+    const adminsIds = getAdmins();
+    const adminsNicks = [];
+    for (const id of adminsIds) {
+      const { username } = await charon.getChat(id);
+      adminsNicks.push(`@${username}`);
+    }
+    charon.reply(text(1) + '\n\n' + text(2) + `\n${adminsNicks.join('\n')}`);
   }
 };
 

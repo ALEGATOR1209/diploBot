@@ -4,11 +4,13 @@ const Telegraf = require('telegraf');
 const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const imports = require('./imports');
+const Logger = require('./logger');
 
 //Charon - system messages transportation between Telegram API and commands
 class Charon {
   constructor(bot) {
     this.bot = bot;
+    this.logger = new Logger('game.log', 'err.log');
   }
   commands(commands) {
     for (const command of commands) {
@@ -61,10 +63,18 @@ class Charon {
   }
   async execute(ctx, type, fn) {
     const messenger = ctx.update.callback_query || ctx.message;
+    const { id, username } = messenger.from;
+    const report = {
+      id,
+      username,
+      input: ctx.message.text,
+      command: fn,
+      date: new Date()
+    };
+
     try {
       const getPlayers = imports.scripts('getPlayers');
       const setPlayer = imports.scripts('setPlayer');
-      const { id } = messenger.from;
       if (!getPlayers().includes(id)) setPlayer(id);
 
       let mentions;
@@ -94,18 +104,20 @@ class Charon {
       };
 
       await imports[type](fn)(charon);
-    } catch (e) {
+    } catch (error) {
       const getText = imports.scripts('getText');
 
       Charon.reply(
         ctx,
         'reply',
         getText('botError')
-          .replace('{error}', e),
+          .replace('{error}', error),
       );
       imports.scripts('setState')(messenger.from.id, '', null);
-      console.error(e);
+      report.error = error;
     }
+    this.logger
+      .log(report);
   }
   static reply(ctx, type, text, keyboard, options) {
     return ctx[type](

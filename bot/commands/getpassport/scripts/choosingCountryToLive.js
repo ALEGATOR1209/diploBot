@@ -1,5 +1,6 @@
 'use strict';
 
+const noState = require('./noState');
 const choosingCountryToLive = charon => {
   const {
     setMigrantQueue,
@@ -9,7 +10,6 @@ const choosingCountryToLive = charon => {
     getText,
     getDead,
     setState,
-    noState,
   } = charon.get([
     'setMigrantQueue',
     'getAdmins',
@@ -19,7 +19,6 @@ const choosingCountryToLive = charon => {
     'getText',
     'getDead',
     'setState',
-    'noState',
   ]);
   const text = id => getText('getpassport')[id];
   if (charon.message.chat.type !== 'private') {

@@ -17,7 +17,7 @@ const noState = charon => {
 
   const userCountry = findUser(id);
   if (!userCountry) {
-    charon.reply(text(0) + text(1), reply);
+    charon.reply(text(0) + text(1));
     return;
   }
 
