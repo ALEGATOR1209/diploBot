@@ -7,14 +7,12 @@ const free = async charon => {
     getText,
     jail,
     getGame,
-    getPlayers,
   } = charon.get([
     'getAdmins',
     'findUser',
     'getText',
     'jail',
     'getGame',
-    'getPlayers',
   ]);
   const text = t => getText('free')[t];
   const { id } = charon.message.from;

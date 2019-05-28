@@ -14,6 +14,6 @@ const getText = id => {
       text[phrase] = getRandomChoice(text[phrase]);
     }
   return text;
-}
+};
 
 module.exports = getText;

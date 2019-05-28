@@ -124,7 +124,7 @@ const kill = async charon => {
   editUser(country.chat, id, {
     shoot: new Date(),
   });
- if (killed > 60) bury(victim);
+  if (killed > 60) bury(victim);
 };
 
 module.exports = kill;

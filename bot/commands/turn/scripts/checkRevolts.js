@@ -58,7 +58,7 @@ const checkRevolts = charon => {
       if (revolution.type === 'CHANGE_PARENT') {
         answer += text(5)
           .replace('{parent}', revolution.demands)
-          .replace('{child}', revolution.revolter)
+          .replace('{child}', revolution.revolter);
       }   else {
         answer += '✅' + revolution.demands
           .map(el => rightslist[el])
