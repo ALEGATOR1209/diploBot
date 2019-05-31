@@ -4,25 +4,19 @@ const whereami = charon => {
   const {
     findUser,
     getText,
-    getDead,
-    getGame,
-    getAllCountries,
   } = charon.get([
     'findUser',
     'getText',
-    'getDead',
-    'getGame',
-    'getAllCountries',
   ]);
   const text = t => getText('whereami')[t];
 
   const { id } = charon.message.from;
-  const dead = getDead(id);
-  const turn = getGame('turn');
+  const db = charon.databases;
+  const dead = db.graveyard.task([ id ]);
+  const [ turn, deathTime ] = db.game.task([ 'turn', 'deathTime' ]);
 
   let message = text(1).replace('{turn}', turn);
   if (dead && Object.keys(dead).length > 0) {
-    const deathTime = getGame('deathTime');
     message += text(2).replace('{turn}', dead.dateOfDeath + deathTime - turn);
   }
   const country = findUser(id);
@@ -46,7 +40,7 @@ const whereami = charon => {
 
     message += text(12).replace('{class}', country.migrantClass);
   } else if (!dead) {
-    const countrylist = getAllCountries();
+    const countrylist = db.countries.task(['countries']);
     let migrant = false;
     for (const name in countrylist) {
       const blob = countrylist[name];
