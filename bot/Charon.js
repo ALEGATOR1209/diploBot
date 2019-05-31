@@ -3,14 +3,17 @@
 const Telegraf = require('telegraf');
 const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
+
 const imports = require('./imports');
 const Logger = require('./logger');
+const DbMaster = require('./database');
 
 //Charon - system messages transportation between Telegram API and commands
 class Charon {
   constructor(bot) {
     this.bot = bot;
     this.logger = new Logger('game.log', 'err.log');
+    this.databases = new DbMaster('./databases/');
   }
   commands(commands) {
     for (const command of commands) {
@@ -101,6 +104,7 @@ class Charon {
         getChat: this.getChat.bind(this),
         update: ctx.update,
         mentions,
+        databases: this.databases,
       };
 
       await imports[type](fn)(charon);

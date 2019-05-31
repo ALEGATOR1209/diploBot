@@ -19,12 +19,10 @@ get-task:
 ]
  */
 
-
 class DbWorker {
   constructor(database) {
     this.database = database;
     this.working = false;
-    this.tasks = [];
     this.lastWork = new Date();
   }
   write(field, data) {
@@ -39,6 +37,7 @@ class DbWorker {
       .value();
   }
   task(task) {
+    this.lastWork = new Date();
     if (task instanceof Array) { //get fields
       const result = task.map(field => this.get(field));
       return result;
@@ -48,6 +47,10 @@ class DbWorker {
     for (const field of fields) { //set fields
       this.write(field, task[field]);
     }
+  }
+  getLastWork() {
+    if (this.working) return new Date();
+    return this.lastWork;
   }
 }
 
@@ -60,28 +63,25 @@ class DbManager {
       get: (manager, db) => manager.getWorker(db),
     };
 
-    const proxy = new Proxy(this, handler);
-    return proxy;
+    return new Proxy(this, handler);
   }
   getWorker(db) {
     if (!this.pool[db]) {
-      console.log('Creating worker');
       this.pool[db] = new DbWorker(low(new FileSync(this.path + db + '.json')));
-    } else { console.log('From pool'); }
+      this.oppress(db);
+    }
     return this.pool[db];
+  }
+  //this method kills worker that has been out of work for 1 hour
+  //cruel world of capitalism as is
+  oppress(worker) {
+    const lastWork = this.pool[worker]
+      .getLastWork();
+    const lazinessTime = new Date() - lastWork;
+
+    if (lazinessTime >= DEFAULT_LAZY) delete this.pool[worker];
+    else setTimeout(() => this.oppress(worker), DEFAULT_LAZY - lazinessTime);
   }
 }
 
 module.exports = DbManager;
-
-//USAGE
-const manager = new DbManager('../databases/');
-let [ admins ] = manager.admins.task([ 'admins' ]);
-console.dir({ admins });
-
-manager.admins.task({ admins: [ ...admins, 'hello!' ] });
-[ admins ] = manager.admins.task([ 'admins' ]);
-console.dir({ admins });
-
-const [ players ] = manager.players.task([ 'players' ]);
-console.dir({  players });
